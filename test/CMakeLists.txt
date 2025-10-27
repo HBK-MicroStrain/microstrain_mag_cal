@@ -16,10 +16,13 @@ FetchContent_MakeAvailable(microstrain_test)
 # Test setup
 # ---------------------------------------------------------------
 
-add_executable(unit_tests)
+add_executable(unit_tests
+    "library.unit.cpp"
+)
 
 target_link_libraries(unit_tests PRIVATE
     microstrain_test::cpp
+    microstrain_mag_cal
 )
 
 # ---------------------------------------------------------------
