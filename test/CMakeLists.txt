@@ -1,9 +1,16 @@
 # ---------------------------------------------------------------
 # Dependencies
 # ---------------------------------------------------------------
-# TODO: Will be moved to separate repo
-set(MICROSTRAIN_TEST_USE_DOCTEST ON CACHE BOOL "" FORCE)
-add_subdirectory("microstrain_test")
+include(FetchContent)
+
+set(MICROSTRAIN_TEST_FRAMEWORK_CPP "doctest" CACHE STRING "" FORCE)
+
+FetchContent_Declare(microstrain_test
+    GIT_REPOSITORY https://github.com/LORD-MicroStrain/microstrain_test.git
+    GIT_TAG v0.2.7
+)
+
+FetchContent_MakeAvailable(microstrain_test)
 
 # ---------------------------------------------------------------
 # Test setup
