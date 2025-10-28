@@ -44,3 +44,10 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
 
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
+
+MICROSTRAIN_TEST_CASE("MVP", "Spatial_coverage_matches_InertialConnect")
+{
+    const double result = MicrostrainMagCal::calculate_spacial_coverage(CHECK_POINTS);
+
+    CHECK(result == doctest::Approx(13.281).epsilon(0.001));
+}
