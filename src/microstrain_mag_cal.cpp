@@ -4,7 +4,7 @@ namespace MicrostrainMagCal
 {
     double calculate_measured_field_strength(const Eigen::MatrixX3d &points)
     {
-        if (points.rows() == 0)
+        if (points.size() == 0)
         {
             return 0.0;
         }

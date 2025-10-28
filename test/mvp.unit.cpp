@@ -28,6 +28,16 @@ constexpr std::array<double, 20 * 3> raw_points = {
 const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
 
 
+MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")
+{
+    Eigen::MatrixX3d empty_matrix;
+    empty_matrix.resize(0, 3);
+
+    const double result = MicrostrainMagCal::calculate_measured_field_strength(empty_matrix);
+
+    CHECK(result == 0.0);
+}
+
 MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
 {
     const double result = MicrostrainMagCal::calculate_measured_field_strength(CHECK_POINTS);
