@@ -1,5 +1,5 @@
-#include <microstrain_test/microstrain_test.hpp>
 #include <microstrain_mag_cal.hpp>
+#include <microstrain_test/microstrain_test.hpp>
 
 constexpr std::array<double, 30 * 3> raw_points = {
     /*  1 */ -0.159911692 ,  0.0808103382, -0.213378355 ,
@@ -25,7 +25,9 @@ constexpr std::array<double, 30 * 3> raw_points = {
 };
 const Eigen::Matrix<double, 20, 3> CHECK_POINTS(raw_points.data());
 
-MICROSTRAIN_TEST_CASE("mvp", "Measured_field_strength_matches_Inertial_connect")
+MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
 {
-    // TODO: Implement
+    const double result = MicrostrainMagCal::calculate_measured_field_strength(CHECK_POINTS);
+
+    CHECK(result == 0.383);
 }
