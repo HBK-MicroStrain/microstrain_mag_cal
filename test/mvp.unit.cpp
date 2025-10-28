@@ -44,3 +44,16 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
 
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
+
+MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
+{
+    const double reference_field_strength = 0.557;
+
+    const MicrostrainMagCal::Fit result = MicrostrainMagCal::calculate_spherical_fit(
+        CHECK_POINTS,
+        reference_field_strength);
+
+    CHECK(/* Result soft iron matrix = OLD */);
+    CHECK(/* Result hard iron offset = OLD */);
+    CHECK(/* Result fit status = Valid */);
+}
