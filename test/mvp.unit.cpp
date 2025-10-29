@@ -3,7 +3,7 @@
 
 // Data points taken from a real InertialConnect data capture. All expected values for tests are
 // taken from InertialConnect based off this input data.
-constexpr std::array<double, 20 * 3> raw_points = {
+static constexpr std::array<double, 20 * 3> raw_points = {
     /*  1 */ -0.159911692 ,  0.0808103382, -0.213378355 ,
     /*  2 */ -0.357420951 ,  0.0722654387, -0.131103173 ,
     /*  3 */ -0.433592647 ,  0.0410155207,  0.0539549403,
@@ -25,7 +25,7 @@ constexpr std::array<double, 20 * 3> raw_points = {
     /* 19 */  0.0866696984, -0.0373534188,  0.579832494 ,
     /* 20 */  0.0798337832, -0.0866696984,  0.555662632
 };
-const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
+static const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
 
 
 MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")

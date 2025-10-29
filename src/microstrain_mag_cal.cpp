@@ -141,7 +141,8 @@ namespace MicrostrainMagCal
         parameters.tail<3>() = points.colwise().mean(); // Initial offset (offset_x, offset_y, offset_z)
 
         // Setup optimization
-        Eigen::NumericalDiff<SphericalFitFunctor> numerical_differentiator(SphericalFitFunctor(points, field_strength));
+        const SphericalFitFunctor functor(points, field_strength);
+        Eigen::NumericalDiff<SphericalFitFunctor> numerical_differentiator(functor);
         Eigen::LevenbergMarquardt<Eigen::NumericalDiff<SphericalFitFunctor>> solver(numerical_differentiator);
 
         solver.parameters.maxfev = MAX_ITERATIONS;
