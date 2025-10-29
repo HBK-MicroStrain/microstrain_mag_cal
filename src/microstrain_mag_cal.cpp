@@ -73,13 +73,55 @@ namespace MicrostrainMagCal
         return 100.0 * occupied_bins.size() / (num_latitude_bins * num_longitude_bins);
     }
 
+    // Returns a fit result that leaves the calibration unchanged (doesn't apply).
     FitResult no_calibration_applied()
     {
         // Identity matrix and zero vector applies no change
         return FitResult(Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false);
     }
 
-    FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, double field_strength)
+    struct SphericalFitFunctor
+    {
+        // Required type definitions for Eigen
+        using Scalar = double;
+        using InputType = Eigen::Vector4d;
+        using ValueType = Eigen::VectorXd;
+        using JacobianType = Eigen::MatrixXd;
+
+        enum {
+            InputsAtCompileTime = 4,              // Number of parameters
+            ValuesAtCompileTime = Eigen::Dynamic  // Number of residuals (dynamic)
+        };
+
+        const Eigen::MatrixX3d &points;
+        const double target_radius;
+
+        SphericalFitFunctor(const Eigen::MatrixX3d& points, const double field_strength)
+            : points(points), target_radius(field_strength) {}
+
+        // Required by Eigen ---> Number of residuals (one per point)
+        int values() const { return static_cast<int>(points.rows()); }
+
+        // Required by Eigen ---> Number of parameters to optimize (scale^2, offset_x, offset_y, offset_z)
+        int inputs() const { return 4; }
+
+        // Required by Eigen ---> Computes residual for each point
+        int operator()(const Eigen::Vector4d& parameters, Eigen::VectorXd& residuals) const
+        {
+            const double scale = std::sqrt(parameters(0));
+            const Eigen::Vector3d offset = parameters.tail<3>();
+
+            for (int i = 0; i < points.rows(); ++i)
+            {
+                const Eigen::Vector3d corrected_point = (points.row(i).transpose() - offset) / scale;
+                residuals(i) = corrected_point.norm() - target_radius;
+            }
+
+            return 0;
+        }
+    };
+
+    FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, const double field_strength)
     {
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;
@@ -93,7 +135,7 @@ namespace MicrostrainMagCal
         }
 
         // Initialize parameters for solver
-        Eigen::Vector4d parameters;
+        Eigen::VectorXd parameters;
         parameters(0) = 1.0;                       // Initial scale^2;
         // TODO: Move field offset calculation to separate internal function
         parameters.tail<3>() = points.colwise().mean(); // Initial offset (offset_x, offset_y, offset_z)
