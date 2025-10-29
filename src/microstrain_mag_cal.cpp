@@ -69,4 +69,9 @@ namespace MicrostrainMagCal
         // S% = S * 100
         return 100.0 * occupied_bins.size() / (num_latitude_bins * num_longitude_bins);
     }
+
+    FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, double field_strength)
+    {
+
+    }
 }
