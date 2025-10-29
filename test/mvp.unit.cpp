@@ -70,7 +70,13 @@ MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
     const MicrostrainMagCal::FitResult result = MicrostrainMagCal::calculate_spherical_fit(CHECK_POINTS, field_strength);
 
     CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(0.764696).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 0) == doctest::Approx(0.0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(0.764696).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 2) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 0) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 1) == doctest::Approx(0.0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(2, 2) == doctest::Approx(0.764696).epsilon(0.001));
 
     CHECK(result.hard_iron_offset(0) == doctest::Approx(-0.01354).epsilon(0.001));
