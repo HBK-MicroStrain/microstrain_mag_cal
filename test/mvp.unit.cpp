@@ -45,6 +45,23 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
 
+MICROSTRAIN_TEST_CASE("MVP", "Spatial_coverage_handles_no_data_points")
+{
+    Eigen::MatrixX3d empty_matrix;
+    empty_matrix.resize(0, 3);
+
+    const double result = MicrostrainMagCal::calculate_spatial_coverage(empty_matrix);
+
+    CHECK(result == 0.0);
+}
+
+MICROSTRAIN_TEST_CASE("MVP", "Spatial_coverage_matches_InertialConnect")
+{
+    const double result = MicrostrainMagCal::calculate_spatial_coverage(CHECK_POINTS);
+
+    CHECK(result == doctest::Approx(3.125).epsilon(0.001));
+}
+
 MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
 {
     const double reference_field_strength = 0.557;
