@@ -26,6 +26,6 @@ namespace MicrostrainMagCal
     double calculate_measured_field_strength(const Eigen::MatrixX3d &points);
     // TODO: Document using Geography convention over Physics convention.
     double calculate_spatial_coverage(const Eigen::MatrixX3d &points);
-    // TODO: Document row major/column major issue
+    // TODO: Document using direct calibration over scaled calibration.
     FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, double field_strength);
 }
