@@ -1,9 +1,10 @@
 #include <microstrain_mag_cal.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 
+
 // Data points taken from a real InertialConnect data capture. All expected values for tests are
 // taken from InertialConnect based off this input data.
-constexpr std::array<double, 20 * 3> raw_points = {
+static constexpr std::array<double, 20 * 3> raw_points = {
     /*  1 */ -0.159911692 ,  0.0808103382, -0.213378355 ,
     /*  2 */ -0.357420951 ,  0.0722654387, -0.131103173 ,
     /*  3 */ -0.433592647 ,  0.0410155207,  0.0539549403,
@@ -25,7 +26,7 @@ constexpr std::array<double, 20 * 3> raw_points = {
     /* 19 */  0.0866696984, -0.0373534188,  0.579832494 ,
     /* 20 */  0.0798337832, -0.0866696984,  0.555662632
 };
-const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
+static const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
 
 
 MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")
@@ -60,4 +61,25 @@ MICROSTRAIN_TEST_CASE("MVP", "Spatial_coverage_matches_InertialConnect")
     const double result = MicrostrainMagCal::calculate_spatial_coverage(CHECK_POINTS);
 
     CHECK(result == doctest::Approx(3.125).epsilon(0.001));
+}
+
+MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
+{
+    constexpr double field_strength = 0.557;
+
+    const MicrostrainMagCal::FitResult result = MicrostrainMagCal::calculate_spherical_fit(CHECK_POINTS, field_strength);
+
+    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(0.764696).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 0) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(0.764696).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 2) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 0) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 1) == doctest::Approx(0.0).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 2) == doctest::Approx(0.764696).epsilon(0.001));
+
+    CHECK(result.hard_iron_offset(0) == doctest::Approx(-0.01354).epsilon(0.001));
+    CHECK(result.hard_iron_offset(1) == doctest::Approx(0.09346).epsilon(0.001));
+    CHECK(result.hard_iron_offset(2) == doctest::Approx(0.15742).epsilon(0.001));
 }

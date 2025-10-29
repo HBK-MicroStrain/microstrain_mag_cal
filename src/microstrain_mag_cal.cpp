@@ -1,8 +1,11 @@
 #include <set>
 
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
+
 #include <microstrain_mag_cal.hpp>
 
-#define M_PI   3.14159265358979323846
+#define M_PI   3.14159265358979323846 // π
 #define M_PI_2 1.57079632679489661923 // π/2
 
 
@@ -68,5 +71,101 @@ namespace MicrostrainMagCal
         // S = (occupied_bins / total_bins)
         // S% = S * 100
         return 100.0 * occupied_bins.size() / (num_latitude_bins * num_longitude_bins);
+    }
+
+    // Returns a fit result that leaves the calibration unchanged (doesn't apply).
+    FitResult no_calibration_applied()
+    {
+        // Identity matrix and zero vector applies no change
+        return FitResult(Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false);
+    }
+
+    struct SphericalFitFunctor
+    {
+        // Required type definitions for Eigen
+        using Scalar = double;
+        using InputType = Eigen::Vector4d;
+        using ValueType = Eigen::VectorXd;
+        using JacobianType = Eigen::MatrixXd;
+
+        enum {
+            InputsAtCompileTime = 4,              // Number of parameters
+            ValuesAtCompileTime = Eigen::Dynamic  // Number of residuals (dynamic)
+        };
+
+        const Eigen::MatrixX3d &points;
+        const double target_radius;
+
+        SphericalFitFunctor(const Eigen::MatrixX3d& points, const double field_strength)
+            : points(points), target_radius(field_strength) {}
+
+        // Required by Eigen ---> Number of residuals (one per point)
+        int values() const { return static_cast<int>(points.rows()); }
+
+        // Required by Eigen ---> Number of parameters to optimize (scale^2, offset_x, offset_y, offset_z)
+        int inputs() const { return 4; }
+
+        // Required by Eigen ---> Computes residual for each point
+        int operator()(const Eigen::Vector4d& parameters, Eigen::VectorXd& residuals) const
+        {
+            const double scale = std::sqrt(parameters(0));
+            const Eigen::Vector3d offset = parameters.tail<3>();
+
+            for (int i = 0; i < points.rows(); ++i)
+            {
+                const Eigen::Vector3d corrected_point = (points.row(i).transpose() - offset) / scale;
+                residuals(i) = corrected_point.norm() - target_radius;
+            }
+
+            return 0;
+        }
+    };
+
+    FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, const double field_strength)
+    {
+        constexpr int MAX_ITERATIONS = 1000;
+        constexpr double TOLERANCE = 1.0e-10;
+
+        // Mathematical minimum since we are optimizing four parameters:
+        // * One scale parameter
+        // * Three offset parameters (x, y, z)
+        if (points.rows() < 4)
+        {
+            return no_calibration_applied();
+        }
+
+        // Initialize parameters for solver
+        Eigen::VectorXd parameters(4);
+        parameters(0) = 1.0;                       // Initial scale^2;
+        // TODO: Move field offset calculation to separate internal function
+        parameters.tail<3>() = points.colwise().mean(); // Initial offset (offset_x, offset_y, offset_z)
+
+        // Setup optimization
+        const SphericalFitFunctor functor(points, field_strength);
+        Eigen::NumericalDiff<SphericalFitFunctor> numerical_differentiator(functor);
+        Eigen::LevenbergMarquardt<Eigen::NumericalDiff<SphericalFitFunctor>> solver(numerical_differentiator);
+
+        solver.parameters.maxfev = MAX_ITERATIONS;
+        solver.parameters.xtol = TOLERANCE;
+
+        // Optimize
+        const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
+
+        // Check convergence
+        const bool converged =
+            status == Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall ||
+            status == Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall;
+
+        if (!converged)
+        {
+            return no_calibration_applied();
+        }
+
+        // Extract results
+        const double scale = std::sqrt(parameters(0));
+        const Eigen::Matrix<double, 3, 3> soft_iron_matrix = Eigen::Matrix<double, 3, 3>::Identity() * scale;
+        const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
+
+        return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
 }
