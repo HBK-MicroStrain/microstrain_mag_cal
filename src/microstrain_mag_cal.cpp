@@ -135,7 +135,7 @@ namespace MicrostrainMagCal
         }
 
         // Initialize parameters for solver
-        Eigen::VectorXd parameters;
+        Eigen::VectorXd parameters(4);
         parameters(0) = 1.0;                       // Initial scale^2;
         // TODO: Move field offset calculation to separate internal function
         parameters.tail<3>() = points.colwise().mean(); // Initial offset (offset_x, offset_y, offset_z)

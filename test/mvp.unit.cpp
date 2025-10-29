@@ -1,6 +1,7 @@
 #include <microstrain_mag_cal.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 
+
 // Data points taken from a real InertialConnect data capture. All expected values for tests are
 // taken from InertialConnect based off this input data.
 static constexpr std::array<double, 20 * 3> raw_points = {
