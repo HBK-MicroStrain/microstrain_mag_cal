@@ -91,8 +91,8 @@ MICROSTRAIN_TEST_CASE("MVP", "Fit_RMSE_matches_InertialConnect")
          1.21213, 0.01196, -0.05057,
          0.01196, 1.35210,  0.06738,
         -0.05057, 0.06738,  1.34479;
-    Eigen::Vector3d hard_iron_offset(0.00426, 0.10610, 0.17490);
-    double field_strength = 0.557;
+    const Eigen::Vector3d hard_iron_offset(0.00426, 0.10610, 0.17490);
+    constexpr double field_strength = 0.557;
 
     const double result = MicrostrainMagCal::calculateFitRMSE(CHECK_POINTS, soft_iron_matrix, hard_iron_offset, field_strength);
 
