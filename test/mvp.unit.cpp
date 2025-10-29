@@ -65,16 +65,14 @@ MICROSTRAIN_TEST_CASE("MVP", "Spatial_coverage_matches_InertialConnect")
 MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
 {
     constexpr double field_strength = 0.557;
-
-    const MicrostrainMagCal::FitResult result = MicrostrainMagCal::calculate_spherical_fit(
-        CHECK_POINTS,
-        field_strength);
-
     Eigen::Matrix<double, 3, 3> soft_iron_matrix_from_InertialConnect;
     soft_iron_matrix_from_InertialConnect << 1.30771,     0.0,     0.0,
                                                  0.0, 1.30771,     0.0,
                                                  0.0,     0.0, 1.30771;
+
+    const MicrostrainMagCal::FitResult result = MicrostrainMagCal::calculate_spherical_fit(CHECK_POINTS, field_strength);
+
     CHECK(result.soft_iron_matrix.isApprox(soft_iron_matrix_from_InertialConnect, 0.001));
     CHECK(result.hard_iron_offset.isApprox(Eigen::Vector3d(-0.01354, 0.09346, 0.15742), 0.001));
-    CHECK(result.status == MicrostrainMagCal::FitResult::Status::Valid);
+    CHECK(result.valid == true);
 }
