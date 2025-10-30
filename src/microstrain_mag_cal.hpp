@@ -1,7 +1,5 @@
 #pragma once
 
-//#include <utility>
-
 #include <Eigen/Dense>
 
 
@@ -28,4 +26,9 @@ namespace MicrostrainMagCal
     double calculate_spatial_coverage(const Eigen::MatrixX3d &points);
     // TODO: Document using direct calibration over scaled calibration.
     FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, double field_strength);
+    double calculateFitRMSE(
+        const Eigen::MatrixX3d &points,
+        const Eigen::Matrix<double, 3, 3> &soft_iron_matrix,
+        const Eigen::Vector3d &hard_iron_offset,
+        double field_strength);
 }
