@@ -4,6 +4,15 @@
 
 include(FetchContent)
 
+# NOTE: I had to do: `git config --global http.sslBackend schannel` to get the SSL certificates to
+# work on windows. Might be worth looking into whether it's better to do this or update OpenSSL
+# certificates manually.
+FetchContent_Declare(
+    eigen
+    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+    GIT_TAG 3.4.1
+    GIT_SHALLOW TRUE
+)
 FetchContent_Declare(
     mio
     GIT_REPOSITORY https://github.com/vimpunk/mio.git
@@ -17,6 +26,7 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
 )
 
+FetchContent_MakeAvailable(eigen)
 FetchContent_MakeAvailable(mio)
 FetchContent_MakeAvailable(mip_sdk)
 
@@ -40,8 +50,9 @@ add_executable(offline_mag_cal_commandline
 
 target_link_libraries(offline_mag_cal_commandline
     PRIVATE
-        microstrain_mag_cal
+        Eigen3::Eigen
         mio::mio
+        microstrain_mag_cal
         ${MIP_LIBRARY}
 )
 

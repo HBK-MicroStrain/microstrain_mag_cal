@@ -2,8 +2,10 @@
 
 #include "mio/mmap.hpp"
 
+#include <microstrain/platform.h>
 #include "mip/mip_parser.hpp"
 #include "mip/definitions/data_sensor.hpp"
+
 
 using ScaledMag = mip::data_sensor::ScaledMag;
 
