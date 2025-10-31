@@ -1,10 +1,11 @@
 #include <iostream>
 
-#include "mio/mmap.hpp"
+#include <Eigen/Dense>
+#include <mio/mmap.hpp>
 
 #include <microstrain/platform.h>
-#include "mip/mip_parser.hpp"
-#include "mip/definitions/data_sensor.hpp"
+#include <mip/mip_parser.hpp>
+#include <mip/definitions/data_sensor.hpp>
 
 
 using ScaledMag = mip::data_sensor::ScaledMag;
@@ -53,7 +54,7 @@ int main()
     size_t num_points = 0;
     mip::Parser parser(&countPointsInRawData, &num_points, 0);
     parser.parse(data, data_size, 0);
-    // TODO: Allocate matrix
+    Eigen::MatrixX3d points(num_points, 3);
 
     // Pass 2: Extract points from the raw binary data into the matrix.
     // TODO: Implement
