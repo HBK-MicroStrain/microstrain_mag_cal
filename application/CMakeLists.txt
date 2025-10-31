@@ -10,8 +10,15 @@ FetchContent_Declare(
     GIT_TAG master
     GIT_SHALLOW TRUE
 )
+FetchContent_Declare(
+    mip_sdk
+    GIT_REPOSITORY https://github.com/LORD-MicroStrain/mip_sdk.git
+    GIT_TAG latest
+    GIT_SHALLOW TRUE
+)
 
 FetchContent_MakeAvailable(mio)
+FetchContent_MakeAvailable(mip_sdk)
 
 # ---------------------------------------------------------------
 # Application setup
@@ -23,7 +30,7 @@ project(offline_mag_cal
     VERSION 0.0.0
 )
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -33,8 +40,9 @@ add_executable(offline_mag_cal_commandline
 
 target_link_libraries(offline_mag_cal_commandline
     PRIVATE
-        mio::mio
         microstrain_mag_cal
+        mio::mio
+        ${MIP_LIBRARY}
 )
 
 # Copy the test file to the build directory
