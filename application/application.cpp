@@ -1,16 +1,33 @@
 #include <iostream>
 
 #include "mio/mmap.hpp"
-#include "mip/mip_interface.hpp"
+
+#include "mip/mip_parser.hpp"
 #include "mip/definitions/data_sensor.hpp"
 
 using ScaledMag = mip::data_sensor::ScaledMag;
 
 
-// TODO: Implement
-void addPointToMatrix(void *matrix, const mip::FieldView &field_view, mip::Timestamp timestamp)
+bool countPointsInRawData(void *num_points, const mip::PacketView *packet_view, mip::Timestamp timestamp)
 {
+    if (packet_view == nullptr)
+    {
+        return false;
+    }
 
+    if (packet_view->descriptorSet() == ScaledMag::DESCRIPTOR_SET)
+    {
+        for (const mip::FieldView &field : *packet_view)
+        {
+            if (field.fieldDescriptor() == ScaledMag::FIELD_DESCRIPTOR)
+            {
+                size_t *count = static_cast<size_t *>(num_points);
+                ++(*count);
+            }
+        }
+    }
+
+    return true;
 }
 
 
@@ -29,13 +46,15 @@ int main()
     const uint8_t *data = reinterpret_cast<const uint8_t *>(file_mapping.data());
     const size_t data_size = file_mapping.size();
 
-    // TODO: Set up two-pass approach to pre-allocate matrix
-    // Extract a matrix of points from the raw binary data.
+    // Pass 1: Pre-allocate matrix
     // We aren't working with a device, so the timeouts and timestamp aren't needed.
-    mip::Interface data_parser(0, 0);
-    mip::DispatchHandler fieldHandler;
-    data_parser.registerFieldCallback<&addPointToMatrix>(fieldHandler, ScaledMag::DESCRIPTOR_SET, ScaledMag::FIELD_DESCRIPTOR, nullptr);
-    data_parser.inputBytes(data, data_size, 0);
+    size_t num_points = 0;
+    mip::Parser parser(&countPointsInRawData, &num_points, 0);
+    parser.parse(data, data_size, 0);
+    // TODO: Allocate matrix
+
+    // Pass 2: Extract points from the raw binary data into the matrix.
+    // TODO: Implement
 
     return 0;
 }
