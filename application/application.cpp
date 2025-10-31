@@ -33,6 +33,21 @@ bool countPointsInRawData(void *num_points, const mip::PacketView *packet_view, 
     return true;
 }
 
+bool extractPointsToMatrix(Eigen::MatrixX3d &points_matrix, const mip::PacketView &packet_view, mip::Timestamp timestamp)
+{
+    if (packet_view.descriptorSet() == ScaledMag::DESCRIPTOR_SET)
+    {
+        for (const mip::FieldView &field : packet_view)
+        {
+            if (field.fieldDescriptor() == ScaledMag::FIELD_DESCRIPTOR)
+            {
+            }
+        }
+    }
+
+    return true;
+}
+
 
 int main()
 {
@@ -54,10 +69,14 @@ int main()
     size_t num_points = 0;
     mip::Parser parser(&countPointsInRawData, &num_points, 0);
     parser.parse(data, data_size, 0);
-    Eigen::MatrixX3d points(num_points, 3);
+    Eigen::MatrixX3d points_matrix(num_points, 3);
 
-    // Pass 2: Extract points from the raw binary data into the matrix.
-    // TODO: Implement
+    // Pass 2: Extract points from the binary data into the matrix.
+    parser.setCallback<Eigen::MatrixX3d, &extractPointsToMatrix>(points_matrix);
+
+    // TODO: For testing, remove after
+    std::cout << "MATRIX:\n";
+    std::cout << points_matrix.topRows(10) << std::endl;
 
     return 0;
 }
