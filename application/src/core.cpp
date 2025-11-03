@@ -27,8 +27,8 @@ bool extractPoints(void *flattened_points_out, const mip::PacketView *packet_vie
                 // TODO: Replace with the improved logic
                 float extracted_point[3];
                 microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[0]);
-                microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[0]);
-                microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[0]);
+                microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[1]);
+                microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[2]);
 
                 for (uint8_t i = 0; i < 3; ++i)
                 {
@@ -52,10 +52,10 @@ namespace Core
         parser.parse(data, data_size, 0);
 
         // Zero-copy map to matrix
-        return Eigen::Map<Eigen::Matrix<double, 3, Eigen::Dynamic>>(
+        return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>>(
             flattened_points.data(),
-            3,
-            flattened_points.size()
+            flattened_points.size() / 3,
+            3
         );
     }
 }
