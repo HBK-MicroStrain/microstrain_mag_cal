@@ -6,8 +6,9 @@
 using ScaledMag = mip::data_sensor::ScaledMag;
 
 
-// TODO: Rename
-bool extractPoints(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp timestamp)
+// Called by the mip parser for each packet found.
+// The points are flattened into a list (x1, y1, z1, ..., xN, yN, zN).
+bool extractFlattenedPoints(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp timestamp)
 {
     (void)timestamp;
 
@@ -46,7 +47,7 @@ namespace Core
         // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN)
         // We aren't working with a device, so the timeouts and timestamp aren't needed.
         std::vector<double> flattened_points;
-        mip::Parser parser(&extractPoints, &flattened_points, 0);
+        mip::Parser parser(&extractFlattenedPoints, &flattened_points, 0);
         parser.parse(data, data_size, 0);
 
         // Zero-copy map to matrix
