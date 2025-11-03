@@ -22,7 +22,7 @@ FetchContent_Declare(
 FetchContent_Declare(
     mip_sdk
     GIT_REPOSITORY https://github.com/LORD-MicroStrain/mip_sdk.git
-    GIT_TAG latest
+    GIT_TAG develop
     GIT_SHALLOW TRUE
 )
 
@@ -44,15 +44,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(offline_mag_cal_commandline
-    "application.cpp"
-)
+add_library(offline_mag_cal_core)
+add_executable(offline_mag_cal_commandline)
 
 target_link_libraries(offline_mag_cal_commandline
     PRIVATE
         Eigen3::Eigen
         mio::mio
         microstrain_mag_cal
+        offline_mag_cal_core
         ${MIP_LIBRARY}
 )
 
@@ -63,3 +63,9 @@ add_custom_command(
         "${CMAKE_CURRENT_LIST_DIR}/test_file_for_offline_mag.bin"
         "$<TARGET_FILE_DIR:offline_mag_cal_commandline>/test_file_for_offline_mag.bin"
 )
+
+# ---------------------------------------------------------------
+# Subdirectories
+# ---------------------------------------------------------------
+
+add_subdirectory(src)
