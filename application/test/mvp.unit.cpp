@@ -36,13 +36,6 @@ private:
     std::vector<uint8_t> m_data;
 };
 
-static constexpr std::array<double, 3 * 3> raw_points = {
-      1.123456789 ,  -2.123456789,   3.123456789,
-     -4.123456789 ,   5.123456789,  -6.123456789,
-      7.123456789 ,  -8.123456789,   9.123456789,
-};
-static const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
-
 
 MICROSTRAIN_TEST_CASE("MVP", "Extracting_a_points_matrix_contains_all_points_from_the_raw_data")
 {
