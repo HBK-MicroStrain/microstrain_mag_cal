@@ -24,14 +24,13 @@ bool extractPoints(void *flattened_points_out, const mip::PacketView *packet_vie
         {
             if (field.fieldDescriptor() == ScaledMag::FIELD_DESCRIPTOR)
             {
-                float extracted_point[3];
-
-                const bool ok = mip::Serializer(field.payload()).extract(extracted_point);
-                assert(ok);
+                float temp;
+                mip::Serializer serializer(field.payload());
 
                 for (uint8_t i = 0; i < 3; ++i)
                 {
-                    flattened_points->push_back(static_cast<double>(extracted_point[i]));
+                    assert(serializer.extract(temp));
+                    flattened_points->push_back(static_cast<double>(temp));
                 }
             }
         }
