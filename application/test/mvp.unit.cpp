@@ -3,27 +3,14 @@
 #include <mip/mip_packet.h>
 
 
+// This factory class allows us to create controllable and replicable fake binary data.
 class BinaryDataBuilder
 {
 public:
     BinaryDataBuilder& addMagCalPointVector(const float x, const float y, const float z)
     {
-        mip::C::mip_packet_view packet;
-        uint8_t buffer[mip::C::MIP_PACKET_LENGTH_MAX];
-        mip::C::mip_packet_create(&packet, buffer, sizeof(buffer), ScaledMag::DESCRIPTOR_SET);
-
-        uint8_t payload[3 * sizeof(float)];
-        std::memcpy(payload, &x, sizeof(float));
-        std::memcpy(payload + sizeof(float), &y, sizeof(float));
-        std::memcpy(payload + 2 * sizeof(float), &z, sizeof(float));
-
-        mip::C::mip_packet_add_field(&packet, ScaledMag::FIELD_DESCRIPTOR, payload, sizeof(payload));
-        mip::C::mip_packet_finalize(&packet);
-
-        const uint8_t *packet_data = mip::C::mip_packet_buffer(&packet);
-        const uint_least16_t packet_length = mip::C::mip_packet_total_length(&packet);
-
-        m_data.insert(m_data.end(), packet_data, packet_data + packet_length);
+        const mip::PacketBuf packet(ScaledMag{{x, y, z}});
+        m_data.insert(m_data.end(), packet.data().begin(), packet.data().end());
 
         return *this;
     }
