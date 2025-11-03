@@ -24,11 +24,10 @@ bool extractPoints(void *flattened_points_out, const mip::PacketView *packet_vie
         {
             if (field.fieldDescriptor() == ScaledMag::FIELD_DESCRIPTOR)
             {
-                // TODO: Replace with the improved logic
                 float extracted_point[3];
-                microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[0]);
-                microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[1]);
-                microstrain::serialization::big_endian::read(field.payload().data(), extracted_point[2]);
+
+                const bool ok = mip::Serializer(field.payload()).extract(extracted_point);
+                assert(ok);
 
                 for (uint8_t i = 0; i < 3; ++i)
                 {
