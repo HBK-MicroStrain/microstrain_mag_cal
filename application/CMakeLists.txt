@@ -10,7 +10,7 @@ include(FetchContent)
 FetchContent_Declare(
     eigen
     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG 3.4.1
+    GIT_TAG 5.0.0
     GIT_SHALLOW TRUE
 )
 FetchContent_Declare(
@@ -29,6 +29,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(eigen)
 FetchContent_MakeAvailable(mio)
 FetchContent_MakeAvailable(mip_sdk)
+
+if (MSVC)
+    # Known issue by Eigen team. It's a strict warning for code style and doesn't affect
+    # anything functionality-wise.
+    target_compile_options(eigen INTERFACE /wd5054)
+endif()
 
 # ---------------------------------------------------------------
 # Application setup
@@ -71,3 +77,4 @@ add_custom_command(
 # ---------------------------------------------------------------
 
 add_subdirectory(src)
+add_subdirectory(test)

@@ -2,6 +2,7 @@
 
 // TODO: Setup point estimate to pre-allocate data pointer vector
 // TODO: Change count callback to extract the data pointers to the vector
+/*
 bool countPointsInRawData(void *num_points, const mip::PacketView *packet_view, mip::Timestamp timestamp)
 {
     if (packet_view == nullptr)
@@ -23,7 +24,9 @@ bool countPointsInRawData(void *num_points, const mip::PacketView *packet_view, 
 
     return true;
 }
+*/
 
+/*
 bool extractPointsToMatrix(Eigen::MatrixX3d &points_matrix, const mip::PacketView &packet_view, mip::Timestamp timestamp)
 {
     if (packet_view.descriptorSet() == ScaledMag::DESCRIPTOR_SET)
@@ -50,13 +53,14 @@ bool extractPointsToMatrix(Eigen::MatrixX3d &points_matrix, const mip::PacketVie
 
     return true;
 }
+*/
 
 namespace Core
 {
     // TODO: Implement
     Eigen::MatrixX3d extractPointMatrixFromRawData(const uint8_t *data, const size_t data_size)
     {
-
+        /*
         // Pass 1: Pre-allocate matrix
         // We aren't working with a device, so the timeouts and timestamp aren't needed.
         // TODO: Setup point estimate to pre-allocate data pointer vector
@@ -80,6 +84,8 @@ namespace Core
         // TODO: For testing, remove after
         std::cout << "MATRIX:\n";
         std::cout << points_matrix.topRows(10) << std::endl;
-        */
+        #1#
+    */
+        return Eigen::MatrixX3d::Zero(data_size, 3);
     }
 }
