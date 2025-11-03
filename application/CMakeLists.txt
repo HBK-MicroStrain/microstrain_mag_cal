@@ -47,13 +47,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(offline_mag_cal_core)
 add_executable(offline_mag_cal_commandline)
 
+target_link_libraries(offline_mag_cal_core
+    Eigen3::Eigen
+    ${MIP_LIBRARY}
+)
 target_link_libraries(offline_mag_cal_commandline
     PRIVATE
-        Eigen3::Eigen
         mio::mio
         microstrain_mag_cal
         offline_mag_cal_core
-        ${MIP_LIBRARY}
 )
 
 # Copy the test file to the build directory
