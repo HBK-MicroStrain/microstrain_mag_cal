@@ -1,7 +1,7 @@
 #include <core.hpp>
-#include <microstrain_test/microstrain_test.hpp>
-#include <mip/mip_packet.h>
 
+#include <microstrain_test/microstrain_test.hpp>
+#include "mip/definitions/data_sensor.hpp"
 
 // This factory class allows us to create controllable and replicable fake binary data.
 class BinaryDataBuilder
@@ -9,7 +9,7 @@ class BinaryDataBuilder
 public:
     BinaryDataBuilder& addMagCalPointVector(const float x, const float y, const float z)
     {
-        const mip::PacketBuf packet(ScaledMag{{x, y, z}});
+        const mip::PacketBuf packet(mip::data_sensor::ScaledMag{{x, y, z}});
         m_data.insert(m_data.end(), packet.data().begin(), packet.data().end());
 
         return *this;
