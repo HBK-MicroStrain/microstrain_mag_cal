@@ -16,6 +16,12 @@ public:
         return *this;
     }
 
+    // Adds noise to simulate other data in a binary file.
+    //
+    // We don't care what that data is, but it's useful for tests to make sure only the correct
+    // data is extracted, and that all the correct data is extracted. In other words, it removes
+    // potential false negatives that could come from the logic working on just the data to be
+    // extracted, but breaking if there is other data in the input.
     BinaryDataBuilder& addNoise(const std::initializer_list<uint8_t> noise)
     {
         m_data.insert(m_data.end(), noise.begin(), noise.end());
