@@ -64,6 +64,7 @@ target_link_libraries(offline_mag_cal_commandline
         offline_mag_cal_core
 )
 
+# TODO: Remove when commandline interface implemented
 # Copy the test file to the build directory
 add_custom_command(
     TARGET offline_mag_cal_commandline POST_BUILD

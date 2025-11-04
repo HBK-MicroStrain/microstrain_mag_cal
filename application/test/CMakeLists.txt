@@ -1,6 +1,7 @@
 # ---------------------------------------------------------------
 # Dependencies
 # ---------------------------------------------------------------
+
 include(FetchContent)
 
 set(MICROSTRAIN_TEST_FRAMEWORK_CPP "doctest" CACHE STRING "" FORCE)
@@ -20,9 +21,10 @@ add_executable(application_unit_tests
     "mvp.unit.cpp"
 )
 
-target_link_libraries(application_unit_tests PRIVATE
-    microstrain_test::cpp
-    offline_mag_cal_core
+target_link_libraries(application_unit_tests
+    PRIVATE
+        microstrain_test::cpp
+        offline_mag_cal_core
 )
 
 # ---------------------------------------------------------------
