@@ -3,7 +3,6 @@
 #include <microstrain_test/microstrain_test.hpp>
 #include "mip/definitions/data_sensor.hpp"
 
-using ScaledMag = mip::data_sensor::ScaledMag;
 
 // This factory class allows us to create controllable and replicable fake binary data.
 class BinaryDataBuilder
@@ -35,22 +34,26 @@ private:
 };
 
 
-MICROSTRAIN_TEST_CASE("MVP", "Extracting_a_point_matrix_contains_all_points_from_the_input_binary_data")
+MICROSTRAIN_TEST_CASE("MVP", "Mag_cal_data_can_be_extracted_from_binary_into_a_point_matrix")
 {
     BinaryDataBuilder builder = BinaryDataBuilder()
-        //.addNoise({0xFF, 0xAB, 0xCD, 0xEF})
-        .addMipPacket(ScaledMag{{1.123456789f,  -2.123456789f,   3.123456789f}})
-        //.addNoise({0xFF, 0xAB, 0xCD, 0xEF})
-        //.addNoise({0xFF, 0xAB, 0xCD, 0xEF})
-        .addMipPacket(ScaledMag{{-4.123456789f,   5.123456789f,  -6.123456789f}})
-        //.addNoise({0xFF, 0xAB, 0xCD, 0xEF})
-        //.addNoise({0xFF, 0xAB, 0xCD, 0xEF})
-        //.addNoise({0xFF, 0xAB, 0xCD, 0xEF})
-        .addMipPacket(ScaledMag{{7.123456789f,  -8.123456789f,   9.123456789f}});
-        //.addNoise({0xFF, 0xAB, 0xCD, 0xEF});
+        .addMipPacket(
+            mip::data_sensor::ScaledMag{{1.123456789f,  -2.123456789f,   3.123456789f}}
+        )
+        .addMipPacket(
+            mip::data_sensor::ScaledAccel{{0.0f, 0.0f, 0.0f}}, // Noise
+            mip::data_sensor::ScaledMag{{-4.123456789f,   5.123456789f,  -6.123456789f}}
+        )
+        .addMipPacket(
+            mip::data_sensor::ScaledAccel{{0.0f, 0.0f, 0.0f}}, // Noise
+            mip::data_sensor::ScaledMag{{7.123456789f,  -8.123456789f,   9.123456789f}},
+            mip::data_sensor::ScaledGyro{{0.0f, 0.0f, 0.0f}}    // Noise
+        );
     const microstrain::ConstU8ArrayView data_view = builder.data();
 
     Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data_view);
+
+    // TODO: Add check for size
 
     CHECK(result(0, 0) == doctest::Approx(1.123456789).epsilon(0.001));
     CHECK(result(0, 1) == doctest::Approx(-2.123456789).epsilon(0.001));
