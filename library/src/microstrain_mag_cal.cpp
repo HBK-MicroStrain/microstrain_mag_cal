@@ -184,7 +184,7 @@ namespace MicrostrainMagCal
     {
         // Required type definitions for Eigen
         using Scalar = double;
-        using InputType = Eigen::Vector4d;
+        using InputType = Eigen::Vector<double, 9>;
         using ValueType = Eigen::VectorXd;
         using JacobianType = Eigen::MatrixXd;
 
@@ -207,7 +207,7 @@ namespace MicrostrainMagCal
         int inputs() const { return 9; }
 
         // Required by Eigen ---> Direct parameterization: soft iron matrix (symmetric) + offset
-        int operator()(const Eigen::Vector4d& parameters, Eigen::VectorXd& residuals) const
+        int operator()(const Eigen::VectorXd& parameters, Eigen::VectorXd& residuals) const
         {
             const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(parameters);
             const Eigen::Vector3d offset = parameters.tail<3>();
