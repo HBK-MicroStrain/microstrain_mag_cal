@@ -180,6 +180,48 @@ namespace MicrostrainMagCal
         return matrix;
     }
 
+    struct EllipsoidalFitFunctor
+    {
+        // Required type definitions for Eigen
+        using Scalar = double;
+        using InputType = Eigen::Vector4d;
+        using ValueType = Eigen::VectorXd;
+        using JacobianType = Eigen::MatrixXd;
+
+        enum {
+            InputsAtCompileTime = 9,              // Number of parameters
+            ValuesAtCompileTime = Eigen::Dynamic  // Number of residuals (dynamic)
+        };
+
+        const Eigen::MatrixX3d &points;
+        const double target_radius;
+
+        EllipsoidalFitFunctor(const Eigen::MatrixX3d& points, const double field_strength)
+            : points(points), target_radius(field_strength) {}
+
+        // Required by Eigen ---> Number of residuals (one per point)
+        int values() const { return static_cast<int>(points.rows()); }
+
+        // Required by Eigen ---> Number of parameters to optimize
+        // (upper triangle of soft iron matrix, offset_x, offset_y, offset_z)
+        int inputs() const { return 9; }
+
+        // Required by Eigen ---> Direct parameterization: soft iron matrix (symmetric) + offset
+        int operator()(const Eigen::Vector4d& parameters, Eigen::VectorXd& residuals) const
+        {
+            const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(parameters);
+            const Eigen::Vector3d offset = parameters.tail<3>();
+
+            for (int i = 0; i < points.rows(); ++i)
+            {
+                const Eigen::Vector3d corrected_point = soft_iron_matrix * (points.row(i).transpose() - offset); // / scale;
+                residuals(i) = corrected_point.norm() - target_radius;
+            }
+
+            return 0;
+        }
+    };
+
     FitResult calculate_ellipsoidal_fit(const Eigen::MatrixX3d &points, double field_strength)
     {
         constexpr int MAX_ITERATIONS = 1000;
