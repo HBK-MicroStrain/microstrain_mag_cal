@@ -59,8 +59,8 @@ MICROSTRAIN_TEST_CASE("MVP", "Mag_cal_data_can_be_extracted_from_binary_into_a_p
 
     Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data_view);
 
-    // TODO: Add check for size
-
+    REQUIRE(result.rows() == 3);
+    REQUIRE(result.cols() == 3);
     CHECK(result(0, 0) == doctest::Approx(CHECK_POINTS[0]).epsilon(0.001));
     CHECK(result(0, 1) == doctest::Approx(CHECK_POINTS[1]).epsilon(0.001));
     CHECK(result(0, 2) == doctest::Approx(CHECK_POINTS[2]).epsilon(0.001));

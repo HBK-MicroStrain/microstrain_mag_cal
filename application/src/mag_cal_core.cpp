@@ -26,7 +26,7 @@ bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::Packe
             mip::Serializer serializer(field.payload());
             float temp;
 
-            for (uint8_t i = 0; i < 3; ++i)
+            for (uint8_t i = 0; i < 2; ++i)
             {
                 assert(serializer.extract(temp));
                 flattened_points->push_back(temp);
