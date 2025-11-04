@@ -7,8 +7,8 @@ using ScaledMag = mip::data_sensor::ScaledMag;
 
 
 // Called by the mip parser for each packet found.
-// The points are flattened into a list (x1, y1, z1, ..., xN, yN, zN).
-bool extractFlattenedPoints(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp timestamp)
+// Flattened list ---> (x1, y1, z1, ..., xN, yN, zN).
+bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp timestamp)
 {
     (void)timestamp;
 
@@ -31,7 +31,7 @@ bool extractFlattenedPoints(void *flattened_points_out, const mip::PacketView *p
                 for (uint8_t i = 0; i < 3; ++i)
                 {
                     assert(serializer.extract(temp));
-                    flattened_points->push_back(static_cast<double>(temp));
+                    flattened_points->push_back(temp);
                 }
             }
         }
@@ -47,13 +47,13 @@ namespace Core
         // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN)
         // We aren't working with a device, so the timeouts and timestamp aren't needed.
         std::vector<double> flattened_points;
-        mip::Parser parser(&extractFlattenedPoints, &flattened_points, 0);
+        mip::Parser parser(&extractPointsIntoFlattenedList, &flattened_points, 0);
         parser.parse(data, data_size, 0);
 
         // Zero-copy map to matrix
         return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>>(
             flattened_points.data(),
-            flattened_points.size() / 3,
+            static_cast<Eigen::Index>(flattened_points.size()) / 3,
             3
         );
     }
