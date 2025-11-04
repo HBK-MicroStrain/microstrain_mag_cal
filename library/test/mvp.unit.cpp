@@ -92,6 +92,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
 
     REQUIRE(result.soft_iron_matrix.rows() == 3);
     REQUIRE(result.soft_iron_matrix.cols() == 3);
+
     CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(1.21213).epsilon(0.001));
     CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0.01196).epsilon(0.001));
     CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(-0.05057).epsilon(0.001));
