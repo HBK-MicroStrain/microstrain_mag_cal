@@ -6,6 +6,6 @@ target_sources(offline_mag_cal_cli
 )
 target_sources(offline_mag_cal_core
     PRIVATE
-        "core.cpp"
-        "core.hpp"
+        "mag_cal_core.cpp"
+        "mag_cal_core.hpp"
 )

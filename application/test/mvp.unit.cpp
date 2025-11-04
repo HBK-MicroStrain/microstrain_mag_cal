@@ -1,4 +1,4 @@
-#include <core.hpp>
+#include <mag_cal_core.hpp>
 
 #include <microstrain_test/microstrain_test.hpp>
 #include "mip/definitions/data_sensor.hpp"
@@ -54,7 +54,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Extracting_a_point_matrix_contains_all_points_from
     const uint8_t *data = builder.data();
     const size_t data_size = builder.data_size();
 
-    Eigen::MatrixX3d result = Core::extractPointMatrixFromRawData(data, data_size);
+    Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data, data_size);
 
     CHECK(result(0, 0) == doctest::Approx(1.123456789).epsilon(0.001));
     CHECK(result(0, 1) == doctest::Approx(-2.123456789).epsilon(0.001));

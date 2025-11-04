@@ -2,7 +2,7 @@
 
 #include <mio/mmap.hpp>
 
-#include <core.hpp>
+#include <mag_cal_core.hpp>
 
 int main()
 {
@@ -19,7 +19,7 @@ int main()
     const uint8_t *data = reinterpret_cast<const uint8_t *>(file_mapping.data());
     const size_t data_size = file_mapping.size();
 
-    Eigen::MatrixX3d point_matrix = Core::extractPointMatrixFromRawData(data, data_size);
+    Eigen::MatrixX3d point_matrix = mag_cal_core::extractPointMatrixFromRawData(data, data_size);
 
     // TODO: Use point_matrix as input to calibration functions
 

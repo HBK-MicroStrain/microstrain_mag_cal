@@ -1,4 +1,4 @@
-#include <core.hpp>
+#include <mag_cal_core.hpp>
 
 #include <mip/mip_parser.hpp>
 #include <mip/definitions/data_sensor.hpp>
@@ -42,7 +42,7 @@ bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::Packe
     return true;
 }
 
-namespace Core
+namespace mag_cal_core
 {
     Eigen::MatrixX3d extractPointMatrixFromRawData(const uint8_t *data, const size_t data_size)
     {
