@@ -8,9 +8,8 @@ using ScaledMag = mip::data_sensor::ScaledMag;
 
 // Called by the mip parser for each packet found.
 // Flattened list ---> (x1, y1, z1, ..., xN, yN, zN).
-bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp timestamp)
+bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp /* timestamp */)
 {
-    (void)timestamp;
     assert(packet_view);
 
     std::vector<double> *flattened_points = static_cast<std::vector<double>*>(flattened_points_out);
