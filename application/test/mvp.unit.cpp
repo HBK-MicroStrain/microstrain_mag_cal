@@ -3,6 +3,7 @@
 #include <microstrain_test/microstrain_test.hpp>
 #include "mip/definitions/data_sensor.hpp"
 
+
 // This factory class allows us to create controllable and replicable fake binary data.
 class BinaryDataBuilder
 {
@@ -22,12 +23,12 @@ public:
         return *this;
     }
 
-    const uint8_t* data() const
+    [[nodiscard]] const uint8_t* data() const
     {
         return m_data.data();
     }
 
-    size_t data_size() const
+    [[nodiscard]] size_t data_size() const
     {
         return m_data.size();
     }
@@ -37,7 +38,7 @@ private:
 };
 
 
-MICROSTRAIN_TEST_CASE("MVP", "Extracting_a_points_matrix_contains_all_points_from_the_raw_data")
+MICROSTRAIN_TEST_CASE("MVP", "Extracting_a_point_matrix_contains_all_points_from_the_input_binary_data")
 {
     BinaryDataBuilder builder = BinaryDataBuilder()
         .addNoise({0xFF, 0xAB, 0xCD, 0xEF})
