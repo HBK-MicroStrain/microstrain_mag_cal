@@ -51,10 +51,9 @@ MICROSTRAIN_TEST_CASE("MVP", "Extracting_a_point_matrix_contains_all_points_from
         .addNoise({0xFF, 0xAB, 0xCD, 0xEF})
         .addMagCalPointVector(7.123456789f,  -8.123456789f,   9.123456789f)
         .addNoise({0xFF, 0xAB, 0xCD, 0xEF});
-    const uint8_t *data = builder.data();
-    const size_t data_size = builder.data_size();
+    const microstrain::ConstU8ArrayView data_view(builder.data(), builder.data_size());
 
-    Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data, data_size);
+    Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data_view);
 
     CHECK(result(0, 0) == doctest::Approx(1.123456789).epsilon(0.001));
     CHECK(result(0, 1) == doctest::Approx(-2.123456789).epsilon(0.001));

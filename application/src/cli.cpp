@@ -17,9 +17,9 @@ int main()
     }
 
     const uint8_t *data = reinterpret_cast<const uint8_t *>(file_mapping.data());
-    const size_t data_size = file_mapping.size();
+    const microstrain::ConstU8ArrayView data_view(data, file_mapping.size());
 
-    Eigen::MatrixX3d point_matrix = mag_cal_core::extractPointMatrixFromRawData(data, data_size);
+    Eigen::MatrixX3d point_matrix = mag_cal_core::extractPointMatrixFromRawData(data_view);
 
     // TODO: Use point_matrix as input to calibration functions
 

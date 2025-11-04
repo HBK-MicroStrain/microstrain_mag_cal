@@ -44,13 +44,13 @@ bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::Packe
 
 namespace mag_cal_core
 {
-    Eigen::MatrixX3d extractPointMatrixFromRawData(const uint8_t *data, const size_t data_size)
+    Eigen::MatrixX3d extractPointMatrixFromRawData(const microstrain::ConstU8ArrayView &data_view)
     {
         // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN)
         // We aren't working with a device, so the timeouts and timestamp aren't needed.
         std::vector<double> flattened_points;
         mip::Parser parser(&extractPointsIntoFlattenedList, &flattened_points, 0);
-        parser.parse(data, data_size, 0);
+        parser.parse(data_view.data(), data_view.size(), 0);
 
         // Zero-copy map to matrix
         return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>>(
