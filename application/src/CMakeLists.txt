@@ -2,7 +2,7 @@ target_include_directories(offline_mag_cal_core PUBLIC ".")
 
 target_sources(offline_mag_cal_commandline
     PRIVATE
-        "application.cpp"
+        "cli.cpp"
 )
 target_sources(offline_mag_cal_core
     PRIVATE
