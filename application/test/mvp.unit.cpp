@@ -23,14 +23,9 @@ public:
         return *this;
     }
 
-    [[nodiscard]] const uint8_t* data() const
+    microstrain::ConstU8ArrayView data() const
     {
-        return m_data.data();
-    }
-
-    [[nodiscard]] size_t data_size() const
-    {
-        return m_data.size();
+        return {m_data.data(), m_data.size()};
     }
 
 private:
@@ -51,7 +46,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Extracting_a_point_matrix_contains_all_points_from
         .addNoise({0xFF, 0xAB, 0xCD, 0xEF})
         .addMagCalPointVector(7.123456789f,  -8.123456789f,   9.123456789f)
         .addNoise({0xFF, 0xAB, 0xCD, 0xEF});
-    const microstrain::ConstU8ArrayView data_view(builder.data(), builder.data_size());
+    const microstrain::ConstU8ArrayView data_view = builder.data();
 
     Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data_view);
 
