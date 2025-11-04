@@ -51,13 +51,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(offline_mag_cal_core)
-add_executable(offline_mag_cal_commandline)
+add_executable(offline_mag_cal_cli)
 
 target_link_libraries(offline_mag_cal_core
     Eigen3::Eigen
     ${MIP_LIBRARY}
 )
-target_link_libraries(offline_mag_cal_commandline
+target_link_libraries(offline_mag_cal_cli
     PRIVATE
         mio::mio
         microstrain_mag_cal
@@ -67,10 +67,10 @@ target_link_libraries(offline_mag_cal_commandline
 # TODO: Remove when commandline interface implemented
 # Copy the test file to the build directory
 add_custom_command(
-    TARGET offline_mag_cal_commandline POST_BUILD
+    TARGET offline_mag_cal_cli POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_LIST_DIR}/test_file_for_offline_mag.bin"
-        "$<TARGET_FILE_DIR:offline_mag_cal_commandline>/test_file_for_offline_mag.bin"
+        "$<TARGET_FILE_DIR:offline_mag_cal_cli>/test_file_for_offline_mag.bin"
 )
 
 # ---------------------------------------------------------------
