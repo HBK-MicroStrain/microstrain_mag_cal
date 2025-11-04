@@ -169,6 +169,11 @@ namespace MicrostrainMagCal
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
 
+    FitResult calculate_ellipsoidal_fit(const Eigen::MatrixX3d &points, double field_strength)
+    {
+
+    }
+
     double calculateFitRMSE(
         const Eigen::MatrixX3d &points,
         const Eigen::Matrix<double, 3, 3> &soft_iron_matrix,
