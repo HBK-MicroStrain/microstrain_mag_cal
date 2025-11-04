@@ -23,16 +23,18 @@ bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::Packe
     {
         for (const mip::FieldView &field : *packet_view)
         {
-            if (field.fieldDescriptor() == ScaledMag::FIELD_DESCRIPTOR)
+            if (field.fieldDescriptor() != ScaledMag::FIELD_DESCRIPTOR)
             {
-                float temp;
-                mip::Serializer serializer(field.payload());
+                continue;
+            }
 
-                for (uint8_t i = 0; i < 3; ++i)
-                {
-                    assert(serializer.extract(temp));
-                    flattened_points->push_back(temp);
-                }
+            mip::Serializer serializer(field.payload());
+            float temp;
+
+            for (uint8_t i = 0; i < 3; ++i)
+            {
+                assert(serializer.extract(temp));
+                flattened_points->push_back(temp);
             }
         }
     }
