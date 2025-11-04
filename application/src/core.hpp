@@ -2,10 +2,10 @@
 
 #include <Eigen/Dense>
 
+// Needed to fix OS-specific naming conflicts
 #include <microstrain/platform.h>
 
 namespace Core
 {
-    // TODO: Add documentation
-    Eigen::MatrixX3d extractPointMatrixFromRawData(const uint8_t *data, const size_t data_size);
+    Eigen::MatrixX3d extractPointMatrixFromRawData(const uint8_t *data, size_t data_size);
 }
