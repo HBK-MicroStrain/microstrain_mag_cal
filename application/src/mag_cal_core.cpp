@@ -11,11 +11,7 @@ using ScaledMag = mip::data_sensor::ScaledMag;
 bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp timestamp)
 {
     (void)timestamp;
-
-    if (packet_view == nullptr)
-    {
-        return false;
-    }
+    assert(packet_view);
 
     std::vector<double> *flattened_points = static_cast<std::vector<double>*>(flattened_points_out);
 
