@@ -60,6 +60,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(offline_mag_cal_core)
 add_executable(offline_mag_cal_cli)
 
+set_target_properties(offline_mag_cal_cli
+    PROPERTIES
+        OUTPUT_NAME offline-mag-cal
+)
+
 target_link_libraries(offline_mag_cal_core
     Eigen3::Eigen
     ${MIP_LIBRARY}
