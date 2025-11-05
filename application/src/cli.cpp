@@ -24,7 +24,7 @@ public:
 
 int main(const int argc, char **argv)
 {
-    /*** Commandline arguments ***/
+    /*** Parse commandline arguments ***/
 
     std::filesystem::path filepath;
     bool spherical_fit = false;
@@ -44,7 +44,7 @@ int main(const int argc, char **argv)
 
     CLI11_PARSE(app, argc, argv);
 
-    /*** Read-only view of the input file ***/
+    /*** Create a read-only view of the input file ***/
 
     std::error_code error;
     const mio::mmap_source file_view = mio::make_mmap_source(filepath.string(), error);
@@ -58,11 +58,9 @@ int main(const int argc, char **argv)
     const uint8_t *data = reinterpret_cast<const uint8_t *>(file_view.data());
     const microstrain::ConstU8ArrayView data_view(data, file_view.size());
 
-    /*** Point matrix extraction ***/
+    /*** Run the calculations ***/
 
     Eigen::MatrixX3d point_matrix = mag_cal_core::extractPointMatrixFromRawData(data_view);
-
-    /*** Fit algorithms ***/
 
     if (spherical_fit)
     {
