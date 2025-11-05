@@ -1,11 +1,23 @@
 #include <iostream>
 
+#include <CLI/CLI.hpp>
 #include <mio/mmap.hpp>
 
 #include <mag_cal_core.hpp>
 
-int main()
+int main(const int argc, char **argv)
 {
+    std::string file_name;
+    std::string fit_type;
+
+    CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
+    app.add_option("-f,--mip-binary-file", file_name, "The binary file containing mip data to read from.")
+        ->required();
+    app.add_option("-t,--fit-type", fit_type, "The type of fit to calculate (spherical or ellipsoidal.")
+        ->required();
+
+    CLI11_PARSE(app, argc, argv);
+
     // Map a read-only view of the given file.
     std::error_code error;
     const mio::mmap_source file_mapping = mio::make_mmap_source("test_file_for_offline_mag.bin", error);
