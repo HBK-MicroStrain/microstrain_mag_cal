@@ -9,15 +9,19 @@
 int main(const int argc, char **argv)
 {
     std::filesystem::path filepath;
-    std::string fit_type;
+    bool spherical_fit = false;
+    bool ellipsoidal_fit = false;
 
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
 
     app.add_option("-f,--file", filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
-    app.add_option("-t,--fit-type", fit_type, "The type of fit to calculate (spherical or ellipsoidal.")
-        ->required();
+    app.add_flag("-s,--spherical-fit", spherical_fit, "Calculate the spherical fit of the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    app.add_flag("-e,--ellipsoidal-fit", ellipsoidal_fit, "Calculate the ellipsoidal fit of the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     CLI11_PARSE(app, argc, argv);
 
