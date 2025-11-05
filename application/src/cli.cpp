@@ -19,6 +19,8 @@ public:
 
 int main(const int argc, char **argv)
 {
+    /*** Commandline arguments ***/
+
     std::filesystem::path filepath;
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
@@ -37,9 +39,10 @@ int main(const int argc, char **argv)
 
     CLI11_PARSE(app, argc, argv);
 
-    // Map a read-only view of the given file.
+    /*** Read-only view of the input file ***/
+
     std::error_code error;
-    const mio::mmap_source file_mapping = mio::make_mmap_source("test_file_for_offline_mag.bin", error);
+    const mio::mmap_source file_view = mio::make_mmap_source(filepath.string(), error);
 
     if (error)
     {
@@ -47,11 +50,14 @@ int main(const int argc, char **argv)
         return 1;
     }
 
-    const uint8_t *data = reinterpret_cast<const uint8_t *>(file_mapping.data());
-    const microstrain::ConstU8ArrayView data_view(data, file_mapping.size());
+    const uint8_t *data = reinterpret_cast<const uint8_t *>(file_view.data());
+    const microstrain::ConstU8ArrayView data_view(data, file_view.size());
+
+    /*** Point matrix extraction ***/
 
     Eigen::MatrixX3d point_matrix = mag_cal_core::extractPointMatrixFromRawData(data_view);
 
+    /*** Fit algorithms ***/
     // TODO: Use point_matrix as input to calibration functions
 
     return 0;
