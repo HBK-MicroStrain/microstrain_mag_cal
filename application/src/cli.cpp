@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <iostream>
 
 #include <CLI/CLI.hpp>
@@ -7,11 +8,13 @@
 
 int main(const int argc, char **argv)
 {
-    std::string file_name;
+    std::filesystem::path filepath;
     std::string fit_type;
 
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
-    app.add_option("-f,--mip-binary-file", file_name, "The binary file containing mip data to read from.")
+
+    app.add_option("-f,--file", filepath, "A binary file containing mip data to read from.")
+        ->check(CLI::ExistingFile)
         ->required();
     app.add_option("-t,--fit-type", fit_type, "The type of fit to calculate (spherical or ellipsoidal.")
         ->required();
