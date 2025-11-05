@@ -72,15 +72,6 @@ target_link_libraries(offline_mag_cal_cli
         offline_mag_cal_core
 )
 
-# TODO: Remove when commandline interface implemented
-# Copy the test file to the build directory
-add_custom_command(
-    TARGET offline_mag_cal_cli POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_LIST_DIR}/test_file_for_offline_mag.bin"
-        "$<TARGET_FILE_DIR:offline_mag_cal_cli>/test_file_for_offline_mag.bin"
-)
-
 # ---------------------------------------------------------------
 # Subdirectories
 # ---------------------------------------------------------------
