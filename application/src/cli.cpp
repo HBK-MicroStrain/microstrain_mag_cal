@@ -7,9 +7,14 @@
 #include <mag_cal_core.hpp>
 
 
-class UsageFormatter final : public CLI::Formatter
+// Adds custom formatting for --help output.
+//
+// All settings that aren't overridden will retain their defaults.
+//
+class HelpMessageFormatter final : public CLI::Formatter
 {
 public:
+    // Output for usage line
     std::string make_usage(const CLI::App* app, const std::string name) const override
     {
        return "USAGE: " + name + (app->get_help_ptr() != nullptr ? " [OPTIONS]" : "") + "\n";
@@ -26,7 +31,7 @@ int main(const int argc, char **argv)
     bool ellipsoidal_fit = false;
 
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
-    app.formatter(std::make_shared<UsageFormatter>());
+    app.formatter(std::make_shared<HelpMessageFormatter>());
 
     app.add_option("-f,--file", filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
