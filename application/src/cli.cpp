@@ -58,7 +58,16 @@ int main(const int argc, char **argv)
     Eigen::MatrixX3d point_matrix = mag_cal_core::extractPointMatrixFromRawData(data_view);
 
     /*** Fit algorithms ***/
-    // TODO: Use point_matrix as input to calibration functions
+
+    if (spherical_fit)
+    {
+        // TODO: Run fit algorithm
+    }
+
+    if (ellipsoidal_fit)
+    {
+        // TODO: Run fit algorithm
+    }
 
     return 0;
 }
