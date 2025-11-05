@@ -4,11 +4,17 @@
 
 include(FetchContent)
 
-# NOTE: I had to do: `git config --global http.sslBackend schannel` to get the SSL certificates to
-# work on windows. Might be worth looking into whether it's better to do this or update OpenSSL
-# certificates manually.
+FetchContent_Declare(
+    cli11
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
+    GIT_TAG v2.6.1
+    GIT_SHALLOW TRUE
+)
 FetchContent_Declare(
     eigen
+    # NOTE: I had to do: `git config --global http.sslBackend schannel` to get the SSL certificates to
+    # work on windows. Might be worth looking into whether it's better to do this or update OpenSSL
+    # certificates manually.
     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
     GIT_TAG 5.0.0
     GIT_SHALLOW TRUE
@@ -26,6 +32,7 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
 )
 
+FetchContent_MakeAvailable(cli11)
 FetchContent_MakeAvailable(eigen)
 FetchContent_MakeAvailable(mio)
 FetchContent_MakeAvailable(mip_sdk)
@@ -59,6 +66,7 @@ target_link_libraries(offline_mag_cal_core
 )
 target_link_libraries(offline_mag_cal_cli
     PRIVATE
+        CLI11::CLI11
         mio::mio
         microstrain_mag_cal
         offline_mag_cal_core
