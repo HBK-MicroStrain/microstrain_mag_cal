@@ -28,6 +28,8 @@ namespace microstrain_mag_cal
 
     double calculate_spatial_coverage(const Eigen::MatrixX3d &points)
     {
+        // This algorithm uses the geography convention for coverage.
+
         if (points.size() == 0)
         {
             return 0.0;
@@ -123,6 +125,8 @@ namespace microstrain_mag_cal
 
     FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, const double field_strength)
     {
+        // This algorithm uses direct calibration instead of scaled calibration.
+
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;
 
