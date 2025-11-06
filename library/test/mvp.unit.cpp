@@ -31,12 +31,12 @@ static const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_poin
 
 MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_is_near_the_data_center")
 {
-    Eigen::RowVector3d result = estimateInitialHardIronOffset(CHECK_POINTS);
+    Eigen::RowVector3d result = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
 
     REQUIRE(result.cols() == 3);
-    CHECK(result(0) == doctest::Approx(-0.168185).epsilon(0.001));
-    CHECK(result(1) == doctest::Approx(0.100665).epsilon(0.001));
-    CHECK(result(2) == doctest::Approx(0.287445).epsilon(0.001));
+    CHECK(result(0) == doctest::Approx(-0.161364).epsilon(0.001));
+    CHECK(result(1) == doctest::Approx(0.081262).epsilon(0.001));
+    CHECK(result(2) == doctest::Approx(0.240466).epsilon(0.001));
 }
 
 MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")

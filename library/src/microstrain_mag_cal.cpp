@@ -11,6 +11,11 @@
 
 namespace microstrain_mag_cal
 {
+    Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points)
+    {
+        return points.colwise().mean();
+    }
+
     /// Calculates the mean measured field strength from raw magnetometer measurements.
     ///
     /// Computes the magnitude (Euclidean norm) of each raw measurement vector and returns the

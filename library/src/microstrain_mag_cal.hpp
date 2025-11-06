@@ -21,6 +21,8 @@ namespace microstrain_mag_cal
         const bool succeeded;
     };
 
+    Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points);
+
     // ---------------------------------------------------------------------------------------------
     // Data Statistics
     // ---------------------------------------------------------------------------------------------
