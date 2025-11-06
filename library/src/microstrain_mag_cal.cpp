@@ -169,6 +169,108 @@ namespace MicrostrainMagCal
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
 
+    // Upper and lower triangles are the same in a symmetric matrix!!
+    inline Eigen::Matrix3d createSymmetricMatrixFromUpperTriangle(const Eigen::VectorXd& params, const int start_index = 0)
+    {
+        Eigen::Matrix3d matrix;
+        matrix << params(start_index + 0), params(start_index + 1), params(start_index + 2),
+                  params(start_index + 1), params(start_index + 3), params(start_index + 4),
+                  params(start_index + 2), params(start_index + 4), params(start_index + 5);
+
+        return matrix;
+    }
+
+    struct EllipsoidalFitFunctor
+    {
+        // Required type definitions for Eigen
+        using Scalar = double;
+        using InputType = Eigen::Vector<double, 9>;
+        using ValueType = Eigen::VectorXd;
+        using JacobianType = Eigen::MatrixXd;
+
+        enum {
+            InputsAtCompileTime = 9,              // Number of parameters
+            ValuesAtCompileTime = Eigen::Dynamic  // Number of residuals (dynamic)
+        };
+
+        const Eigen::MatrixX3d &points;
+        const double target_radius;
+
+        EllipsoidalFitFunctor(const Eigen::MatrixX3d& points, const double field_strength)
+            : points(points), target_radius(field_strength) {}
+
+        // Required by Eigen ---> Number of residuals (one per point)
+        int values() const { return static_cast<int>(points.rows()); }
+
+        // Required by Eigen ---> Number of parameters to optimize
+        // (upper triangle of soft iron matrix, offset_x, offset_y, offset_z)
+        int inputs() const { return 9; }
+
+        // Required by Eigen ---> Direct parameterization: soft iron matrix (symmetric) + offset
+        int operator()(const Eigen::VectorXd& parameters, Eigen::VectorXd& residuals) const
+        {
+            const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(parameters);
+            const Eigen::Vector3d offset = parameters.tail<3>();
+
+            for (int i = 0; i < points.rows(); ++i)
+            {
+                const Eigen::Vector3d corrected_point = soft_iron_matrix * (points.row(i).transpose() - offset); // / scale;
+                residuals(i) = corrected_point.norm() - target_radius;
+            }
+
+            return 0;
+        }
+    };
+
+    FitResult calculate_ellipsoidal_fit(const Eigen::MatrixX3d &points, double field_strength)
+    {
+        constexpr int MAX_ITERATIONS = 1000;
+        constexpr double TOLERANCE = 1.0e-10;
+
+        // Mathematical minimum since we are optimizing nine parameters:
+        // * Six for symmetric matrix
+        // * Three offset parameters (x, y, z)
+        if (points.rows() < 9)
+        {
+            return no_calibration_applied();
+        }
+
+        // Initialize parameters for solver
+        Eigen::VectorXd parameters(9);
+        parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
+                                     1.0, 0.0,  // the upper triangle for optimization.
+                                          1.0;
+        // TODO: Move field offset calculation to separate internal function
+        parameters.tail<3>() = points.colwise().mean(); // Initial offset (offset_x, offset_y, offset_z)
+
+        // Setup optimization
+        const EllipsoidalFitFunctor functor(points, field_strength);
+        Eigen::NumericalDiff<EllipsoidalFitFunctor> numerical_differentiator(functor);
+        Eigen::LevenbergMarquardt<Eigen::NumericalDiff<EllipsoidalFitFunctor>> solver(numerical_differentiator);
+
+        solver.parameters.maxfev = MAX_ITERATIONS;
+        solver.parameters.xtol = TOLERANCE;
+
+        // Optimize
+        const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
+
+        // Check convergence
+        const bool converged =
+            status == Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall ||
+            status == Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall;
+
+        if (!converged)
+        {
+            return no_calibration_applied();
+        }
+
+        // Extract results
+        const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(parameters);
+        const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
+
+        return FitResult(soft_iron_matrix, hard_iron_offset, true);
+    }
+
     double calculateFitRMSE(
         const Eigen::MatrixX3d &points,
         const Eigen::Matrix<double, 3, 3> &soft_iron_matrix,
