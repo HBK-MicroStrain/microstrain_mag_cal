@@ -3,7 +3,7 @@
 #include <Eigen/Dense>
 
 
-namespace MicrostrainMagCal
+namespace microstrain_mag_cal
 {
     struct FitResult
     {

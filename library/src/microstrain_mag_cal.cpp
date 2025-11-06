@@ -9,7 +9,7 @@
 #define M_PI_2 1.57079632679489661923 // π/2
 
 
-namespace MicrostrainMagCal
+namespace microstrain_mag_cal
 {
     double calculate_measured_field_strength(const Eigen::MatrixX3d &points)
     {
