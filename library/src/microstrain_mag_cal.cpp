@@ -36,12 +36,7 @@ namespace microstrain_mag_cal
             return 0.0;
         }
 
-        // TODO: Move to separate internal function
-        // -------------------------------
-        const Eigen::RowVector3d field_offset = points.colwise().mean();
-        // -------------------------------
-
-        return (points.rowwise() - field_offset).rowwise().norm().mean();
+        return (points.rowwise() - estimateInitialHardIronOffset(points)).rowwise().norm().mean();
     }
 
     /// Calculates the spatial coverage percentage from raw magnetometer measurements.
@@ -64,13 +59,11 @@ namespace microstrain_mag_cal
 
         constexpr int num_latitude_bins = 18;
         constexpr int num_longitude_bins = 32;
-        // TODO: Move to separate internal function
-        const Eigen::RowVector3d field_offset = points.colwise().mean();
 
         std::set<std::pair<int, int>> occupied_bins;
 
         for (int i = 0; i < points.rows(); ++i) {
-            Eigen::Vector3d point = points.row(i) - field_offset;
+            Eigen::Vector3d point = points.row(i) - estimateInitialHardIronOffset(points);
 
             // Normalizing to the unit sphere here because we only care about directional
             // information, not magnitude information.
@@ -185,9 +178,8 @@ namespace microstrain_mag_cal
 
         // Initialize parameters for solver
         Eigen::VectorXd parameters(4);
-        parameters(0) = 1.0;                       // Initial scale^2;
-        // TODO: Move field offset calculation to separate internal function
-        parameters.tail<3>() = points.colwise().mean(); // Initial offset (offset_x, offset_y, offset_z)
+        parameters(0) = 1.0;  // Initial scale^2;
+        parameters.tail<3>() = estimateInitialHardIronOffset(points);
 
         // Setup optimization
         const SphericalFitFunctor functor(points, field_strength);
@@ -304,8 +296,7 @@ namespace microstrain_mag_cal
         parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
                                      1.0, 0.0,  // the upper triangle for optimization.
                                           1.0;
-        // TODO: Move field offset calculation to separate internal function
-        parameters.tail<3>() = points.colwise().mean(); // Initial offset (offset_x, offset_y, offset_z)
+        parameters.tail<3>() = estimateInitialHardIronOffset(points);
 
         // Setup optimization
         const EllipsoidalFitFunctor functor(points, field_strength);
