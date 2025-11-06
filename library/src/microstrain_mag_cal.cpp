@@ -53,10 +53,11 @@ namespace microstrain_mag_cal
     /// Good spatial coverage (>70%) is necessary for accurate calibration.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
     ///
     /// @returns Coverage percentage (0-100%), where higher values indicate better distribution.
     ///
-    double calculateSpatialCoverage(const Eigen::MatrixX3d &points)
+    double calculateSpatialCoverage(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset)
     {
         // This algorithm uses the geography convention for coverage.
 
@@ -71,7 +72,7 @@ namespace microstrain_mag_cal
         std::set<std::pair<int, int>> occupied_bins;
 
         for (int i = 0; i < points.rows(); ++i) {
-            Eigen::Vector3d point = points.row(i) - estimateInitialHardIronOffset(points);
+            Eigen::Vector3d point = points.row(i) - initial_offset;
 
             // Normalizing to the unit sphere here because we only care about directional
             // information, not magnitude information.
@@ -101,6 +102,13 @@ namespace microstrain_mag_cal
         // S = (occupied_bins / total_bins)
         // S% = S * 100
         return 100.0 * occupied_bins.size() / (num_latitude_bins * num_longitude_bins);
+    }
+
+    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
+    ///
+    double calculateSpatialCoverage(const Eigen::MatrixX3d &points)
+    {
+        return calculateSpatialCoverage(points, estimateInitialHardIronOffset(points));
     }
 
     // Returns a fit result that leaves the calibration unchanged (doesn't apply).
