@@ -29,6 +29,16 @@ static constexpr std::array<double, 20 * 3> raw_points = {
 static const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
 
 
+MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_is_near_the_data_center")
+{
+    Eigen::RowVector3d result = estimateInitialHardIronOffset(CHECK_POINTS);
+
+    REQUIRE(result.cols() == 3);
+    CHECK(result(0) == doctest::Approx(-0.168185).epsilon(0.001));
+    CHECK(result(1) == doctest::Approx(0.100665).epsilon(0.001));
+    CHECK(result(2) == doctest::Approx(0.287445).epsilon(0.001));
+}
+
 MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")
 {
     Eigen::MatrixX3d empty_matrix;
