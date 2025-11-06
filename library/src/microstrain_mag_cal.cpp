@@ -275,19 +275,15 @@ namespace microstrain_mag_cal
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
 
-    double calculateFitRMSE(
-        const Eigen::MatrixX3d &points,
-        const Eigen::Matrix<double, 3, 3> &soft_iron_matrix,
-        const Eigen::Vector3d &hard_iron_offset,
-        const double field_strength)
+    double calculateFitRMSE(const Eigen::MatrixX3d &points, const FitResult &fit_result, const double field_strength)
     {
         const double field_strength_squared = field_strength * field_strength;
 
         // Precompute A
-        const Eigen::Matrix3d A = soft_iron_matrix.transpose() * soft_iron_matrix;
+        const Eigen::Matrix3d A = fit_result.soft_iron_matrix.transpose() * fit_result.soft_iron_matrix;
 
         // Compute compensated magnetometer readings
-        const Eigen::MatrixX3d centered = points.rowwise() - hard_iron_offset.transpose();
+        const Eigen::MatrixX3d centered = points.rowwise() - fit_result.hard_iron_offset.transpose();
 
         // For each point: compute (p - bias)^T * A * (p - bias)
         const Eigen::VectorXd quadratic_forms = (centered * A).cwiseProduct(centered).rowwise().sum();

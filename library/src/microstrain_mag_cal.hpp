@@ -87,17 +87,12 @@ namespace microstrain_mag_cal
     /// Lower RMSE indicates a better fit quality.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
-    /// @param soft_iron_matrix 3x3 soft-iron correction matrix from the fit
-    /// @param hard_iron_offset 3x1 hard-iron offset vector from the fit
+    /// @param fit_result Calibration fit result containing soft-iron matrix and hard-iron offset.
     /// @param field_strength The field strength to use for the target radius. Use the reference
     ///                       field strength if possible. Only use the measured field strength if
     ///                       the reference is unknown.
     ///
     /// @returns RMSE in the same units as the input data.
     ///
-    double calculateFitRMSE(
-        const Eigen::MatrixX3d &points,
-        const Eigen::Matrix<double, 3, 3> &soft_iron_matrix,
-        const Eigen::Vector3d &hard_iron_offset,
-        double field_strength);
+    double calculateFitRMSE(const Eigen::MatrixX3d &points, const FitResult &fit_result, double field_strength);
 }
