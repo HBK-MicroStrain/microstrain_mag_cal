@@ -11,7 +11,7 @@
 
 namespace microstrain_mag_cal
 {
-    double calculate_measured_field_strength(const Eigen::MatrixX3d &points)
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points)
     {
         if (points.size() == 0)
         {
@@ -26,7 +26,7 @@ namespace microstrain_mag_cal
         return (points.rowwise() - field_offset).rowwise().norm().mean();
     }
 
-    double calculate_spatial_coverage(const Eigen::MatrixX3d &points)
+    double calculateSpatialCoverage(const Eigen::MatrixX3d &points)
     {
         // This algorithm uses the geography convention for coverage.
 
@@ -123,7 +123,7 @@ namespace microstrain_mag_cal
         }
     };
 
-    FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, const double field_strength)
+    FitResult calculateSphericalFit(const Eigen::MatrixX3d &points, const double field_strength)
     {
         // This algorithm uses direct calibration instead of scaled calibration.
 
@@ -226,7 +226,7 @@ namespace microstrain_mag_cal
         }
     };
 
-    FitResult calculate_ellipsoidal_fit(const Eigen::MatrixX3d &points, double field_strength)
+    FitResult calculateEllipsoidalFit(const Eigen::MatrixX3d &points, double field_strength)
     {
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;

@@ -33,8 +33,7 @@ namespace microstrain_mag_cal
     ///
     /// @returns Mean measured field strength in the same unit as the input measurements.
     ///
-    // TODO: Rename to calculateMeanMeasuredFieldStrength()
-    double calculate_measured_field_strength(const Eigen::MatrixX3d &points);
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points);
 
     /// Calculates the spatial coverage percentage from raw magnetometer measurements.
     ///
@@ -45,7 +44,7 @@ namespace microstrain_mag_cal
     ///
     /// @returns Coverage percentage (0-100%), where higher values indicate better distribution.
     ///
-    double calculate_spatial_coverage(const Eigen::MatrixX3d &points);
+    double calculateSpatialCoverage(const Eigen::MatrixX3d &points);
 
     /// Performs spherical calibration fit on raw magnetometer measurements.
     ///
@@ -64,7 +63,7 @@ namespace microstrain_mag_cal
     /// @returns Fit result containing hard-iron offset, soft-iron scale factors, and whether the
     ///          fit succeeded. The units will be the same as the input data.
     ///
-    FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, double field_strength);
+    FitResult calculateSphericalFit(const Eigen::MatrixX3d &points, double field_strength);
 
     /// Performs ellipsoidal calibration fit on raw magnetometer measurements.
     ///
@@ -80,7 +79,7 @@ namespace microstrain_mag_cal
     /// @returns Fit result containing hard-iron offset, full soft-iron matrix, and whether the
     ///          fit succeeded. The units will be the same as the input data.
     ///
-    FitResult calculate_ellipsoidal_fit(const Eigen::MatrixX3d &points, double field_strength);
+    FitResult calculateEllipsoidalFit(const Eigen::MatrixX3d &points, double field_strength);
 
     /// Calculates the root mean square error (RMSE) for a calibration fit.
     ///
