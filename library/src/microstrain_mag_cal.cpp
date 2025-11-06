@@ -26,17 +26,25 @@ namespace microstrain_mag_cal
     ///       soft-iron distortions.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
     ///
     /// @returns Mean measured field strength in the same unit as the input measurements.
     ///
-    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points)
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset)
     {
         if (points.size() == 0)
         {
             return 0.0;
         }
 
-        return (points.rowwise() - estimateInitialHardIronOffset(points)).rowwise().norm().mean();
+        return (points.rowwise() - initial_offset).rowwise().norm().mean();
+    }
+
+    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
+    ///
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points)
+    {
+        return calculateMeanMeasuredFieldStrength(points, estimateInitialHardIronOffset(points));
     }
 
     /// Calculates the spatial coverage percentage from raw magnetometer measurements.

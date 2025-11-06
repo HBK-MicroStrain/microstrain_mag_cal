@@ -27,6 +27,7 @@ namespace microstrain_mag_cal
     // Data Statistics
     // ---------------------------------------------------------------------------------------------
 
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
     double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points);
     double calculateSpatialCoverage(const Eigen::MatrixX3d &points);
 
