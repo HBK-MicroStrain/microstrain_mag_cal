@@ -143,7 +143,7 @@ namespace microstrain_mag_cal
         int inputs() const { return NumParameters; }
 
         // Common residual calculation --> delegates correction to each derived functor
-        int operator()(const Eigen::Vector4d& parameters, Eigen::VectorXd& residuals) const
+        int operator()(const InputType& parameters, Eigen::VectorXd& residuals) const
         {
             for (int i = 0; i < points.rows(); ++i)
             {
@@ -163,7 +163,6 @@ namespace microstrain_mag_cal
         return FitResult(Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false);
     }
 
-    // Required by Eigen for the solver
     struct SphericalFitFunctor : FitFunctorBase<SphericalFitFunctor, 4>
     {
         using Base = FitFunctorBase;
@@ -259,44 +258,17 @@ namespace microstrain_mag_cal
         return matrix;
     }
 
-    // Required by Eigen for the solver
-    struct EllipsoidalFitFunctor
+    struct EllipsoidalFitFunctor : FitFunctorBase<EllipsoidalFitFunctor, 9>
     {
-        // Required type definitions for Eigen
-        using Scalar = double;
-        using InputType = Eigen::Vector<double, 9>;
-        using ValueType = Eigen::VectorXd;
-        using JacobianType = Eigen::MatrixXd;
+        using Base = FitFunctorBase;
+        using Base::Base;
 
-        static constexpr int InputsAtCompileTime = 9;               // Number of parameters
-        static constexpr int ValuesAtCompileTime = Eigen::Dynamic;  // Number of residuals (dynamic)
-
-        const Eigen::MatrixX3d &points;
-        const double target_radius;
-
-        EllipsoidalFitFunctor(const Eigen::MatrixX3d& points, const double field_strength)
-            : points(points), target_radius(field_strength) {}
-
-        // Required by Eigen ---> Number of residuals (one per point)
-        int values() const { return static_cast<int>(points.rows()); }
-
-        // Required by Eigen ---> Number of parameters to optimize
-        // (upper triangle of soft iron matrix, offset_x, offset_y, offset_z)
-        int inputs() const { return 9; }
-
-        // Required by Eigen ---> Direct parameterization: soft iron matrix (symmetric) + offset
-        int operator()(const Eigen::VectorXd& parameters, Eigen::VectorXd& residuals) const
+        static Eigen::Vector3d applyCorrection(const Eigen::Vector<double, 9> &parameters, const Eigen::Vector3d &point)
         {
             const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(parameters);
-            const Eigen::Vector3d offset = parameters.tail<3>();
+            const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
 
-            for (int i = 0; i < points.rows(); ++i)
-            {
-                const Eigen::Vector3d corrected_point = soft_iron_matrix * (points.row(i).transpose() - offset); // / scale;
-                residuals(i) = corrected_point.norm() - target_radius;
-            }
-
-            return 0;
+            return soft_iron_matrix * (point - hard_iron_offset);
         }
     };
 
