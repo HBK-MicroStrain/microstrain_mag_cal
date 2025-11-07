@@ -8,6 +8,7 @@
 
 #include "microstrain_mag_cal.hpp"
 
+
 // Adds custom formatting for --help output.
 //
 // All settings that aren't overridden will retain their defaults.
@@ -21,6 +22,24 @@ public:
        return "USAGE: " + name + (app->get_help_ptr() != nullptr ? " [OPTIONS]" : "") + "\n";
     }
 };
+
+// Console output after the fitting algorithms are run
+void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result)
+{
+    static constexpr int MIN_SUPPORTED_TERMINAL_WIDTH = 50;
+
+    printf("%s\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
+    printf("%s\n", fit_name.data());
+    printf("%s\n\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
+
+    printf("Fit Result: %s\n\n", result.succeeded ? "SUCCEEDED" : "FAILED");
+
+    printf("Soft-Iron Matrix:\n");
+    std::cout << result.soft_iron_matrix << "\n\n";
+
+    printf("Hard-Iron Offset:\n");
+    std::cout << result.hard_iron_offset << "\n\n";
+}
 
 
 int main(const int argc, char **argv)
@@ -69,12 +88,18 @@ int main(const int argc, char **argv)
 
     if (spherical_fit)
     {
-        microstrain_mag_cal::fitSphere(points, field_strength, initial_offset);
+        const microstrain_mag_cal::FitResult result =
+            microstrain_mag_cal::fitSphere(points, field_strength, initial_offset);
+
+        displayFitResult("Spherical Fit", result);
     }
 
     if (ellipsoidal_fit)
     {
-        microstrain_mag_cal::fitEllipsoid(points, field_strength, initial_offset);
+        const microstrain_mag_cal::FitResult result =
+            microstrain_mag_cal::fitEllipsoid(points, field_strength, initial_offset);
+
+        displayFitResult("Ellipsoidal Fit", result);
     }
 
     return 0;
