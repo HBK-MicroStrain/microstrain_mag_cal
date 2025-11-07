@@ -159,8 +159,49 @@ namespace microstrain_mag_cal
     // Returns a fit result that leaves the calibration unchanged (doesn't apply).
     FitResult no_calibration_applied()
     {
-        // Identity matrix and zero vector applies no change
+        // Identity matrix and zero vector applies no change.
         return FitResult(Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false);
+    }
+
+    template<typename FunctorType>
+    bool calculateFit(
+        const Eigen::MatrixX3d &points,
+        const double field_strength,
+        Eigen::VectorXd &parameters,
+        const int min_points)
+    {
+        constexpr int MAX_ITERATIONS = 1000;
+        constexpr double TOLERANCE = 1.0e-10;
+
+        // TODO: Get min points from parameters and removed argument
+        if (points.rows() < min_points)
+        {
+            return false;
+        }
+
+        // Setup optimization
+        const FunctorType functor(points, field_strength);
+        Eigen::NumericalDiff<FunctorType> numerical_differentiator(functor);
+        Eigen::LevenbergMarquardt<Eigen::NumericalDiff<FunctorType>> solver(numerical_differentiator);
+
+        solver.parameters.maxfev = MAX_ITERATIONS;
+        solver.parameters.xtol = TOLERANCE;
+
+        // Optimize
+        const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
+
+        // TODO: Combine
+        // Check convergence
+        const bool converged =
+            status == Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall ||
+            status == Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall;
+
+        if (!converged)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     struct SphericalFitFunctor : FitFunctorBase<SphericalFitFunctor, 4>
@@ -200,46 +241,18 @@ namespace microstrain_mag_cal
         const double field_strength,
         const Eigen::RowVector3d &initial_offset)
     {
-        // This algorithm uses direct calibration instead of scaled calibration.
-
-        constexpr int MAX_ITERATIONS = 1000;
-        constexpr double TOLERANCE = 1.0e-10;
-
-        // Mathematical minimum since we are optimizing four parameters:
-        // * One scale parameter
-        // * Three offset parameters (x, y, z)
-        if (points.rows() < 4)
-        {
-            return no_calibration_applied();
-        }
-
-        // Initialize parameters for solver
+        // Initialize parameters for the solver
         Eigen::VectorXd parameters(4);
-        parameters(0) = 1.0;  // Initial scale^2;
-        parameters.tail<3>() = initial_offset;
-
-        // Setup optimization
-        const SphericalFitFunctor functor(points, field_strength);
-        Eigen::NumericalDiff<SphericalFitFunctor> numerical_differentiator(functor);
-        Eigen::LevenbergMarquardt<Eigen::NumericalDiff<SphericalFitFunctor>> solver(numerical_differentiator);
-
-        solver.parameters.maxfev = MAX_ITERATIONS;
-        solver.parameters.xtol = TOLERANCE;
+        parameters(0) = 1.0;               // scale^2
+        parameters.tail<3>() = initial_offset;  // hard iron offset
 
         // Optimize
-        const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
-
-        // Check convergence
-        const bool converged =
-            status == Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall ||
-            status == Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall;
-
-        if (!converged)
+        if (!calculateFit<SphericalFitFunctor>(points, field_strength, parameters, 4))
         {
             return no_calibration_applied();
         }
 
-        // Extract results
+        // Extract spherical results
         const double scale = std::sqrt(parameters(0));
         const Eigen::Matrix<double, 3, 3> soft_iron_matrix = Eigen::Matrix<double, 3, 3>::Identity() * scale;
         const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
@@ -292,46 +305,24 @@ namespace microstrain_mag_cal
         const double field_strength,
         const Eigen::RowVector3d &initial_offset)
     {
-        constexpr int MAX_ITERATIONS = 1000;
-        constexpr double TOLERANCE = 1.0e-10;
-
         // Mathematical minimum since we are optimizing nine parameters:
         // * Six for symmetric matrix
         // * Three offset parameters (x, y, z)
-        if (points.rows() < 9)
-        {
-            return no_calibration_applied();
-        }
 
-        // Initialize parameters for solver
+        // Initialize parameters for the solver
         Eigen::VectorXd parameters(9);
         parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
                                      1.0, 0.0,  // the upper triangle for optimization.
                                           1.0;
         parameters.tail<3>() = initial_offset;
 
-        // Setup optimization
-        const EllipsoidalFitFunctor functor(points, field_strength);
-        Eigen::NumericalDiff<EllipsoidalFitFunctor> numerical_differentiator(functor);
-        Eigen::LevenbergMarquardt<Eigen::NumericalDiff<EllipsoidalFitFunctor>> solver(numerical_differentiator);
-
-        solver.parameters.maxfev = MAX_ITERATIONS;
-        solver.parameters.xtol = TOLERANCE;
-
         // Optimize
-        const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
-
-        // Check convergence
-        const bool converged =
-            status == Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall ||
-            status == Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall;
-
-        if (!converged)
+        if (!calculateFit<EllipsoidalFitFunctor>(points, field_strength, parameters, 9))
         {
             return no_calibration_applied();
         }
 
-        // Extract results
+        // Extract ellipsoidal results
         const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(parameters);
         const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
 
