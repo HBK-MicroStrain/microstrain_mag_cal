@@ -11,6 +11,16 @@
 
 namespace microstrain_mag_cal
 {
+    /// @brief Estimates the initial hard-iron offset using the mean of all measurements
+    ///
+    /// Computes the centroid of all magnetometer measurements as an initial estimate. This provides
+    /// a reasonable starting point for iterative calibration algorithms.
+    ///
+    /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
+    ///
+    /// @returns 1x3 row vector containing the estimated hard-iron offset [bx, by, bz] in the same
+    ///          units as the input measurements.
+    ///
     Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points)
     {
         if (points.rows() == 0)
