@@ -13,6 +13,11 @@ namespace microstrain_mag_cal
 {
     Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points)
     {
+        if (points.rows() == 0)
+        {
+            return Eigen::RowVector3d::Zero();
+        }
+
         return points.colwise().mean();
     }
 
@@ -42,13 +47,6 @@ namespace microstrain_mag_cal
         }
 
         return (points.rowwise() - initial_offset).rowwise().norm().mean();
-    }
-
-    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
-    ///
-    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points)
-    {
-        return calculateMeanMeasuredFieldStrength(points, estimateInitialHardIronOffset(points));
     }
 
     /// Calculates the spatial coverage percentage from raw magnetometer measurements.
@@ -106,13 +104,6 @@ namespace microstrain_mag_cal
         // S = (occupied_bins / total_bins)
         // S% = S * 100
         return 100.0 * occupied_bins.size() / (num_latitude_bins * num_longitude_bins);
-    }
-
-    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
-    ///
-    double calculateSpatialCoverage(const Eigen::MatrixX3d &points)
-    {
-        return calculateSpatialCoverage(points, estimateInitialHardIronOffset(points));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -238,13 +229,6 @@ namespace microstrain_mag_cal
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
 
-    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
-    ///
-    FitResult calculateSphericalFit(const Eigen::MatrixX3d &points, const double field_strength)
-    {
-        return calculateSphericalFit(points, field_strength, estimateInitialHardIronOffset(points));
-    }
-
     // Upper and lower triangles are the same in a symmetric matrix!!
     inline Eigen::Matrix3d createSymmetricMatrixFromUpperTriangle(const Eigen::VectorXd& params, const int start_index = 0)
     {
@@ -334,7 +318,7 @@ namespace microstrain_mag_cal
         parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
                                      1.0, 0.0,  // the upper triangle for optimization.
                                           1.0;
-        parameters.tail<3>() = estimateInitialHardIronOffset(points);
+        parameters.tail<3>() = initial_offset;
 
         // Setup optimization
         const EllipsoidalFitFunctor functor(points, field_strength);
@@ -362,13 +346,6 @@ namespace microstrain_mag_cal
         const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
 
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
-    }
-
-    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
-    ///
-    FitResult calculateEllipsoidalFit(const Eigen::MatrixX3d &points, const double field_strength)
-    {
-        return calculateEllipsoidalFit(points, field_strength, estimateInitialHardIronOffset(points));
     }
 
     // ---------------------------------------------------------------------------------------------
