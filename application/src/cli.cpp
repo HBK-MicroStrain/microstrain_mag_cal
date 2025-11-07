@@ -91,14 +91,17 @@ int main(const int argc, char **argv)
     const Eigen::MatrixX3d points = mag_cal_core::extractPointMatrixFromRawData(data_view);
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
-    printf("Number of points: %lld\n\n", points.rows());
+    printf("Number Of Points: %lld\n\n", points.rows());
 
     if (!arg_field_strength.has_value())
     {
         arg_field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
 
-    printf("Using field strength: %.5f\n\n", arg_field_strength.value());
+    if (spherical_fit || ellipsoidal_fit)
+    {
+        printf("Using Field Strength: %.5f\n\n", arg_field_strength.value());
+    }
 
     if (arg_spatial_coverage)
     {
