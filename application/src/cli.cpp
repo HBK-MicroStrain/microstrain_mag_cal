@@ -49,6 +49,7 @@ int main(const int argc, char **argv)
     /*** Parse commandline arguments ***/
 
     std::filesystem::path filepath;
+    std::optional<double> arg_field_strength;
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
 
@@ -59,9 +60,11 @@ int main(const int argc, char **argv)
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
-    app.add_flag("-s,--spherical-fit", spherical_fit, "Calculate the spherical fit of the input data.")
+    app.add_option("-r,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-e,--ellipsoidal-fit", ellipsoidal_fit, "Calculate the ellipsoidal fit of the input data.")
+    app.add_flag("-s,--spherical-fit", spherical_fit, "Perform a spherical fit on the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    app.add_flag("-e,--ellipsoidal-fit", ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     CLI11_PARSE(app, argc, argv);
@@ -85,15 +88,17 @@ int main(const int argc, char **argv)
     const Eigen::MatrixX3d points = mag_cal_core::extractPointMatrixFromRawData(data_view);
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
-    // TODO: Set to check for argument first
-    const double field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
+    if (!arg_field_strength.has_value())
+    {
+        arg_field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
+    }
 
     if (spherical_fit)
     {
         const microstrain_mag_cal::FitResult fit_result =
-            microstrain_mag_cal::fitSphere(points, field_strength, initial_offset);
+            microstrain_mag_cal::fitSphere(points, arg_field_strength.value(), initial_offset);
 
-        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, field_strength);
+        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
 
         displayFitResult("Spherical Fit", fit_result, fit_RMSE);
     }
@@ -101,9 +106,9 @@ int main(const int argc, char **argv)
     if (ellipsoidal_fit)
     {
         const microstrain_mag_cal::FitResult fit_result =
-            microstrain_mag_cal::fitEllipsoid(points, field_strength, initial_offset);
+            microstrain_mag_cal::fitEllipsoid(points, arg_field_strength.value(), initial_offset);
 
-        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, field_strength);
+        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
 
         displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
     }
