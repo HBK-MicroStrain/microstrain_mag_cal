@@ -168,17 +168,13 @@ namespace microstrain_mag_cal
     }
 
     template<typename FunctorType>
-    bool calculateFit(
-        const Eigen::MatrixX3d &points,
-        const double field_strength,
-        Eigen::VectorXd &parameters,
-        const int min_points)
+    bool calculateFit(const Eigen::MatrixX3d &points, const double field_strength, Eigen::VectorXd &parameters)
     {
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;
 
-        // TODO: Get min points from parameters and removed argument
-        if (points.rows() < min_points)
+        // Mathematical minimum
+        if (points.rows() < parameters.cols())
         {
             return false;
         }
@@ -251,7 +247,7 @@ namespace microstrain_mag_cal
         parameters.tail<3>() = initial_offset;  // hard iron offset
 
         // Optimize
-        if (!calculateFit<SphericalFitFunctor>(points, field_strength, parameters, 4))
+        if (!calculateFit<SphericalFitFunctor>(points, field_strength, parameters))
         {
             return noCalibrationApplied();
         }
@@ -321,7 +317,7 @@ namespace microstrain_mag_cal
         parameters.tail<3>() = initial_offset;
 
         // Optimize
-        if (!calculateFit<EllipsoidalFitFunctor>(points, field_strength, parameters, 9))
+        if (!calculateFit<EllipsoidalFitFunctor>(points, field_strength, parameters))
         {
             return noCalibrationApplied();
         }
