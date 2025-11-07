@@ -5,7 +5,6 @@
 #include <mio/mmap.hpp>
 
 #include <mag_cal_core.hpp>
-
 #include "microstrain_mag_cal.hpp"
 
 
