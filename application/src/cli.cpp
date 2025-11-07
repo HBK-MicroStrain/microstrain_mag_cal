@@ -49,6 +49,7 @@ int main(const int argc, char **argv)
     /*** Parse commandline arguments ***/
 
     std::filesystem::path filepath;
+    bool arg_num_points;
     std::optional<double> arg_field_strength;
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
@@ -60,6 +61,8 @@ int main(const int argc, char **argv)
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
+    app.add_flag("-p,--num-points", arg_num_points, "Number of unique magnetometer points in the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_option("-r,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-s,--spherical-fit", spherical_fit, "Perform a spherical fit on the input data.")
@@ -91,6 +94,11 @@ int main(const int argc, char **argv)
     if (!arg_field_strength.has_value())
     {
         arg_field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
+    }
+
+    if (arg_num_points)
+    {
+        printf("Number of points: %lld\n\n", points.rows());
     }
 
     if (spherical_fit)
