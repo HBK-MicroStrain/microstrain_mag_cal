@@ -303,13 +303,14 @@ namespace microstrain_mag_cal
     /// @param field_strength The field strength to use for the target radius. Use the reference
     ///                       field strength if possible. Only use the measured field strength if
     ///                       the reference is unknown.
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
     ///
     /// @returns Fit result containing hard-iron offset, full soft-iron matrix, and whether the
     ///          fit succeeded. The units will be the same as the input data.
     ///
     FitResult calculateEllipsoidalFit(
         const Eigen::MatrixX3d &points,
-        double field_strength,
+        const double field_strength,
         const Eigen::RowVector3d &initial_offset)
     {
         constexpr int MAX_ITERATIONS = 1000;
