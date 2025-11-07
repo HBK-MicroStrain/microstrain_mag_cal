@@ -49,8 +49,8 @@ int main(const int argc, char **argv)
     /*** Parse commandline arguments ***/
 
     std::filesystem::path filepath;
-    bool arg_num_points;
     std::optional<double> arg_field_strength;
+    bool arg_spatial_coverage = false;
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
 
@@ -61,9 +61,9 @@ int main(const int argc, char **argv)
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
-    app.add_flag("-p,--num-points", arg_num_points, "Number of unique magnetometer points in the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_option("-r,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    app.add_flag("-c,--spatial-coverage", arg_spatial_coverage, "Calculate the spatial coverage of the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-s,--spherical-fit", spherical_fit, "Perform a spherical fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
@@ -91,10 +91,7 @@ int main(const int argc, char **argv)
     const Eigen::MatrixX3d points = mag_cal_core::extractPointMatrixFromRawData(data_view);
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
-    if (arg_num_points)
-    {
-        printf("Number of points: %lld\n\n", points.rows());
-    }
+    printf("Number of points: %lld\n\n", points.rows());
 
     if (!arg_field_strength.has_value())
     {
@@ -102,6 +99,11 @@ int main(const int argc, char **argv)
     }
 
     printf("Using field strength: %.5f\n\n", arg_field_strength.value());
+
+    if (arg_spatial_coverage)
+    {
+        printf("Spatial Coverage: %.5f%%\n\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
+    }
 
     if (spherical_fit)
     {
