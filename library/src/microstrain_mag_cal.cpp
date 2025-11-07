@@ -11,7 +11,11 @@
 
 namespace microstrain_mag_cal
 {
-    /// @brief Estimates the initial hard-iron offset using the mean of all measurements
+    // ---------------------------------------------------------------------------------------------
+    // Initial Parameter Estimation
+    // ---------------------------------------------------------------------------------------------
+
+    /// @brief Estimates the initial hard-iron offset using the mean of all measurements.
     ///
     /// Computes the centroid of all magnetometer measurements as an initial estimate. This provides
     /// a reasonable starting point for iterative calibration algorithms.
@@ -45,7 +49,7 @@ namespace microstrain_mag_cal
     ///       soft-iron distortions.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
     ///
     /// @returns Mean measured field strength in the same unit as the input measurements.
     ///
@@ -65,7 +69,7 @@ namespace microstrain_mag_cal
     /// Good spatial coverage (>70%) is necessary for accurate calibration.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
     ///
     /// @returns Coverage percentage (0-100%), where higher values indicate better distribution.
     ///
@@ -231,7 +235,7 @@ namespace microstrain_mag_cal
     /// @param field_strength The field strength to use for the target radius. Use the reference
     ///                       field strength if possible. Only use the measured field strength if
     ///                       the reference is unknown.
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
     ///
     /// @returns Fit result containing hard-iron offset, soft-iron scale factors, and whether the
     ///          fit succeeded. The units will be the same as the input data.
@@ -295,7 +299,7 @@ namespace microstrain_mag_cal
     /// @param field_strength The field strength to use for the target radius. Use the reference
     ///                       field strength if possible. Only use the measured field strength if
     ///                       the reference is unknown.
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
     ///
     /// @returns Fit result containing hard-iron offset, full soft-iron matrix, and whether the
     ///          fit succeeded. The units will be the same as the input data.
@@ -307,7 +311,7 @@ namespace microstrain_mag_cal
     {
         // Mathematical minimum since we are optimizing nine parameters:
         // * Six for symmetric matrix
-        // * Three offset parameters (x, y, z)
+        // * Three offset parameters (bx, by, bz)
 
         // Initialize parameters for the solver
         Eigen::VectorXd parameters(9);
