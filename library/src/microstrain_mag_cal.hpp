@@ -3,33 +3,54 @@
 #include <Eigen/Dense>
 
 
-namespace MicrostrainMagCal
+namespace microstrain_mag_cal
 {
+    // ---------------------------------------------------------------------------------------------
+    // Data Structures
+    // ---------------------------------------------------------------------------------------------
+
     struct FitResult
     {
-        FitResult(
-            Eigen::Matrix<double, 3, 3> soft_iron_matrix,
-            Eigen::Vector3d hard_iron_offset,
-            const bool valid) :
-                soft_iron_matrix(std::move(soft_iron_matrix)),
-                hard_iron_offset(std::move(hard_iron_offset)),
-                valid(valid) {}
+        FitResult(Eigen::Matrix<double, 3, 3> soft_iron_matrix, Eigen::Vector3d hard_iron_offset, const bool succeeded) :
+            soft_iron_matrix(std::move(soft_iron_matrix)),
+            hard_iron_offset(std::move(hard_iron_offset)),
+            succeeded(succeeded) {}
 
         const Eigen::Matrix<double, 3, 3> soft_iron_matrix;
         const Eigen::Vector3d hard_iron_offset;
-        const bool valid;
+        const bool succeeded;
     };
 
-    // TODO: Document Nx3 matrix constructor limitation when creating an empty matrix.
-    double calculate_measured_field_strength(const Eigen::MatrixX3d &points);
-    // TODO: Document using Geography convention over Physics convention.
-    double calculate_spatial_coverage(const Eigen::MatrixX3d &points);
-    // TODO: Document using direct calibration over scaled calibration.
-    FitResult calculate_spherical_fit(const Eigen::MatrixX3d &points, double field_strength);
-    FitResult calculate_ellipsoidal_fit(const Eigen::MatrixX3d &points, double field_strength);
-    double calculateFitRMSE(
+    // ---------------------------------------------------------------------------------------------
+    // Initial Parameter Estimation
+    // ---------------------------------------------------------------------------------------------
+
+    Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points);
+
+    // ---------------------------------------------------------------------------------------------
+    // Data Statistics
+    // ---------------------------------------------------------------------------------------------
+
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
+    double calculateSpatialCoverage(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
+
+    // ---------------------------------------------------------------------------------------------
+    // Calibration Fitting
+    // ---------------------------------------------------------------------------------------------
+
+    FitResult fitSphere(
         const Eigen::MatrixX3d &points,
-        const Eigen::Matrix<double, 3, 3> &soft_iron_matrix,
-        const Eigen::Vector3d &hard_iron_offset,
-        double field_strength);
+        double field_strength,
+        const Eigen::RowVector3d &initial_offset);
+
+    FitResult fitEllipsoid(
+        const Eigen::MatrixX3d &points,
+        double field_strength,
+        const Eigen::RowVector3d &initial_offset);
+
+    // ---------------------------------------------------------------------------------------------
+    // Fit Quality metrics
+    // ---------------------------------------------------------------------------------------------
+
+    double calculateFitRMSE(const Eigen::MatrixX3d &points, const FitResult &fit_result, double field_strength);
 }

@@ -16,11 +16,11 @@ FetchContent_MakeAvailable(microstrain_test)
 # Test setup
 # ---------------------------------------------------------------
 
-add_executable(unit_tests
+add_executable(library_unit_tests
     "mvp.unit.cpp"
 )
 
-target_link_libraries(unit_tests PRIVATE
+target_link_libraries(library_unit_tests PRIVATE
     microstrain_test::cpp
     microstrain_mag_cal
 )
@@ -32,6 +32,6 @@ target_link_libraries(unit_tests PRIVATE
 include(${microstrain_test_SOURCE_DIR}/scripts/DiscoverTests.cmake)
 
 microstrain_discover_tests_cpp(
-    TARGET unit_tests
+    TARGET library_unit_tests
     LABELS "unit"
 )
