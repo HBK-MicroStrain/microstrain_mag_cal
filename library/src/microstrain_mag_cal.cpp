@@ -313,7 +313,10 @@ namespace microstrain_mag_cal
     /// @returns Fit result containing hard-iron offset, full soft-iron matrix, and whether the
     ///          fit succeeded. The units will be the same as the input data.
     ///
-    FitResult calculateEllipsoidalFit(const Eigen::MatrixX3d &points, double field_strength)
+    FitResult calculateEllipsoidalFit(
+        const Eigen::MatrixX3d &points,
+        double field_strength,
+        const Eigen::RowVector3d &initial_offset)
     {
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;
@@ -361,6 +364,12 @@ namespace microstrain_mag_cal
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
 
+    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
+    ///
+    FitResult calculateEllipsoidalFit(const Eigen::MatrixX3d &points, const double field_strength)
+    {
+        return calculateEllipsoidalFit(points, field_strength, estimateInitialHardIronOffset(points));
+    }
 
     // ---------------------------------------------------------------------------------------------
     // Fit Quality metrics
