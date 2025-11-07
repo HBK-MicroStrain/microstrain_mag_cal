@@ -6,6 +6,7 @@
 
 #include <mag_cal_core.hpp>
 
+#include "microstrain_mag_cal.hpp"
 
 // Adds custom formatting for --help output.
 //
@@ -60,16 +61,20 @@ int main(const int argc, char **argv)
 
     /*** Run the calculations ***/
 
-    Eigen::MatrixX3d point_matrix = mag_cal_core::extractPointMatrixFromRawData(data_view);
+    const Eigen::MatrixX3d points = mag_cal_core::extractPointMatrixFromRawData(data_view);
+    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
+
+    // TODO: Set to check for argument first
+    const double field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
 
     if (spherical_fit)
     {
-        // TODO: Run fit algorithm
+        microstrain_mag_cal::fitSphere(points, field_strength, initial_offset);
     }
 
     if (ellipsoidal_fit)
     {
-        // TODO: Run fit algorithm
+        microstrain_mag_cal::fitEllipsoid(points, field_strength, initial_offset);
     }
 
     return 0;
