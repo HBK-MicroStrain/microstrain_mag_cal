@@ -24,7 +24,7 @@ public:
 };
 
 // Console output after the fitting algorithms are run
-void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result)
+void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
 {
     static constexpr int MIN_SUPPORTED_TERMINAL_WIDTH = 50;
 
@@ -39,6 +39,8 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
 
     printf("Hard-Iron Offset:\n");
     std::cout << result.hard_iron_offset << "\n\n";
+
+    printf("Fit RMSE: %.5f\n\n", fit_RMSE);
 }
 
 
@@ -88,18 +90,22 @@ int main(const int argc, char **argv)
 
     if (spherical_fit)
     {
-        const microstrain_mag_cal::FitResult result =
+        const microstrain_mag_cal::FitResult fit_result =
             microstrain_mag_cal::fitSphere(points, field_strength, initial_offset);
 
-        displayFitResult("Spherical Fit", result);
+        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, field_strength);
+
+        displayFitResult("Spherical Fit", fit_result, fit_RMSE);
     }
 
     if (ellipsoidal_fit)
     {
-        const microstrain_mag_cal::FitResult result =
+        const microstrain_mag_cal::FitResult fit_result =
             microstrain_mag_cal::fitEllipsoid(points, field_strength, initial_offset);
 
-        displayFitResult("Ellipsoidal Fit", result);
+        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, field_strength);
+
+        displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
     }
 
     return 0;
