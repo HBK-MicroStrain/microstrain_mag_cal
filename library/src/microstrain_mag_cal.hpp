@@ -37,7 +37,12 @@ namespace microstrain_mag_cal
     // Calibration Fitting
     // ---------------------------------------------------------------------------------------------
 
+    FitResult calculateSphericalFit(
+        const Eigen::MatrixX3d &points,
+        double field_strength,
+        const Eigen::RowVector3d &initial_offset);
     FitResult calculateSphericalFit(const Eigen::MatrixX3d &points, double field_strength);
+
     FitResult calculateEllipsoidalFit(const Eigen::MatrixX3d &points, double field_strength);
 
     // ---------------------------------------------------------------------------------------------

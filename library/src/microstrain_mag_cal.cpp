@@ -16,6 +16,10 @@ namespace microstrain_mag_cal
         return points.colwise().mean();
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Data Statistics
+    // ---------------------------------------------------------------------------------------------
+
     /// Calculates the mean measured field strength from raw magnetometer measurements.
     ///
     /// Computes the magnitude (Euclidean norm) of each raw measurement vector and returns the
@@ -111,6 +115,10 @@ namespace microstrain_mag_cal
         return calculateSpatialCoverage(points, estimateInitialHardIronOffset(points));
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Calibration Fitting
+    // ---------------------------------------------------------------------------------------------
+
     // Returns a fit result that leaves the calibration unchanged (doesn't apply).
     FitResult no_calibration_applied()
     {
@@ -173,11 +181,15 @@ namespace microstrain_mag_cal
     /// @param field_strength The field strength to use for the target radius. Use the reference
     ///                       field strength if possible. Only use the measured field strength if
     ///                       the reference is unknown.
+    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (x, y, z).
     ///
     /// @returns Fit result containing hard-iron offset, soft-iron scale factors, and whether the
     ///          fit succeeded. The units will be the same as the input data.
     ///
-    FitResult calculateSphericalFit(const Eigen::MatrixX3d &points, const double field_strength)
+    FitResult calculateSphericalFit(
+        const Eigen::MatrixX3d &points,
+        const double field_strength,
+        const Eigen::RowVector3d &initial_offset)
     {
         // This algorithm uses direct calibration instead of scaled calibration.
 
@@ -195,7 +207,7 @@ namespace microstrain_mag_cal
         // Initialize parameters for solver
         Eigen::VectorXd parameters(4);
         parameters(0) = 1.0;  // Initial scale^2;
-        parameters.tail<3>() = estimateInitialHardIronOffset(points);
+        parameters.tail<3>() = initial_offset;
 
         // Setup optimization
         const SphericalFitFunctor functor(points, field_strength);
@@ -224,6 +236,13 @@ namespace microstrain_mag_cal
         const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
 
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
+    }
+
+    /// @brief Convenience overload that automatically estimates the initial hard iron offset.
+    ///
+    FitResult calculateSphericalFit(const Eigen::MatrixX3d &points, const double field_strength)
+    {
+        return calculateSphericalFit(points, field_strength, estimateInitialHardIronOffset(points));
     }
 
     // Upper and lower triangles are the same in a symmetric matrix!!
@@ -341,6 +360,11 @@ namespace microstrain_mag_cal
 
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
+
+
+    // ---------------------------------------------------------------------------------------------
+    // Fit Quality metrics
+    // ---------------------------------------------------------------------------------------------
 
     /// Calculates the root mean square error (RMSE) for a calibration fit.
     ///
