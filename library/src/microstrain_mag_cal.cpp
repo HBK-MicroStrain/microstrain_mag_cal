@@ -169,7 +169,7 @@ namespace microstrain_mag_cal
     }
 
     template<typename FunctorType>
-    bool calculateFit(const Eigen::MatrixX3d &points, const double field_strength, Eigen::VectorXd &parameters)
+    bool optimizeFit(const Eigen::MatrixX3d &points, const double field_strength, Eigen::VectorXd &parameters)
     {
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;
@@ -238,21 +238,18 @@ namespace microstrain_mag_cal
         const double field_strength,
         const Eigen::RowVector3d &initial_offset)
     {
-        // Initialize parameters for the solver
-        Eigen::VectorXd parameters(4);
-        parameters(0) = 1.0;               // scale^2
-        parameters.tail<3>() = initial_offset;  // hard iron offset
+        Eigen::VectorXd fit_parameters(4);
+        fit_parameters(0) = 1.0;               // Scale^2
+        fit_parameters.tail<3>() = initial_offset;  // Hard iron offset
 
-        // Optimize
-        if (!calculateFit<SphericalFitFunctor>(points, field_strength, parameters))
+        if (!optimizeFit<SphericalFitFunctor>(points, field_strength, fit_parameters))
         {
             return noCalibrationApplied();
         }
 
-        // Extract spherical results
-        const double scale = std::sqrt(parameters(0));
+        const double scale = std::sqrt(fit_parameters(0));
         const Eigen::Matrix<double, 3, 3> soft_iron_matrix = Eigen::Matrix<double, 3, 3>::Identity() * scale;
-        const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
+        const Eigen::Vector3d hard_iron_offset = fit_parameters.tail<3>();
 
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
@@ -302,22 +299,19 @@ namespace microstrain_mag_cal
         const double field_strength,
         const Eigen::RowVector3d &initial_offset)
     {
-        // Initialize parameters for the solver
-        Eigen::VectorXd parameters(9);
-        parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
-                                     1.0, 0.0,  // the upper triangle for optimization.
-                                          1.0;
-        parameters.tail<3>() = initial_offset;
+        Eigen::VectorXd fit_parameters(9);
+        fit_parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
+                                         1.0, 0.0,  // the upper triangle for optimization.
+                                              1.0;
+        fit_parameters.tail<3>() = initial_offset;  // Hard iron offset
 
-        // Optimize
-        if (!calculateFit<EllipsoidalFitFunctor>(points, field_strength, parameters))
+        if (!optimizeFit<EllipsoidalFitFunctor>(points, field_strength, fit_parameters))
         {
             return noCalibrationApplied();
         }
 
-        // Extract ellipsoidal results
-        const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(parameters);
-        const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
+        const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(fit_parameters);
+        const Eigen::Vector3d hard_iron_offset = fit_parameters.tail<3>();
 
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
