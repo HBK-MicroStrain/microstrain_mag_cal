@@ -157,7 +157,7 @@ namespace microstrain_mag_cal
     };
 
     // Returns a fit result that leaves the calibration unchanged (doesn't apply).
-    FitResult no_calibration_applied()
+    FitResult noCalibrationApplied()
     {
         // Identity matrix and zero vector applies no change.
         return FitResult(Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false);
@@ -249,7 +249,7 @@ namespace microstrain_mag_cal
         // Optimize
         if (!calculateFit<SphericalFitFunctor>(points, field_strength, parameters, 4))
         {
-            return no_calibration_applied();
+            return noCalibrationApplied();
         }
 
         // Extract spherical results
@@ -319,7 +319,7 @@ namespace microstrain_mag_cal
         // Optimize
         if (!calculateFit<EllipsoidalFitFunctor>(points, field_strength, parameters, 9))
         {
-            return no_calibration_applied();
+            return noCalibrationApplied();
         }
 
         // Extract ellipsoidal results
