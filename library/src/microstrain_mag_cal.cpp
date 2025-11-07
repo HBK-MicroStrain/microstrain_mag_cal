@@ -191,13 +191,9 @@ namespace microstrain_mag_cal
         // Optimize
         const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
 
-        // TODO: Combine
-        // Check convergence
-        const bool converged =
-            status == Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall ||
-            status == Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall;
-
-        if (!converged)
+        // Fail if the optimization didn't converge
+        if (status != Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall &&
+            status != Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall)
         {
             return false;
         }
