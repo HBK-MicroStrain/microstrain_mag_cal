@@ -164,42 +164,17 @@ namespace microstrain_mag_cal
     }
 
     // Required by Eigen for the solver
-    struct SphericalFitFunctor
+    struct SphericalFitFunctor : FitFunctorBase<SphericalFitFunctor, 4>
     {
-        // Required type definitions for Eigen
-        using Scalar = double;
-        using InputType = Eigen::Vector4d;
-        using ValueType = Eigen::VectorXd;
-        using JacobianType = Eigen::MatrixXd;
+        using Base = FitFunctorBase;
+        using Base::Base;
 
-        static constexpr int InputsAtCompileTime = 4;               // Number of parameters
-        static constexpr int ValuesAtCompileTime = Eigen::Dynamic;  // Number of residuals (dynamic)
-
-        const Eigen::MatrixX3d &points;
-        const double target_radius;
-
-        SphericalFitFunctor(const Eigen::MatrixX3d& points, const double field_strength)
-            : points(points), target_radius(field_strength) {}
-
-        // Required by Eigen ---> Number of residuals (one per point)
-        int values() const { return static_cast<int>(points.rows()); }
-
-        // Required by Eigen ---> Number of parameters to optimize (scale^2, offset_x, offset_y, offset_z)
-        int inputs() const { return 4; }
-
-        // Required by Eigen ---> Computes residual for each point
-        int operator()(const Eigen::Vector4d& parameters, Eigen::VectorXd& residuals) const
+        static Eigen::Vector3d applyCorrection(const Eigen::Vector4d &parameters, const Eigen::Vector3d &point)
         {
             const double scale = std::sqrt(parameters(0));
-            const Eigen::Vector3d offset = parameters.tail<3>();
+            const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
 
-            for (int i = 0; i < points.rows(); ++i)
-            {
-                const Eigen::Vector3d corrected_point = (points.row(i).transpose() - offset) / scale;
-                residuals(i) = corrected_point.norm() - target_radius;
-            }
-
-            return 0;
+            return (point - hard_iron_offset) / scale;
         }
     };
 
