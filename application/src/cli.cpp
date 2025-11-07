@@ -48,16 +48,16 @@ int main(const int argc, char **argv)
 {
     /*** Parse commandline arguments ***/
 
-    std::filesystem::path filepath;
+    std::filesystem::path arg_filepath;
     std::optional<double> arg_field_strength;
     bool arg_spatial_coverage = false;
-    bool spherical_fit = false;
-    bool ellipsoidal_fit = false;
+    bool arg_spherical_fit = false;
+    bool arg_ellipsoidal_fit = false;
 
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
     app.formatter(std::make_shared<HelpMessageFormatter>());
 
-    app.add_option("-f,--file", filepath, "A binary file containing mip data to read from.")
+    app.add_option("-f,--file", arg_filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
@@ -65,9 +65,9 @@ int main(const int argc, char **argv)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-c,--spatial-coverage", arg_spatial_coverage, "Calculate the spatial coverage of the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-s,--spherical-fit", spherical_fit, "Perform a spherical fit on the input data.")
+    app.add_flag("-s,--spherical-fit", arg_spherical_fit, "Perform a spherical fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-e,--ellipsoidal-fit", ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
+    app.add_flag("-e,--ellipsoidal-fit", arg_ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     CLI11_PARSE(app, argc, argv);
@@ -75,7 +75,7 @@ int main(const int argc, char **argv)
     /*** Create a read-only view of the input file ***/
 
     std::error_code error;
-    const mio::mmap_source file_view = mio::make_mmap_source(filepath.string(), error);
+    const mio::mmap_source file_view = mio::make_mmap_source(arg_filepath.string(), error);
 
     if (error)
     {
@@ -98,7 +98,7 @@ int main(const int argc, char **argv)
         arg_field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
 
-    if (spherical_fit || ellipsoidal_fit)
+    if (arg_spherical_fit || arg_ellipsoidal_fit)
     {
         printf("Using Field Strength: %.5f\n\n", arg_field_strength.value());
     }
@@ -108,7 +108,7 @@ int main(const int argc, char **argv)
         printf("Spatial Coverage: %.5f%%\n\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
     }
 
-    if (spherical_fit)
+    if (arg_spherical_fit)
     {
         const microstrain_mag_cal::FitResult fit_result =
             microstrain_mag_cal::fitSphere(points, arg_field_strength.value(), initial_offset);
@@ -118,7 +118,7 @@ int main(const int argc, char **argv)
         displayFitResult("Spherical Fit", fit_result, fit_RMSE);
     }
 
-    if (ellipsoidal_fit)
+    if (arg_ellipsoidal_fit)
     {
         const microstrain_mag_cal::FitResult fit_result =
             microstrain_mag_cal::fitEllipsoid(points, arg_field_strength.value(), initial_offset);
