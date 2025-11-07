@@ -280,11 +280,12 @@ namespace microstrain_mag_cal
         }
     };
 
-    /// Calculates ellipsoidal calibration fit from raw magnetometer measurements.
+    /// @brief Performs an ellipsoidal fit on the raw magnetometer data.
     ///
-    /// Fits an ellipsoid to the measurement data to estimate both hard-iron offset (bias) and
-    /// soft-iron effects (scale/rotation). Provides more accurate calibration than spherical fit
-    /// when ferromagnetic materials cause field distortion.
+    /// Fits an ellipsoid to magnetometer data to estimate both hard-iron offset (bias) and soft-iron
+    /// effects (scaling, rotation, and shear). Provides more accurate calibration than spherical fit
+    /// when ferromagnetic materials cause axis-dependent field distortion. The soft-iron matrix is
+    /// symmetric (6 unique parameters).
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
     /// @param field_strength The field strength to use for the target radius. Use the reference
@@ -292,8 +293,8 @@ namespace microstrain_mag_cal
     ///                       the reference is unknown.
     /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
     ///
-    /// @returns Fit result containing hard-iron offset, full soft-iron matrix, and whether the
-    ///          fit succeeded. The units will be the same as the input data.
+    /// @returns Fit result containing hard-iron offset, full symmetric soft-iron matrix, and whether
+    ///          the fit succeeded. The units will be the same as the input data.
     ///
     FitResult fitEllipsoid(
         const Eigen::MatrixX3d &points,
