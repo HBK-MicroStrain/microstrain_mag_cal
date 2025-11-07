@@ -98,7 +98,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
 
     const microstrain_mag_cal::FitResult result =
-        microstrain_mag_cal::calculateSphericalFit(CHECK_POINTS, field_strength, initial_offset);
+        microstrain_mag_cal::fitSphere(CHECK_POINTS, field_strength, initial_offset);
 
     CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(0.764696).epsilon(0.001));
     CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0.0).epsilon(0.001));
@@ -121,7 +121,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
 
     const microstrain_mag_cal::FitResult result =
-        microstrain_mag_cal::calculateEllipsoidalFit(CHECK_POINTS, field_strength, initial_offset);
+        microstrain_mag_cal::fitEllipsoid(CHECK_POINTS, field_strength, initial_offset);
 
     REQUIRE(result.soft_iron_matrix.rows() == 3);
     REQUIRE(result.soft_iron_matrix.cols() == 3);

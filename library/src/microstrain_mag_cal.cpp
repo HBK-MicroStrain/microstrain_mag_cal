@@ -215,14 +215,15 @@ namespace microstrain_mag_cal
         }
     };
 
-    /// Calculates spherical calibration fit from raw magnetometer measurements.
+    /// @brief Performs a spherical fit on the raw magnetometer data.
     ///
-    /// Fits a sphere to the measurement data to estimate hard-iron offset (bias) and axis-aligned
-    /// soft-iron scaling factors. Assumes distortions are symmetric along sensor axes. The soft
-    /// iron matrix will be diagonal.
+    /// Fits a sphere to magnetometer data for hard-iron calibration and uniform field scaling.
+    /// Estimates hard-iron offset (bias) and a single scale factor applied uniformly to all axes.
+    /// The soft-iron matrix will be a scaled identity matrix.
     ///
-    /// Suitable for sensors with minimal soft-iron effects or axis-aligned distortions. Use
-    /// ellipsoidal fit for more complex soft-iron effects involving rotation or shear.
+    /// Suitable for sensors with minimal soft-iron effects or when only uniform scaling correction
+    /// is needed. Use ellipsoidal fit for more complex soft-iron effects involving axis-dependent
+    /// scaling, rotation or shear.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
     /// @param field_strength The field strength to use for the target radius. Use the reference
@@ -230,10 +231,10 @@ namespace microstrain_mag_cal
     ///                       the reference is unknown.
     /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
     ///
-    /// @returns Fit result containing hard-iron offset, soft-iron scale factors, and whether the
-    ///          fit succeeded. The units will be the same as the input data.
+    /// @returns Fit result containing hard-iron offset, uniform soft-iron scale factor, and whether
+    ///          the fit succeeded. The units will be the same as the input data.
     ///
-    FitResult calculateSphericalFit(
+    FitResult fitSphere(
         const Eigen::MatrixX3d &points,
         const double field_strength,
         const Eigen::RowVector3d &initial_offset)
@@ -294,7 +295,7 @@ namespace microstrain_mag_cal
     /// @returns Fit result containing hard-iron offset, full soft-iron matrix, and whether the
     ///          fit succeeded. The units will be the same as the input data.
     ///
-    FitResult calculateEllipsoidalFit(
+    FitResult fitEllipsoid(
         const Eigen::MatrixX3d &points,
         const double field_strength,
         const Eigen::RowVector3d &initial_offset)
