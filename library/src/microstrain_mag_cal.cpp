@@ -136,10 +136,8 @@ namespace microstrain_mag_cal
         using ValueType = Eigen::VectorXd;
         using JacobianType = Eigen::MatrixXd;
 
-        enum {
-            InputsAtCompileTime = 4,              // Number of parameters
-            ValuesAtCompileTime = Eigen::Dynamic  // Number of residuals (dynamic)
-        };
+        static constexpr int InputsAtCompileTime = 4;               // Number of parameters
+        static constexpr int ValuesAtCompileTime = Eigen::Dynamic;  // Number of residuals (dynamic)
 
         const Eigen::MatrixX3d &points;
         const double target_radius;
@@ -259,10 +257,8 @@ namespace microstrain_mag_cal
         using ValueType = Eigen::VectorXd;
         using JacobianType = Eigen::MatrixXd;
 
-        enum {
-            InputsAtCompileTime = 9,              // Number of parameters
-            ValuesAtCompileTime = Eigen::Dynamic  // Number of residuals (dynamic)
-        };
+        static constexpr int InputsAtCompileTime = 9;               // Number of parameters
+        static constexpr int ValuesAtCompileTime = Eigen::Dynamic;  // Number of residuals (dynamic)
 
         const Eigen::MatrixX3d &points;
         const double target_radius;
