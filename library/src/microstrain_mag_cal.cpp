@@ -99,12 +99,12 @@ namespace microstrain_mag_cal
             const double longitude = std::atan2(y, x); // -π to π radians
 
             // Assign to bins.
-            // Map angle ranges to [0, 1], then scale to bin count.
+            // Map angle ranges to [0, 1], then scale to bin count to get the bin indices.
             int point_latitude_bin = static_cast<int>((latitude + M_PI_2) / M_PI * num_latitude_bins);
             int point_longitude_bin = static_cast<int>((longitude + M_PI) / (2.0 * M_PI) * num_longitude_bins);
 
-            // TODO: Make comment clearer
-            // Clamp to valid bin range in case edge coordinates fall out of the index range.
+            // Clamp bin indices to valid range [0, num_bins - 1] in case floating-point rounding
+            // causes coordinates at bin boundaries to produce out-of-range indices.
             point_latitude_bin = std::max(0, std::min(point_latitude_bin, num_latitude_bins - 1));
             point_longitude_bin = std::max(0, std::min(point_longitude_bin, num_longitude_bins - 1));
 
