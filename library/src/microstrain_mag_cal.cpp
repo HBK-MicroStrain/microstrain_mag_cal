@@ -153,6 +153,7 @@ namespace microstrain_mag_cal
             {
                 const Eigen::Vector3d corrected_point =
                     static_cast<const Derived *>(this)->applyCorrection(parameters, points.row(i).transpose());
+
                 residuals(i) = corrected_point.norm() - target_radius;
             }
 
@@ -173,7 +174,7 @@ namespace microstrain_mag_cal
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;
 
-        // Mathematical minimum
+        // Mathematical minimum for optimizing N parameters
         if (points.rows() < parameters.cols())
         {
             return false;
@@ -305,10 +306,6 @@ namespace microstrain_mag_cal
         const double field_strength,
         const Eigen::RowVector3d &initial_offset)
     {
-        // Mathematical minimum since we are optimizing nine parameters:
-        // * Six for symmetric matrix
-        // * Three offset parameters (bx, by, bz)
-
         // Initialize parameters for the solver
         Eigen::VectorXd parameters(9);
         parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
