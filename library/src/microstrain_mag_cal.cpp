@@ -120,6 +120,42 @@ namespace microstrain_mag_cal
     // Calibration Fitting
     // ---------------------------------------------------------------------------------------------
 
+    // Each fitting algorithm requires a functor that's used by the Eigen solver. This base functor
+    // contains the shared (required) definitions for Eigen.
+    template<typename Derived, int NumParameters>
+    struct FitFunctorBase
+    {
+        using Scalar = double;
+        using InputType = Eigen::Vector<double, NumParameters>;
+        using ValueType = Eigen::VectorXd;
+        using JacobianType = Eigen::MatrixXd;
+
+        static constexpr int InputsAtCompileTime = NumParameters;
+        static constexpr int ValuesAtCompileTime = Eigen::Dynamic;
+
+        const Eigen::MatrixX3d &points;
+        const double target_radius;
+
+        FitFunctorBase(const Eigen::MatrixX3d& points, const double field_strength)
+            : points(points), target_radius(field_strength) {}
+
+        int values() const { return static_cast<int>(points.rows()); }
+        int inputs() const { return NumParameters; }
+
+        // Common residual calculation --> delegates correction to each derived functor
+        int operator()(const Eigen::Vector4d& parameters, Eigen::VectorXd& residuals) const
+        {
+            for (int i = 0; i < points.rows(); ++i)
+            {
+                const Eigen::Vector3d corrected_point =
+                    static_cast<const Derived *>(this)->applyCorrection(parameters, points.row(i).transpose());
+                residuals(i) = corrected_point.norm() - target_radius;
+            }
+
+            return 0;
+        }
+    };
+
     // Returns a fit result that leaves the calibration unchanged (doesn't apply).
     FitResult no_calibration_applied()
     {
