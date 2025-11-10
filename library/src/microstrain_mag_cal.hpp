@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <Eigen/Dense>
 
 
@@ -8,6 +10,16 @@ namespace microstrain_mag_cal
     // ---------------------------------------------------------------------------------------------
     // Data Structures
     // ---------------------------------------------------------------------------------------------
+
+    class PointManager
+    {
+    public:
+        PointManager() = default;
+        PointManager(size_t data_size_estimate);
+
+    private:
+        std::vector<double> m_points;
+    };
 
     struct FitResult
     {
