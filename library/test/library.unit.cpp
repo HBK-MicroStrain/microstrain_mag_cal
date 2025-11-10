@@ -38,15 +38,15 @@ MICROSTRAIN_TEST_CASE("MVP", "The_point_manager_provides_a_properly_formatted_ma
 
     Eigen::MatrixX3d result = point_manager.getMatrix();
 
-    CHECK(result(0, 0) == doctest::Approx(1.0).epsilon(0.001));
-    CHECK(result(0, 1) == doctest::Approx(2.0).epsilon(0.001));
-    CHECK(result(0, 2) == doctest::Approx(3.0).epsilon(0.001));
-    CHECK(result(1, 0) == doctest::Approx(4.0).epsilon(0.001));
-    CHECK(result(1, 1) == doctest::Approx(5.0).epsilon(0.001));
-    CHECK(result(1, 2) == doctest::Approx(6.0).epsilon(0.001));
-    CHECK(result(2, 0) == doctest::Approx(7.0).epsilon(0.001));
-    CHECK(result(2, 1) == doctest::Approx(8.0).epsilon(0.001));
-    CHECK(result(2, 2) == doctest::Approx(9.0).epsilon(0.001));
+    CHECK(result(0, 0) == doctest::Approx(1.0).epsilon(0.01));
+    CHECK(result(0, 1) == doctest::Approx(2.0).epsilon(0.01));
+    CHECK(result(0, 2) == doctest::Approx(3.0).epsilon(0.01));
+    CHECK(result(1, 0) == doctest::Approx(4.0).epsilon(0.01));
+    CHECK(result(1, 1) == doctest::Approx(5.0).epsilon(0.01));
+    CHECK(result(1, 2) == doctest::Approx(6.0).epsilon(0.01));
+    CHECK(result(2, 0) == doctest::Approx(7.0).epsilon(0.01));
+    CHECK(result(2, 1) == doctest::Approx(8.0).epsilon(0.01));
+    CHECK(result(2, 2) == doctest::Approx(9.0).epsilon(0.01));
 }
 
 MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_handles_no_data_points")

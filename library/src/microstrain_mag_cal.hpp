@@ -19,8 +19,10 @@ namespace microstrain_mag_cal
 
         void addPoint(std::array<float, 3> point);
 
+        Eigen::MatrixX3d getMatrix();
+
     private:
-        std::vector<double> m_points;
+        std::vector<double> m_flattened_points;
     };
 
     struct FitResult
