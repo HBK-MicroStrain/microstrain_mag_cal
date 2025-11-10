@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <Eigen/Dense>
 
 
@@ -8,6 +10,22 @@ namespace microstrain_mag_cal
     // ---------------------------------------------------------------------------------------------
     // Data Structures
     // ---------------------------------------------------------------------------------------------
+
+    class PointManager
+    {
+    public:
+        PointManager() = default;
+        explicit PointManager(size_t data_size_estimate);
+
+        void addPoint(const std::array<float, 3> &point);
+
+        Eigen::MatrixX3d getMatrix();
+
+    private:
+        // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN).
+        // We can then map the Eigen matrix directly to this list for zero-copy.
+        std::vector<double> m_flattened_points;
+    };
 
     struct FitResult
     {

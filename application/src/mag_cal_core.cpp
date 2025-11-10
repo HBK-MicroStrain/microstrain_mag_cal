@@ -1,18 +1,18 @@
 #include <mag_cal_core.hpp>
 
+#include <microstrain_mag_cal.hpp>
 #include <mip/mip_parser.hpp>
 #include <mip/definitions/data_sensor.hpp>
 
 using ScaledMag = mip::data_sensor::ScaledMag;
 
 
-// Called by the mip parser for each packet found.
-// Flattened list ---> (x1, y1, z1, ..., xN, yN, zN).
-bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::PacketView *packet_view, const mip::Timestamp /* timestamp */)
+// Extracts the points into the point manager. Called by the mip parser for each packet found.
+bool extractPoints(void *point_manager, const mip::PacketView *packet_view, const mip::Timestamp /* timestamp */)
 {
     assert(packet_view);
 
-    std::vector<double> *flattened_points = static_cast<std::vector<double>*>(flattened_points_out);
+    microstrain_mag_cal::PointManager *m_point_manager = static_cast<microstrain_mag_cal::PointManager*>(point_manager);
 
     if (packet_view->descriptorSet() == ScaledMag::DESCRIPTOR_SET)
     {
@@ -24,13 +24,14 @@ bool extractPointsIntoFlattenedList(void *flattened_points_out, const mip::Packe
             }
 
             mip::Serializer serializer(field.payload());
-            float temp;
+            std::array<float, 3> temp;
 
             for (uint8_t i = 0; i < 3; ++i)
             {
-                assert(serializer.extract(temp));
-                flattened_points->push_back(temp);
+                assert(serializer.extract(temp[i]));
             }
+
+            m_point_manager->addPoint(temp);
         }
     }
 
@@ -41,17 +42,12 @@ namespace mag_cal_core
 {
     Eigen::MatrixX3d extractPointMatrixFromRawData(const microstrain::ConstU8ArrayView &data_view)
     {
-        // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN)
+        microstrain_mag_cal::PointManager point_manager;
+
         // We aren't working with a device, so the timeouts and timestamp aren't needed.
-        std::vector<double> flattened_points;
-        mip::Parser parser(&extractPointsIntoFlattenedList, &flattened_points, 0);
+        mip::Parser parser(&extractPoints, &point_manager, 0);
         parser.parse(data_view.data(), data_view.size(), 0);
 
-        // Zero-copy map to matrix
-        return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>>(
-            flattened_points.data(),
-            static_cast<Eigen::Index>(flattened_points.size()) / 3,
-            3
-        );
+        return point_manager.getMatrix();
     }
 }

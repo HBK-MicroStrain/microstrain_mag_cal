@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(microstrain_test)
 # ---------------------------------------------------------------
 
 add_executable(library_unit_tests
-    "mvp.unit.cpp"
+    "library.unit.cpp"
 )
 
 target_link_libraries(library_unit_tests PRIVATE

@@ -10,7 +10,7 @@ include(FetchContent)
 FetchContent_Declare(
   Eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-  GIT_TAG 3.4.1
+  GIT_TAG 5.0.0
   GIT_SHALLOW TRUE
 )
 

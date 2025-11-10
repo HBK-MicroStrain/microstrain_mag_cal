@@ -67,13 +67,13 @@ set_target_properties(offline_mag_cal_cli
 
 target_link_libraries(offline_mag_cal_core
     Eigen3::Eigen
+    microstrain_mag_cal
     ${MIP_LIBRARY}
 )
 target_link_libraries(offline_mag_cal_cli
     PRIVATE
         CLI11::CLI11
         mio::mio
-        microstrain_mag_cal
         offline_mag_cal_core
 )
 
