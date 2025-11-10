@@ -29,6 +29,26 @@ static constexpr std::array<double, 20 * 3> raw_points = {
 static const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
 
 
+MICROSTRAIN_TEST_CASE("MVP", "The_point_manager_provides_a_properly_formatted_matrix")
+{
+    microstrain_mag_cal::PointManager point_manager;
+    point_manager.addPoint({1.0f, 2.0f, 3.0f});
+    point_manager.addPoint({4.0f, 5.0f, 6.0f});
+    point_manager.addPoint({7.0f, 8.0f, 9.0f});
+
+    Eigen::MatrixX3d result = point_manager.getMatrix();
+
+    CHECK(result(0, 0) == doctest::Approx(1.0).epsilon(0.001));
+    CHECK(result(0, 1) == doctest::Approx(2.0).epsilon(0.001));
+    CHECK(result(0, 2) == doctest::Approx(3.0).epsilon(0.001));
+    CHECK(result(1, 0) == doctest::Approx(4.0).epsilon(0.001));
+    CHECK(result(1, 1) == doctest::Approx(5.0).epsilon(0.001));
+    CHECK(result(1, 2) == doctest::Approx(6.0).epsilon(0.001));
+    CHECK(result(2, 0) == doctest::Approx(7.0).epsilon(0.001));
+    CHECK(result(2, 1) == doctest::Approx(8.0).epsilon(0.001));
+    CHECK(result(2, 2) == doctest::Approx(9.0).epsilon(0.001));
+}
+
 MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_handles_no_data_points")
 {
     Eigen::MatrixX3d empty_matrix;

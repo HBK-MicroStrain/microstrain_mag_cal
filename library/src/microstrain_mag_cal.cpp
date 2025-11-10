@@ -20,9 +20,9 @@ namespace microstrain_mag_cal
         m_points.reserve(data_size_estimate);
     }
 
-    void PointManager::addPoint(float point[3])
+    void PointManager::addPoint(const std::array<float, 3> point)
     {
-        m_points.insert(m_points.end(), point, point + 3);
+        m_points.insert(m_points.end(), point.begin(), point.end());
     }
 
     // ---------------------------------------------------------------------------------------------

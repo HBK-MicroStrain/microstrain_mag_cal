@@ -17,7 +17,7 @@ namespace microstrain_mag_cal
         PointManager() = default;
         explicit PointManager(size_t data_size_estimate);
 
-        void addPoint(float point[3]);
+        void addPoint(std::array<float, 3> point);
 
     private:
         std::vector<double> m_points;
