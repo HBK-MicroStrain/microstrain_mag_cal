@@ -42,7 +42,8 @@ namespace mag_cal_core
 {
     Eigen::MatrixX3d extractPointMatrixFromRawData(const microstrain::ConstU8ArrayView &data_view)
     {
-        microstrain_mag_cal::PointManager point_manager;
+        const microstrain_mag_cal::VoxelGrid unique_point_grid(0.5);
+        microstrain_mag_cal::PointManager point_manager(unique_point_grid);
 
         // We aren't working with a device, so the timeouts and timestamp aren't needed.
         mip::Parser parser(&extractPoints, &point_manager, 0);
