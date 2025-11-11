@@ -43,18 +43,21 @@ namespace microstrain_mag_cal
     class VoxelGrid
     {
     public:
+        VoxelGrid() = delete;
         explicit VoxelGrid(const double voxel_size) : m_voxel_size(voxel_size) {}
 
     private:
-        std::unordered_set<VoxelKey> m_occupied_voxels;
+        std::unordered_set<VoxelKey> m_occupied_voxels{};
         double m_voxel_size;
     };
 
     class PointManager
     {
     public:
-        PointManager() = default;
-        explicit PointManager(size_t data_size_estimate);
+        explicit PointManager(const VoxelGrid &unique_point_grid, size_t data_size_estimate);
+        // TODO: Document - Moderate default filtering, might get better results taking into account the field strength
+        explicit PointManager(const size_t data_size_estimate) : PointManager(VoxelGrid(0.5), data_size_estimate) {}
+        explicit PointManager(const VoxelGrid &unique_point_grid) : PointManager(unique_point_grid, 0) {}
 
         void addPoint(const std::array<float, 3> &point);
 
@@ -64,6 +67,7 @@ namespace microstrain_mag_cal
         // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN).
         // We can then map the Eigen matrix directly to this list for zero-copy.
         std::vector<double> m_flattened_points;
+        VoxelGrid m_unique_point_grid;
     };
 
     struct FitResult

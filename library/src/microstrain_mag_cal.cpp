@@ -15,9 +15,13 @@ namespace microstrain_mag_cal
     // Data Structures
     // ---------------------------------------------------------------------------------------------
 
-    PointManager::PointManager(const size_t data_size_estimate)
+    PointManager::PointManager(const VoxelGrid &unique_point_grid, const size_t data_size_estimate)
+        : m_unique_point_grid(unique_point_grid)
     {
-        m_flattened_points.reserve(data_size_estimate);
+        if (data_size_estimate > 0)
+        {
+            m_flattened_points.reserve(data_size_estimate);
+        }
     }
 
     void PointManager::addPoint(const std::array<float, 3> &point)
