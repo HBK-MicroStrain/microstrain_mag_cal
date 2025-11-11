@@ -11,6 +11,34 @@ namespace microstrain_mag_cal
     // Data Structures
     // ---------------------------------------------------------------------------------------------
 
+    struct VoxelKey
+    {
+        int x, y, z;
+
+        bool operator==(const VoxelKey &other) const
+        {
+            return x == other.x && y == other.y && z == other.z;
+        }
+    };
+}
+
+namespace std
+{
+    template<>
+    struct hash<microstrain_mag_cal::VoxelKey>
+    {
+        size_t operator()(const microstrain_mag_cal::VoxelKey &k) const noexcept
+        {
+            // TODO: This should be faster than alternatives for smaller datasets. Let's look into
+            //       adding a check for data that exceeds hundreds of thousands of points and switch
+            //       to a more collision-friendly implementation in that case.
+            return hash<int>()(k.x) ^ (hash<int>()(k.y) << 1) ^ (hash<int>()(k.z) << 2);
+        }
+    };
+}
+
+namespace microstrain_mag_cal
+{
     class PointManager
     {
     public:
