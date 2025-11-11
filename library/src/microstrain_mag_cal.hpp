@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_set>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -39,6 +40,16 @@ namespace std
 
 namespace microstrain_mag_cal
 {
+    class VoxelGrid
+    {
+    public:
+        explicit VoxelGrid(const double voxel_size) : m_voxel_size(voxel_size) {}
+
+    private:
+        std::unordered_set<VoxelKey> m_occupied_voxels;
+        double m_voxel_size;
+    };
+
     class PointManager
     {
     public:
