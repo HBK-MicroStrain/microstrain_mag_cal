@@ -15,14 +15,32 @@ namespace microstrain_mag_cal
     // Data Structures
     // ---------------------------------------------------------------------------------------------
 
-    PointManager::PointManager(const size_t data_size_estimate)
+    bool VoxelGrid::isPointInUniqueVoxel(const std::array<float, 3> &point)
     {
-        m_flattened_points.reserve(data_size_estimate);
+        const VoxelKey key{
+            static_cast<int>(std::floor(point[0] / m_voxel_size)),
+            static_cast<int>(std::floor(point[1] / m_voxel_size)),
+            static_cast<int>(std::floor(point[2] / m_voxel_size))
+        };
+
+        return m_occupied_voxels.insert(key).second;
+    }
+
+    PointManager::PointManager(const VoxelGrid &unique_point_grid, const size_t data_size_estimate)
+        : m_unique_point_grid(unique_point_grid)
+    {
+        if (data_size_estimate > 0)
+        {
+            m_flattened_points.reserve(data_size_estimate);
+        }
     }
 
     void PointManager::addPoint(const std::array<float, 3> &point)
     {
-        m_flattened_points.insert(m_flattened_points.end(), point.begin(), point.end());
+        if (m_unique_point_grid.isPointInUniqueVoxel(point))
+        {
+            m_flattened_points.insert(m_flattened_points.end(), point.begin(), point.end());
+        }
     }
 
     Eigen::MatrixX3d PointManager::getMatrix()
