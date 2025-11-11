@@ -26,7 +26,10 @@ namespace microstrain_mag_cal
 
     void PointManager::addPoint(const std::array<float, 3> &point)
     {
-        m_flattened_points.insert(m_flattened_points.end(), point.begin(), point.end());
+        if (m_unique_point_grid.isPointInUniqueVoxel(point))
+        {
+            m_flattened_points.insert(m_flattened_points.end(), point.begin(), point.end());
+        }
     }
 
     Eigen::MatrixX3d PointManager::getMatrix()
