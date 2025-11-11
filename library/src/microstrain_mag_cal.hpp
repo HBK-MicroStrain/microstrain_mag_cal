@@ -46,6 +46,8 @@ namespace microstrain_mag_cal
         VoxelGrid() = delete;
         explicit VoxelGrid(const double voxel_size) : m_voxel_size(voxel_size) {}
 
+        bool isPointInUniqueVoxel(const std::array<float, 3> &point);
+
     private:
         std::unordered_set<VoxelKey> m_occupied_voxels{};
         double m_voxel_size;

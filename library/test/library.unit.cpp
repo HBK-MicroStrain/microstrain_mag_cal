@@ -36,7 +36,7 @@ MICROSTRAIN_TEST_CASE("MVP", "A_non_unique_point_cannot_be_added_to_the_point_ma
 
     point_manager.addPoint({1.0f, 2.0f, 3.0f});
     point_manager.addPoint({1.1f, 2.1f, 3.1f});
-    point_manager.addPoint({1.2f, 2.2f, 3.2f});
+    point_manager.addPoint({1.9f, 2.9f, 3.9f});
     Eigen::MatrixX3d result = point_manager.getMatrix();
 
     REQUIRE(result.rows() == 1);
