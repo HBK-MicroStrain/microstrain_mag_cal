@@ -40,9 +40,19 @@ bool extractPoints(void *point_manager, const mip::PacketView *packet_view, cons
 
 namespace mag_cal_core
 {
-    Eigen::MatrixX3d extractPointMatrixFromRawData(const microstrain::ConstU8ArrayView &data_view)
+    Eigen::MatrixX3d extractPointMatrixFromRawData(
+        const microstrain::ConstU8ArrayView &data_view,
+        const std::optional<double> reference_field_strength)
     {
-        const microstrain_mag_cal::VoxelGrid unique_point_grid(0.5);
+        double voxel_size = 0.5;  // Moderate filtering default
+
+        // Much better filtering, if available
+        if (reference_field_strength.has_value())
+        {
+            voxel_size = reference_field_strength.value() * 0.05;
+        }
+
+        const microstrain_mag_cal::VoxelGrid unique_point_grid(voxel_size);
         microstrain_mag_cal::PointManager point_manager(unique_point_grid);
 
         // We aren't working with a device, so the timeouts and timestamp aren't needed.
