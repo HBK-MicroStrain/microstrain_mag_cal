@@ -28,7 +28,6 @@ namespace microstrain_mag_cal
     // ---------------------------------------------------------------------------------------------
 
     double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
-    double calculateSpatialCoverage(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
 
     // ---------------------------------------------------------------------------------------------
     // Calibration Fitting
@@ -43,10 +42,4 @@ namespace microstrain_mag_cal
         const Eigen::MatrixX3d &points,
         double field_strength,
         const Eigen::RowVector3d &initial_offset);
-
-    // ---------------------------------------------------------------------------------------------
-    // Fit Quality metrics
-    // ---------------------------------------------------------------------------------------------
-
-    double calculateFitRMSE(const Eigen::MatrixX3d &points, const FitResult &fit_result, double field_strength);
 }

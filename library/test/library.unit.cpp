@@ -72,26 +72,6 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("MVP", "Spatial_coverage_handles_no_data_points")
-{
-    Eigen::MatrixX3d empty_matrix;
-    empty_matrix.resize(0, 3);
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(empty_matrix);
-
-    const double result = microstrain_mag_cal::calculateSpatialCoverage(empty_matrix, initial_offset);
-
-    CHECK(result == 0.0);
-}
-
-MICROSTRAIN_TEST_CASE("MVP", "Spatial_coverage_matches_InertialConnect")
-{
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
-
-    const double result = microstrain_mag_cal::calculateSpatialCoverage(CHECK_POINTS, initial_offset);
-
-    CHECK(result == doctest::Approx(3.125).epsilon(0.001));
-}
-
 MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
 {
     constexpr double field_strength = 0.557;
@@ -139,20 +119,4 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
     CHECK(result.hard_iron_offset(0) == doctest::Approx(0.00426).epsilon(0.001));
     CHECK(result.hard_iron_offset(1) == doctest::Approx(0.10610).epsilon(0.001));
     CHECK(result.hard_iron_offset(2) == doctest::Approx(0.17490).epsilon(0.001));
-}
-
-MICROSTRAIN_TEST_CASE("MVP", "Fit_RMSE_matches_InertialConnect")
-{
-    Eigen::Matrix<double, 3, 3> soft_iron_matrix;
-    soft_iron_matrix <<
-         1.21213, 0.01196, -0.05057,
-         0.01196, 1.35210,  0.06738,
-        -0.05057, 0.06738,  1.34479;
-    const Eigen::Vector3d hard_iron_offset(0.00426, 0.10610, 0.17490);
-    const microstrain_mag_cal::FitResult fit_result(soft_iron_matrix, hard_iron_offset, true);
-    constexpr double field_strength = 0.557;
-
-    const double result = microstrain_mag_cal::calculateFitRMSE(CHECK_POINTS, fit_result, field_strength);
-
-    CHECK(result == doctest::Approx(0.010).epsilon(0.001));
 }
