@@ -1,7 +1,7 @@
+#include "calibration.hpp"
+
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
-
-#include <calibration.hpp>
 
 
 namespace microstrain_mag_cal

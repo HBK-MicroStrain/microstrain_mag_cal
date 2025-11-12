@@ -27,10 +27,16 @@ project(microstrain_mag_cal
 
 add_library(microstrain_mag_cal)
 
+target_include_directories(microstrain_mag_cal PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
+
 set_target_properties(microstrain_mag_cal PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     LINKER_LANGUAGE CXX
+)
+
+target_link_libraries(microstrain_mag_cal PUBLIC
+    Eigen3::Eigen
 )
 
 if(MSVC)
@@ -51,13 +57,9 @@ target_compile_options(microstrain_mag_cal PRIVATE
     "${COMPILE_OPTIONS}"
 )
 
-target_link_libraries(microstrain_mag_cal PUBLIC
-    Eigen3::Eigen
-)
-
 # ---------------------------------------------------------------
 # Subdirectories
 # ---------------------------------------------------------------
 
-add_subdirectory(src)
+add_subdirectory(microstrain_mag_cal)
 add_subdirectory(test)

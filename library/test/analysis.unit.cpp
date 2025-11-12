@@ -1,4 +1,4 @@
-#include <analysis.hpp>
+#include <microstrain_mag_cal/analysis.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 
 
