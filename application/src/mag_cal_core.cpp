@@ -46,12 +46,14 @@ namespace mag_cal_core
         const microstrain::ConstU8ArrayView &data_view,
         const std::optional<double> reference_field_strength)
     {
-        double voxel_size = 0.5;  // Moderate filtering default
+        // More conservative default if we don't know the field strength
+        double voxel_size = 0.015;
 
-        // Much better filtering, if available
+        // More accurate adaptive filtering if field strength available.
+        // This should give faster and more accurate fits, even if the spatial coverage is lower.
         if (reference_field_strength.has_value())
         {
-            voxel_size = reference_field_strength.value() * 0.05;
+            voxel_size *= reference_field_strength.value() * 0.03;
         }
 
         const microstrain_mag_cal::VoxelGrid unique_point_grid(voxel_size);
