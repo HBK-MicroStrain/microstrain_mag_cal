@@ -16,28 +16,20 @@ namespace microstrain_mag_cal
         {
             return x == other.x && y == other.y && z == other.z;
         }
-    };
-}
 
-
-namespace std
-{
-    template<>
-    struct hash<microstrain_mag_cal::VoxelKey>
-    {
-        size_t operator()(const microstrain_mag_cal::VoxelKey &k) const noexcept
+        struct Hash
         {
-            // TODO: This should be faster than alternatives for smaller datasets. Let's look into
-            //       adding a check for data that exceeds hundreds of thousands of points and switch
-            //       to a more collision-friendly implementation in that case.
-            return hash<int>()(k.x) ^ (hash<int>()(k.y) << 1) ^ (hash<int>()(k.z) << 2);
-        }
+            size_t operator()(const microstrain_mag_cal::VoxelKey &k) const noexcept
+            {
+                // TODO: This should be faster than alternatives for smaller datasets. Let's look into
+                //       adding a check for data that exceeds hundreds of thousands of points and switch
+                //       to a more collision-friendly implementation in that case.
+                return std::hash<int>()(k.x) ^ (std::hash<int>()(k.y) << 1) ^ (std::hash<int>()(k.z) << 2);
+            }
+        };
     };
-}
 
 
-namespace microstrain_mag_cal
-{
     class VoxelGrid
     {
     public:
@@ -47,7 +39,7 @@ namespace microstrain_mag_cal
         bool isPointInUniqueVoxel(const std::array<float, 3> &point);
 
     private:
-        std::unordered_set<VoxelKey> m_occupied_voxels{};
+        std::unordered_set<VoxelKey, VoxelKey::Hash> m_occupied_voxels{};
         double m_voxel_size;
     };
 
