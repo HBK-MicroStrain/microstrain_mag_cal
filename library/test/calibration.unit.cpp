@@ -1,4 +1,4 @@
-#include <microstrain_mag_cal.hpp>
+#include <calibration.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 
 

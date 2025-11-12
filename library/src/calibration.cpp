@@ -1,15 +1,11 @@
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 
-#include <microstrain_mag_cal.hpp>
+#include <calibration.hpp>
 
 
 namespace microstrain_mag_cal
 {
-    // ---------------------------------------------------------------------------------------------
-    // Initial Parameter Estimation
-    // ---------------------------------------------------------------------------------------------
-
     /// @brief Estimates the initial hard-iron offset using the mean of all measurements.
     ///
     /// Computes the centroid of all magnetometer measurements as an initial estimate. This provides
@@ -29,10 +25,6 @@ namespace microstrain_mag_cal
 
         return points.colwise().mean();
     }
-
-    // ---------------------------------------------------------------------------------------------
-    // Data Statistics
-    // ---------------------------------------------------------------------------------------------
 
     /// Calculates the mean measured field strength from raw magnetometer measurements.
     ///
@@ -57,10 +49,6 @@ namespace microstrain_mag_cal
 
         return (points.rowwise() - initial_offset).rowwise().norm().mean();
     }
-
-    // ---------------------------------------------------------------------------------------------
-    // Calibration Fitting
-    // ---------------------------------------------------------------------------------------------
 
     // Each fitting algorithm requires a functor that's used by the Eigen solver. This base functor
     // contains the shared (required) definitions for Eigen.
@@ -255,5 +243,4 @@ namespace microstrain_mag_cal
 
         return FitResult(soft_iron_matrix, hard_iron_offset, true);
     }
-
 }

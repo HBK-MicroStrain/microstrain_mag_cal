@@ -5,8 +5,8 @@ target_include_directories(microstrain_mag_cal PUBLIC
 target_sources(microstrain_mag_cal PRIVATE
     "analysis.hpp"
     "analysis.cpp"
-    "microstrain_mag_cal.cpp"
-    "microstrain_mag_cal.hpp"
+    "calibration.cpp"
+    "calibration.hpp"
     "preprocessing.hpp"
     "preprocessing.cpp"
 )

@@ -18,7 +18,7 @@ FetchContent_MakeAvailable(microstrain_test)
 
 add_executable(library_unit_tests
     "analysis.unit.cpp"
-    "library.unit.cpp"
+    "calibration.unit.cpp"
     "preprocessing.unit.cpp"
 )
 
