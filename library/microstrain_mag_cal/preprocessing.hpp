@@ -45,17 +45,19 @@ namespace microstrain_mag_cal
 
     private:
         std::unordered_set<VoxelKey, VoxelKey::Hash> m_occupied_voxels{};
-        double m_voxel_size;
+        const double m_voxel_size;
     };
 
 
     class PointManager
     {
     public:
+        PointManager() = delete;
         explicit PointManager(const VoxelGrid &unique_point_grid, size_t data_size_estimate);
         explicit PointManager(const size_t data_size_estimate)
             : PointManager(VoxelGrid(VoxelGrid::DEFAULT_VOXEL_SIZE), data_size_estimate) {}
-        explicit PointManager(const VoxelGrid &unique_point_grid) : PointManager(unique_point_grid, 0) {}
+        explicit PointManager(const VoxelGrid &unique_point_grid)
+            : PointManager(unique_point_grid, 0) {}
 
         void addPoint(const std::array<float, 3> &point);
 
