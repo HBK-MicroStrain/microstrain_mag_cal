@@ -19,12 +19,15 @@ namespace microstrain_mag_cal
 
         struct Hash
         {
-            size_t operator()(const microstrain_mag_cal::VoxelKey &k) const noexcept
+            size_t operator()(const VoxelKey &k) const noexcept
             {
-                // TODO: This should be faster than alternatives for smaller datasets. Let's look into
-                //       adding a check for data that exceeds hundreds of thousands of points and switch
-                //       to a more collision-friendly implementation in that case.
-                return std::hash<int>()(k.x) ^ (std::hash<int>()(k.y) << 1) ^ (std::hash<int>()(k.z) << 2);
+                // Prime number mixing (similar to boost hash_combine)
+                size_t seed = 0;
+                seed ^= std::hash<int>()(k.x) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                seed ^= std::hash<int>()(k.y) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                seed ^= std::hash<int>()(k.z) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+
+                return seed;
             }
         };
     };
