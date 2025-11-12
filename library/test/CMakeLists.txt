@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(microstrain_test)
 
 add_executable(library_unit_tests
     "library.unit.cpp"
+    "preprocessing.unit.cpp"
 )
 
 target_link_libraries(library_unit_tests PRIVATE
