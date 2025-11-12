@@ -47,7 +47,7 @@ namespace mag_cal_core
         const std::optional<double> reference_field_strength)
     {
         // More conservative default if we don't know the field strength
-        double voxel_size = 0.015;
+        double voxel_size = microstrain_mag_cal::VoxelGrid::DEFAULT_VOXEL_SIZE;
 
         // More accurate adaptive filtering if field strength available.
         // This should give faster and more accurate fits, even if the spatial coverage is lower.

@@ -36,6 +36,8 @@ namespace microstrain_mag_cal
     class VoxelGrid
     {
     public:
+        static constexpr double DEFAULT_VOXEL_SIZE = 0.015;
+
         VoxelGrid() = delete;
         explicit VoxelGrid(const double voxel_size) : m_voxel_size(voxel_size) {}
 
@@ -50,8 +52,8 @@ namespace microstrain_mag_cal
     {
     public:
         explicit PointManager(const VoxelGrid &unique_point_grid, size_t data_size_estimate);
-        // TODO: Document - Moderate default filtering, might get better results taking into account the field strength
-        explicit PointManager(const size_t data_size_estimate) : PointManager(VoxelGrid(0.5), data_size_estimate) {}
+        explicit PointManager(const size_t data_size_estimate)
+            : PointManager(VoxelGrid(VoxelGrid::DEFAULT_VOXEL_SIZE), data_size_estimate) {}
         explicit PointManager(const VoxelGrid &unique_point_grid) : PointManager(unique_point_grid, 0) {}
 
         void addPoint(const std::array<float, 3> &point);
