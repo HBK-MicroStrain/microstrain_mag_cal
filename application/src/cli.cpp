@@ -88,7 +88,7 @@ int main(const int argc, char **argv)
 
     /*** Run the calculations ***/
 
-    const Eigen::MatrixX3d points = mag_cal_core::extractPointMatrixFromRawData(data_view);
+    const Eigen::MatrixX3d points = mag_cal_core::extractPointMatrixFromRawData(data_view, arg_field_strength);
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
     printf("Number Of Points: %lld\n\n", points.rows());
