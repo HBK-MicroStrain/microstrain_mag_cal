@@ -48,6 +48,7 @@ namespace microstrain_mag_cal
         double m_voxel_size;
     };
 
+
     class PointManager
     {
     public:
