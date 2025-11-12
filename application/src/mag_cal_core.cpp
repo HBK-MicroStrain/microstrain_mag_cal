@@ -1,6 +1,8 @@
 #include <mag_cal_core.hpp>
 
-#include <calibration.hpp>
+#include <microstrain_mag_cal/analysis.hpp>
+#include <microstrain_mag_cal/calibration.hpp>
+#include <microstrain_mag_cal/preprocessing.hpp>
 #include <mip/mip_parser.hpp>
 #include <mip/definitions/data_sensor.hpp>
 

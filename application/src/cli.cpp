@@ -5,7 +5,8 @@
 #include <mio/mmap.hpp>
 
 #include <mag_cal_core.hpp>
-#include "calibration.hpp"
+#include "microstrain_mag_cal/analysis.hpp"
+#include "microstrain_mag_cal/calibration.hpp"
 
 
 // Adds custom formatting for --help output.
