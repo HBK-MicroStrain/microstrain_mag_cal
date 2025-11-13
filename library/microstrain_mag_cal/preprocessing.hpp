@@ -16,48 +16,48 @@ namespace microstrain_mag_cal
         {
             return x == other.x && y == other.y && z == other.z;
         }
-    };
-}
 
-
-namespace std
-{
-    template<>
-    struct hash<microstrain_mag_cal::VoxelKey>
-    {
-        size_t operator()(const microstrain_mag_cal::VoxelKey &k) const noexcept
+        struct Hash
         {
-            // TODO: This should be faster than alternatives for smaller datasets. Let's look into
-            //       adding a check for data that exceeds hundreds of thousands of points and switch
-            //       to a more collision-friendly implementation in that case.
-            return hash<int>()(k.x) ^ (hash<int>()(k.y) << 1) ^ (hash<int>()(k.z) << 2);
-        }
+            size_t operator()(const VoxelKey &k) const noexcept
+            {
+                // Prime number mixing (similar to boost hash_combine)
+                size_t seed = 0;
+                seed ^= std::hash<int>()(k.x) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                seed ^= std::hash<int>()(k.y) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                seed ^= std::hash<int>()(k.z) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+
+                return seed;
+            }
+        };
     };
-}
 
 
-namespace microstrain_mag_cal
-{
     class VoxelGrid
     {
     public:
+        static constexpr double DEFAULT_VOXEL_SIZE = 0.015;
+
         VoxelGrid() = delete;
         explicit VoxelGrid(const double voxel_size) : m_voxel_size(voxel_size) {}
 
         bool isPointInUniqueVoxel(const std::array<float, 3> &point);
 
     private:
-        std::unordered_set<VoxelKey> m_occupied_voxels{};
-        double m_voxel_size;
+        std::unordered_set<VoxelKey, VoxelKey::Hash> m_occupied_voxels{};
+        const double m_voxel_size;
     };
+
 
     class PointManager
     {
     public:
+        PointManager() = delete;
         explicit PointManager(const VoxelGrid &unique_point_grid, size_t data_size_estimate);
-        // TODO: Document - Moderate default filtering, might get better results taking into account the field strength
-        explicit PointManager(const size_t data_size_estimate) : PointManager(VoxelGrid(0.5), data_size_estimate) {}
-        explicit PointManager(const VoxelGrid &unique_point_grid) : PointManager(unique_point_grid, 0) {}
+        explicit PointManager(const size_t data_size_estimate)
+            : PointManager(VoxelGrid(VoxelGrid::DEFAULT_VOXEL_SIZE), data_size_estimate) {}
+        explicit PointManager(const VoxelGrid &unique_point_grid)
+            : PointManager(unique_point_grid, 0) {}
 
         void addPoint(const std::array<float, 3> &point);
 

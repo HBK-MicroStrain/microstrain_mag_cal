@@ -21,13 +21,6 @@ namespace microstrain_mag_cal
     Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points);
     double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
 
-    FitResult fitSphere(
-        const Eigen::MatrixX3d &points,
-        double field_strength,
-        const Eigen::RowVector3d &initial_offset);
-
-    FitResult fitEllipsoid(
-        const Eigen::MatrixX3d &points,
-        double field_strength,
-        const Eigen::RowVector3d &initial_offset);
+    FitResult fitSphere(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
+    FitResult fitEllipsoid(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
 }
