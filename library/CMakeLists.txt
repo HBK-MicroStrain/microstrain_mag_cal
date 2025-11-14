@@ -25,6 +25,16 @@ project(microstrain_mag_cal
     VERSION 0.0.0
 )
 
+# Suppress unused variable warnings for Python paths. This is to counteract the annoying
+# behavior of automatically passing the Python path variables by some IDEs. We aren't
+# using Python as part of the project, only side scripts, so the variables aren't needed.
+if(DEFINED Python3_EXECUTABLE)
+    # Mark as used
+endif()
+if(DEFINED Python_EXECUTABLE)
+    # Mark as used
+endif()
+
 add_library(microstrain_mag_cal)
 
 target_include_directories(microstrain_mag_cal PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
