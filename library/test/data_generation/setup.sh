@@ -17,7 +17,7 @@ fi
 echo "Found Python: $($PYTHON --version)"
 
 # Check if PDM is installed
-if ! (command -v pdm &> /dev/null) && ! ($PYTHON -m pdm --version &> /dev/null); then
+if ! (pdm --version &> /dev/null) && ! ($PYTHON -m pdm --version &> /dev/null); then
     echo "PDM not found, installing it..."
     $PYTHON -m pip install --user pdm --no-warn-script-location
 fi

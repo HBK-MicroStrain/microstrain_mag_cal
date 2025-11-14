@@ -1,19 +1,11 @@
 [project]
 name = "data_generation"
-version = "0.1.0"
-description = "Default template for PDM package"
-authors = [
-    {name = "", email = "\"\""},
-]
 dependencies = ["numpy>=2.3.4"]
 requires-python = ">=3.11"
 readme = "README.md"
-license = {text = "None"}
-
 
 [tool.pdm]
 distribution = false
-
 
 [tool.pdm.scripts]
 generate_noisy_data = "python scripts/generate_noisy_data.py"
