@@ -23,7 +23,7 @@ if ! (pdm --version &> /dev/null) && ! ($PYTHON -m pdm --version &> /dev/null); 
 fi
 
 # Install dependencies
-echo "Installing dependencies..."
+echo "Installing dependencies (if applicable)..."
 if (command -v pdm &> /dev/null); then
     pdm install
 else
