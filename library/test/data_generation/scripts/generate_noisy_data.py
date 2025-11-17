@@ -12,19 +12,25 @@ import matplotlib.pyplot as plt
 #   * https://www.statisticshowto.com/spherical-coordinates/
 #
 # If the resources go out of date, any mathematical text will do. Just make sure it has the
-# coordinate system defined as: (r, θ, φ) (i.e. uses the Physics convention for phi and theta).
-#
+# coordinate system defined as:
+#   (r, θ, φ), where:
+#       * r --> Radial distance
+#       * θ --> Polar angle
+#       * φ --> Azimuthal angle
+
 # Also make sure the following are satisfied:
 #   * r >= 0
 #   * 0 <= θ <= π
 #   * 0 <= φ <= 2π
+#
+# In other words, this script uses the Physics convention for spherical coordinates.
 
 
 # Generate evenly-spaced spherical coordinates for points on the unit sphere.
 radius = 1
 
 theta_stop = 2 * np.pi
-points_theta = np.linspace(0, theta_stop, )  # Polar angles for spherical points [0, π]
+points_theta = np.linspace(0, theta_stop, )  # Polar angles for spherical points
 
 phi_stop = 2 * np.pi
 points_phi   =   # Azimuthal angles for spherical points [0, 2π]
