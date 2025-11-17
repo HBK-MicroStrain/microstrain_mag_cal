@@ -29,9 +29,10 @@ import matplotlib.pyplot as plt
 
 
 # Generate evenly-spaced spherical coordinates for points on the unit sphere.
+NUM_POINTS = 50
 radius = 1
-points_theta = np.linspace(0, np.pi, 50)
-points_phi = np.linspace(0, 2 * np.pi, 100)
+points_theta = np.linspace(0, np.pi, int(NUM_POINTS / 2))
+points_phi = np.linspace(0, 2 * np.pi, NUM_POINTS)
 
 # Convert the spherical point coordinates to cartesian (x, y, z)
 theta_grid, phi_grid = np.meshgrid(points_theta, points_phi, indexing='ij')
@@ -42,12 +43,13 @@ points_z = radius * np.cos(theta_grid)
 # Arrange the points in an array of (x, y, z) points
 points = np.stack([points_x, points_y, points_z], axis=2)
 
+# TODO: Add known error to cartesian points
+
+# TODO: Add error data to plot to make sure it looks like an ellipsoid
+# TODO: Ensure proper proportions are preserved for both shapes on the plot
 # Visualize the data to make sure it looks like a sphere
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(points[:, 0], points[:, 1], points[:, 2])
+ax.scatter(points[:, :, 0], points[:, :, 1], points[:, :, 2])
+ax.set_box_aspect([1,1,1])
 plt.show()
-
-# TODO: Add known error to cartesian points
-
-# TODO: Visualize data and make sure it looks like an ellipsoid
