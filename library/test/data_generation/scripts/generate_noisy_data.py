@@ -3,6 +3,38 @@
     points on a unit sphere.
 """
 
+# --------------------------------------------------------------
+# Set Tcl/Tk paths dynamically for cross-developer compatibility
+#
+# For some reason the paths for TKinter can't be found when running in a virtual environment.
+# This is a quick (hopefully cross-platform workaround) to fix that.
+
+import os
+import sys
+from pathlib import Path
+
+# Find base Python installation (not venv)
+if hasattr(sys, 'base_prefix'):
+    # sys.base_prefix points to the actual Python installation
+    python_root = Path(sys.base_prefix)
+else:
+    # Fallback for older Python versions
+    python_root = Path(sys.prefix)
+
+tcl_dir = python_root / 'tcl'
+
+tcl_subdirs = list(tcl_dir.glob('tcl8.*'))
+tk_subdirs = list(tcl_dir.glob('tk8.*'))
+
+if tcl_subdirs and tk_subdirs:
+    os.environ['TCL_LIBRARY'] = str(tcl_subdirs[0])
+    os.environ['TK_LIBRARY'] = str(tk_subdirs[0])
+else:
+    print("WARNING: Tcl/Tk subdirectories not found!")
+    print(f"Searched in: {tcl_dir}")
+
+# --------------------------------------------------------------
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -38,9 +70,13 @@ points_y = radius * np.sin(theta_grid) * np.sin(phi_grid)
 points_z = radius * np.cos(theta_grid)
 
 # Arrange the points in an array of (x, y, z) points
-points = np.stack([points_x, points_y, points_z], axis=-1)
+points = np.stack([points_x, points_y, points_z], axis=2)
 
-# TODO: Visualize data and make sure it looks like a sphere
+# Visualize the data to make sure it looks like a sphere
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(points[:, 0], points[:, 1], points[:, 2])
+plt.show()
 
 # TODO: Add known error to cartesian points
 
