@@ -28,12 +28,8 @@ import matplotlib.pyplot as plt
 
 # Generate evenly-spaced spherical coordinates for points on the unit sphere.
 radius = 1
-
-theta_stop = 2 * np.pi
-points_theta = np.linspace(0, theta_stop, )  # Polar angles for spherical points
-
-phi_stop = 2 * np.pi
-points_phi   =   # Azimuthal angles for spherical points [0, 2π]
+points_theta = np.linspace(0, np.pi, 100)
+points_phi = np.linspace(0, 2 * np.pi, 100)
 
 # TODO: Convert the spherical coordinates to cartesian (x, y, z) and create a numpy array
 #       from them
