@@ -2,38 +2,8 @@
     This script generates distorted ellipsoid points with known error from "ideal"
     points on a unit sphere.
 """
-
-# --------------------------------------------------------------
-# Set Tcl/Tk paths dynamically for cross-developer compatibility
-#
-# For some reason the paths for TKinter can't be found when running in a virtual environment.
-# This is a quick (hopefully cross-platform workaround) to fix that.
-
-import os
-import sys
-from pathlib import Path
-
-# Find base Python installation (not venv)
-if hasattr(sys, 'base_prefix'):
-    # sys.base_prefix points to the actual Python installation
-    python_root = Path(sys.base_prefix)
-else:
-    # Fallback for older Python versions
-    python_root = Path(sys.prefix)
-
-tcl_dir = python_root / 'tcl'
-
-tcl_subdirs = list(tcl_dir.glob('tcl8.*'))
-tk_subdirs = list(tcl_dir.glob('tk8.*'))
-
-if tcl_subdirs and tk_subdirs:
-    os.environ['TCL_LIBRARY'] = str(tcl_subdirs[0])
-    os.environ['TK_LIBRARY'] = str(tk_subdirs[0])
-else:
-    print("WARNING: Tcl/Tk subdirectories not found!")
-    print(f"Searched in: {tcl_dir}")
-
-# --------------------------------------------------------------
+import tk_setup
+tk_setup.setup_tkinter()
 
 import numpy as np
 import matplotlib.pyplot as plt
