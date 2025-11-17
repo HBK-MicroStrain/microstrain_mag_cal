@@ -32,15 +32,13 @@ points_theta = np.linspace(0, np.pi, 50)
 points_phi = np.linspace(0, 2 * np.pi, 100)
 
 # Convert the spherical point coordinates to cartesian (x, y, z)
-points = []
-for i in range(points_theta.size):
-    for j in range(points_phi.size):
-        x = radius * np.sin(points_theta[i]) * np.cos(points_phi[j])
-        y = radius * np.sin(points_theta[i]) * np.sin(points_phi[j])
-        z = radius * np.cos(points_theta[i])
-        points.append(np.array(points))
+theta_grid, phi_grid = np.meshgrid(points_theta, points_phi, indexing='ij')
+points_x = radius * np.sin(theta_grid) * np.cos(phi_grid)
+points_y = radius * np.sin(theta_grid) * np.sin(phi_grid)
+points_z = radius * np.cos(theta_grid)
 
-points_array = np.array(points)
+# Arrange the points in an array of (x, y, z) points
+points = np.stack([points_x, points_y, points_z], axis=-1)
 
 # TODO: Visualize data and make sure it looks like a sphere
 
