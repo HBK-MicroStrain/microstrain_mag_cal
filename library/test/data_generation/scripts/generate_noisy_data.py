@@ -28,11 +28,19 @@ import matplotlib.pyplot as plt
 
 # Generate evenly-spaced spherical coordinates for points on the unit sphere.
 radius = 1
-points_theta = np.linspace(0, np.pi, 100)
+points_theta = np.linspace(0, np.pi, 50)
 points_phi = np.linspace(0, 2 * np.pi, 100)
 
-# TODO: Convert the spherical coordinates to cartesian (x, y, z) and create a numpy array
-#       from them
+# Convert the spherical point coordinates to cartesian (x, y, z)
+points = []
+for i in range(points_theta.size):
+    for j in range(points_phi.size):
+        x = radius * np.sin(points_theta[i]) * np.cos(points_phi[j])
+        y = radius * np.sin(points_theta[i]) * np.sin(points_phi[j])
+        z = radius * np.cos(points_theta[i])
+        points.append(np.array(points))
+
+points_array = np.array(points)
 
 # TODO: Visualize data and make sure it looks like a sphere
 
