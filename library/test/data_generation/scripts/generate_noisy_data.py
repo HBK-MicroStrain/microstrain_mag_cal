@@ -1,6 +1,7 @@
 """
-    This script generates distorted ellipsoid points with known error from "ideal"
-    points on a unit sphere.
+    This script generates distorted points with known error from clean points on a unit sphere.
+
+    It plots the original data and the data with error for comparison.
 """
 import tk_setup
 tk_setup.setup_tkinter()
@@ -70,6 +71,8 @@ np.fill_diagonal(error_matrix, [1.1, 2.2, 3.3])  # Add scale-factor error
 # https://numpy.org/doc/stable/user/basics.broadcasting.html
 #
 points_with_error = np.einsum('ij,...j->...i', error_matrix, points) + bias
+
+# Write the points to output file so they can be extracted to
 
 # Visualize the data. The original data should look like a sphere, while the data with error should
 # look like an ellipsoid.
