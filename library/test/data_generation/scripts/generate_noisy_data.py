@@ -51,9 +51,9 @@ points = np.stack([points_x, points_y, points_z], axis=2)
 
 # Add known error (reference these when writing automated tests).
 # Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC8401862/#sec2-sensors-21-05288
-bias = np.array([1.1, 1.2, 1.3])
-error_matrix = np.full((3, 3), 0.4)   # Fill with uniform cross-coupling error
-np.fill_diagonal(error_matrix, [1.1, 1.2, 1.3])  # Add scale-factor error
+bias = np.array([2.1, 2.2, 2.3])
+error_matrix = np.full((3, 3), 0.5)   # Fill with uniform cross-coupling error
+np.fill_diagonal(error_matrix, [1.1, 2.2, 3.3])  # Add scale-factor error
 
 # Einstein summation is applying the error to each (x, y, z) point in the tensor. This is a nice
 # trick to apply the error to each point without having to flatten the tensor to a Nx3 matrix
