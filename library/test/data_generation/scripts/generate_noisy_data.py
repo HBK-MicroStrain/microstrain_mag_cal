@@ -46,11 +46,12 @@ points_z = radius * np.cos(theta_grid)
 #
 # This allows us to query a point (x, y, z) for each pair by indexing [i, j, c],
 #   where i = theta, j = phi, c = coordinate (x, y, or z).
+#
 points = np.stack([points_x, points_y, points_z], axis=2)
 
 # Add known error (reference these when writing automated tests).
 # Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC8401862/#sec2-sensors-21-05288
-bias = np.array([0.1, 0.2, 0.3])
+bias = np.array([1.1, 1.2, 1.3])
 error_matrix = np.full((3, 3), 0.4)   # Fill with uniform cross-coupling error
 np.fill_diagonal(error_matrix, [1.1, 1.2, 1.3])  # Add scale-factor error
 
@@ -64,8 +65,11 @@ np.fill_diagonal(error_matrix, [1.1, 1.2, 1.3])  # Add scale-factor error
 #   *   ij ---> i = row, j = col in error matrix
 #   * ...j ---> j = coordinate grid (x: j = 1, y: j = 2, z: j = 3)
 #   * ...i ---> Result has shape (..., i), sum over j
-# TODO: Add bias
-points_with_error = np.einsum('ij,...j->...i', error_matrix, points)
+#
+# Adding the bias takes advantage of Numpy's broadcasting system:
+# https://numpy.org/doc/stable/user/basics.broadcasting.html
+#
+points_with_error = np.einsum('ij,...j->...i', error_matrix, points) + bias
 
 # TODO: Ensure proper proportions are preserved for both shapes on the plot
 # Visualize the data to make sure it looks like a sphere
