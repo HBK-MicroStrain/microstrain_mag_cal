@@ -71,17 +71,18 @@ np.fill_diagonal(error_matrix, [1.1, 1.2, 1.3])  # Add scale-factor error
 #
 points_with_error = np.einsum('ij,...j->...i', error_matrix, points) + bias
 
-# TODO: Ensure proper proportions are preserved for both shapes on the plot
-# Visualize the data to make sure it looks like a sphere
+# Visualize the data. The original data should look like a sphere, while the data with error should
+# look like an ellipsoid.
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(
     points[:, :, 0], points[:, :, 1], points[:, :, 2],
     label='Original',
-    color='green',)
+    color='green')
 ax.scatter(
     points_with_error[:, :, 0], points_with_error[:, :, 1], points_with_error[:, :, 2],
     label='Error',
-    color='red',)
+    color='red')
+ax.set_aspect('equal')
 ax.legend()
 plt.show()
