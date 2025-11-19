@@ -25,9 +25,9 @@ fi
 # Install dependencies
 echo "Installing dependencies (if applicable)..."
 if (command -v pdm &> /dev/null); then
-    pdm install
+    pdm sync
 else
-    $PYTHON -m pdm install
+    $PYTHON -m pdm sync
 fi
 
 echo ""
