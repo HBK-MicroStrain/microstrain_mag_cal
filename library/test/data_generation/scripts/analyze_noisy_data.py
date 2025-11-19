@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 from generate_clean_data import generate_clean_magnetometer_data
 
 
-# Script parameters
 # Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC8401862/#sec2-sensors-21-05288
 RADIUS          = 1
 NUM_COORDINATES = 50

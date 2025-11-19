@@ -7,6 +7,8 @@
     If run as a script, it writes the data to a C++ header file as an object that can be used by
     test fixtures.
 """
+import pathlib
+
 import numpy as np
 
 
@@ -47,6 +49,43 @@ def generate_clean_magnetometer_data(num_coordinates, radius=1):
     #
     return np.stack([points_x, points_y, points_z], axis=2)
 
+def save_data_as_cpp_header(points_flattened, filepath, radius=1):
+    # TODO: Generate C++ std::array format of data. Should be 2D to 1D projection
+    with open(filepath, "w") as file:
+        file.write(f"/* \n")
+        file.write(f" * Auto-generated test data - do not edit manually.\n")
+        file.write(f" * Generated from spherical coordinates on sphere with radius: {radius}\n")
+        file.write(f" */\n")
+        file.write(f"#pragma once\n")
+        file.write(f"\n")
+
+        file.write(f"#include <array>")
+        file.write(f"\n")
+        file.write(f"\n")
+
+        file.write(f"namespace fixture\n")
+        file.write(f"{{\n")
+
+        rows = points_flattened.shape[0]
+        cols = points_flattened.shape[1]
+        file.write(f"    static constexpr std::array<double, {rows} * {cols}> raw_data {{\n")
+        file.write("    };\n")
+
+        file.write("}\n")
+
 
 if __name__ == "__main__":
-    points = generate_clean_magnetometer_data(50)
+    # Reference: See analysis script
+    NUM_COORDINATES = 50
+    RADIUS          = 1
+    FILENAME        = "clean_data.hpp"
+
+
+    points = generate_clean_magnetometer_data(NUM_COORDINATES, radius=RADIUS)
+    points_flattened = points.reshape(-1, 3)
+
+    script_dir = pathlib.Path(__file__).parent.resolve()
+    data_dir = script_dir.parent
+    filepath = data_dir / FILENAME
+
+    save_data_as_cpp_header(points_flattened, filepath, radius=RADIUS)
