@@ -29,13 +29,13 @@ python -m pdm --version
 You should now be all setup!
 
 ## Generating data for tests
-The process for generating data for tests is as follows:
+The process for generating test data is as follows:
 ```mermaid
 graph TD
     A(Start) --> B[Define test behavior]
     B --> C[Exploratory data analysis]
     C --> D[Generate clean data]
-    D --> E[Set up test fixture]
+    D --> E["Set up test fixture(s)"]
     E --> F["Call fixture in test(s)"]
     F --> B
 ```
