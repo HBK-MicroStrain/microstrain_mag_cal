@@ -36,7 +36,7 @@ graph TD
     B --> C[Exploratory data analysis]
     C --> D[Generate clean data]
     D --> E[Set up test fixture]
-    E --> F[Call fixture in test(s)]
+    E --> F["Call fixture in test(s)"]
     F --> B
 ```
 
