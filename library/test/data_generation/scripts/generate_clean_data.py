@@ -74,8 +74,7 @@ def save_data_as_cpp_header(points_flattened, filepath, radius=1):
             file.write(f"        {row[0]}, {row[1]}, {row[2]}{comma}\n")
         file.write(f"    }};\n")
         file.write(f"\n")
-        # TODO: Change to Eigen mapping
-        file.write(f"    static const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor> CLEAN_DATA(raw_data.data());\n")
+        file.write(f"    static const Eigen::Map<const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor>> CLEAN_DATA(raw_data.data());\n")
 
         file.write("}\n")
 

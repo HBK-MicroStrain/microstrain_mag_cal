@@ -1263,5 +1263,5 @@ namespace fixture
         1.2246467991473532e-16, -2.999519565323715e-32, -1.0
     };
 
-    static const Eigen::Matrix<double, 1250, 3, Eigen::RowMajor> CLEAN_DATA(raw_data.data());
+    static const Eigen::Map<const Eigen::Matrix<double, 1250, 3, Eigen::RowMajor>> CLEAN_DATA(raw_data.data());
 }
