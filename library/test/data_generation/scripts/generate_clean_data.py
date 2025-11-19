@@ -57,25 +57,28 @@ def save_data_as_cpp_header(points_flattened, filepath, radius=1):
         file.write(f" */\n")
         file.write(f"#pragma once\n")
         file.write(f"\n")
-
         file.write(f"#include <array>\n")
         file.write(f"\n")
         file.write(f"#include <Eigen/Dense>\n")
         file.write(f"\n")
-
         file.write(f"namespace fixture\n")
         file.write(f"{{\n")
 
         rows = points_flattened.shape[0]
         cols = points_flattened.shape[1]
+
         file.write(f"    static constexpr std::array raw_data {{\n")
         for i, row in enumerate(points_flattened):
             comma = "," if i < rows - 1 else ""
-            file.write(f"        {row[0]}, {row[1]}, {row[2]}{comma}\n")
+            x, y, z = row
+            # IEEE double holds ~15 digits of precision.
+            # Reference: https://en.wikipedia.org/wiki/Double-precision_floating-point_format#IEEE_754_double-precision_binary_floating-point_format:_binary64
+            # Use width specifier to accommodate sign + decimal point + digits + exponent
+            file.write(f"        {x:22.15e}, {y:23.15e}, {z:23.15e}{comma}\n")
         file.write(f"    }};\n")
         file.write(f"\n")
-        file.write(f"    static const Eigen::Map<const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor>> CLEAN_DATA(raw_data.data());\n")
 
+        file.write(f"    static const Eigen::Map<const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor>> CLEAN_DATA(raw_data.data());\n")
         file.write("}\n")
 
 
