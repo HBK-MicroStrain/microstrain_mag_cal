@@ -92,8 +92,11 @@ if __name__ == "__main__":
     points = generate_clean_magnetometer_data(NUM_COORDINATES, radius=RADIUS)
     points_flattened = points.reshape(-1, 3)
 
-    script_dir = pathlib.Path(__file__).parent.resolve()
-    data_dir = script_dir.parent
-    filepath = data_dir / FILENAME
+    test_dir = (pathlib.Path(__file__)
+        .parent  # Script directory
+        .parent  # Data directory
+        .parent  # Test directory
+        .resolve())
+    filepath = test_dir / FILENAME
 
     save_data_as_cpp_header(points_flattened, filepath, radius=RADIUS)
