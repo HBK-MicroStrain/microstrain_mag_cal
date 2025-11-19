@@ -3,6 +3,26 @@
 #include "clean_data.hpp"
 
 
+namespace fixture
+{
+    // Creates a matrix of synthetic magnetometer data with the given error coefficients.
+    // The matrix is created using the clean data matrix generated from the script.
+    //
+    // Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC8401862/#sec2-sensors-21-05288
+    //
+    Eigen::MatrixX3d getMagCalDataWithError(
+        const Eigen::Vector3d& bias,
+        const Eigen::Vector3d& scale_factor,
+        const double cross_coupling)
+    {
+        Eigen::MatrixX3d error_matrix = Eigen::Matrix<double, 3, 3>::Constant(cross_coupling);
+        error_matrix.diagonal() = scale_factor;
+
+        return (CLEAN_DATA * error_matrix).rowwise() + bias.transpose();
+    }
+}
+
+
 // Data points taken from a real InertialConnect data capture. All expected values for tests are
 // taken from InertialConnect based off this input data.
 static constexpr std::array<double, 20 * 3> raw_points = {
