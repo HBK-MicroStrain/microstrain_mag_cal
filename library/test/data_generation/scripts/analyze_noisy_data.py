@@ -1,7 +1,10 @@
 """
-    This script generates distorted points with known error from clean points on a unit sphere.
+    This script generates distorted points with known error from clean magnetometer data.
 
     It plots the original data and the data with error for comparison.
+
+    Test fixtures are responsible for applying this error, this script has no effect on them.
+    Instead, use this script for exploratory data analysis.
 """
 import tk_setup
 tk_setup.setup_tkinter()
@@ -9,16 +12,24 @@ tk_setup.setup_tkinter()
 import numpy as np
 import matplotlib.pyplot as plt
 
+from generate_clean_data import generate_clean_magnetometer_data
 
 
-
-# Add known error (reference these when writing automated tests).
+# Script parameters
 # Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC8401862/#sec2-sensors-21-05288
-bias = np.array([2.1, 2.2, 2.3])
-error_matrix = np.full((3, 3), 0.5)   # Fill with uniform cross-coupling error
-np.fill_diagonal(error_matrix, [1.1, 2.2, 3.3])  # Add scale-factor error
+RADIUS          = 1
+NUM_COORDINATES = 50
+BIAS            = np.array([2.1, 2.2, 2.3])
+SCALE_FACTOR    = [1.1, 2.2, 3.3]
+CROSS_COUPLING  = 0.5  # Currently uniform. Refactor for individual cross-coupling.
 
-# Einstein summation is applying the error to each (x, y, z) point in the tensor. This is a nice
+
+points = generate_clean_magnetometer_data(num_coordinates=NUM_COORDINATES, radius=RADIUS)
+
+error_matrix = np.full((3, 3), CROSS_COUPLING)   # Fill with uniform cross-coupling error
+np.fill_diagonal(error_matrix, SCALE_FACTOR)            # Add scale-factor error
+
+# Einstein summation applies the error to each (x, y, z) point in the tensor. This is a nice
 # trick to apply the error to each point without having to flatten the tensor to a Nx3 matrix
 # and transpose it.
 #
@@ -32,10 +43,9 @@ np.fill_diagonal(error_matrix, [1.1, 2.2, 3.3])  # Add scale-factor error
 # Adding the bias takes advantage of Numpy's broadcasting system:
 # https://numpy.org/doc/stable/user/basics.broadcasting.html
 #
-points_with_error = np.einsum('ij,...j->...i', error_matrix, points) + bias
+points_with_error = np.einsum('ij,...j->...i', error_matrix, points) + BIAS
 
-# Visualize the data. The original data should look like a sphere, while the data with error should
-# look like an ellipsoid.
+# Data visualization
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(
@@ -49,12 +59,3 @@ ax.scatter(
 ax.set_aspect('equal')
 ax.legend()
 plt.show()
-
-np.set_printoptions(threshold=np.inf, precision=6, suppress=True)
-print("Points:")
-print(points.reshape(-1, 3))
-
-print("\n-----------------------------------------------------------\n")
-
-print("Points with error:")
-print(points.reshape(-1, 3))

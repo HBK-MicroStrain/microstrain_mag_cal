@@ -6,6 +6,3 @@ readme = "README.md"
 
 [tool.pdm]
 distribution = false
-
-[tool.pdm.scripts]
-generate_noisy_data = "python scripts/generate_noisy_data.py"
