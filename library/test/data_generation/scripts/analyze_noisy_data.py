@@ -48,11 +48,11 @@ points_with_error = np.einsum('ij,...j->...i', error_matrix, points) + BIAS
 # Data visualization
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(
+ax.scatter3D(
     points[:, :, 0], points[:, :, 1], points[:, :, 2],
     label='Original',
     color='green')
-ax.scatter(
+ax.scatter3D(
     points_with_error[:, :, 0], points_with_error[:, :, 1], points_with_error[:, :, 2],
     label='Error',
     color='red')
