@@ -13,7 +13,7 @@ namespace microstrain_mag_cal
               succeeded(succeeded) {}
 
         const Eigen::Matrix<double, 3, 3> soft_iron_matrix;
-        const Eigen::Vector3d hard_iron_offset;
+        const Eigen::RowVector3d hard_iron_offset;
         const bool succeeded;
     };
 

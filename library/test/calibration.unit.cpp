@@ -184,17 +184,18 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_produces_valid_calibration_paramet
     CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.01));
     CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.01));
     CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.01));
+    // Corrected points must lie on a sphere of the correct reference strength (all have same magnitude).
+    Eigen::MatrixX3d corrected_data =
+        (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
+    Eigen::VectorXd norms = corrected_data.rowwise().norm();
+    const double max_error = (norms.array() - field_strength).abs().maxCoeff();
+    constexpr double tolerance = 0.01;
+    CHECK(max_error < tolerance * field_strength);
 }
 
 
     // TODO: Move to separate test
     /*
-    // Property 4: Corrected data forms unit sphere
-    // TODO: Flip terms to have soft iron in front, reference to paper on correction application
-    Eigen::MatrixX3d corrected = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
-    for (int i = 0; i < corrected.rows(); ++i) {
-        CHECK(corrected.row(i).norm() == doctest::Approx(field_strength).epsilon(0.01));
-    }
     // Property 5: Correction inverts distortion
     Eigen::Matrix3d distortion_matrix = Eigen::Matrix3d::Constant(cross_coupling);
     distortion_matrix.diagonal() = scale;
