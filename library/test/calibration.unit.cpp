@@ -18,9 +18,18 @@ namespace fixture
     class MagCalDataBuilder
     {
     public:
+        explicit MagCalDataBuilder(const Eigen::MatrixX3d &clean_data) : m_clean_data(clean_data) {}
+
         MagCalDataBuilder addBias(const Eigen::RowVector3d &bias)
         {
             m_bias = bias;
+
+            return *this;
+        }
+
+        MagCalDataBuilder addUniformScaleFactor(const double scale_factor)
+        {
+            m_error_matrix.diagonal() = Eigen::Vector3d(scale_factor, scale_factor, scale_factor);
 
             return *this;
         }
@@ -46,13 +55,12 @@ namespace fixture
         }
 
     private:
-        Eigen::MatrixX3d m_clean_data = CLEAN_DATA;
+        const Eigen::MatrixX3d& m_clean_data;
 
         Eigen::RowVector3d m_bias{0.0, 0.0, 0.0};
         Eigen::Matrix<double, 3, 3> m_error_matrix = Eigen::Matrix<double, 3, 3>::Identity();
     };
 }
-
 
 
 // Data points taken from a real InertialConnect data capture. All expected values for tests are
@@ -125,11 +133,11 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrects_uniform_scaling")
+MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_provides_correction_matrix")
 {
-    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder()
+    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
         .addBias({2.1, 2.2, 2.3})
-        .addScaleFactor({1.5, 1.5, 1.5})
+        .addUniformScaleFactor(1.5)
         .applyError();
     constexpr double field_strength = 1;
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(data_with_error);
@@ -160,7 +168,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrects_uniform_scaling")
 
 MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
 {
-    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder()
+    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
         .addBias({2.1, 2.2, 2.3})
         .addScaleFactor({1.1, 2.2, 3.3})
         .addUniformCrossCoupling(0.5)
