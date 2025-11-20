@@ -168,7 +168,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_provides_correction_matrix")
     CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
+MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_produces_valid_calibration_parameters")
 {
     const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
         .addBias({2.1, 2.2, 2.3})
@@ -179,6 +179,37 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
+
+    // Soft-iron matrix is invertible (positive definite), and thus a physically meaningful transformation.
+    Eigen::Vector3d eigenvalues = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>(result.soft_iron_matrix).eigenvalues();
+    CHECK(eigenvalues(0) > 0);
+    CHECK(eigenvalues(1) > 0);
+    CHECK(eigenvalues(2) > 0);
+    // Hard-iron offset is extracted
+    CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.01));
+    CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.01));
+    CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.01));
+}
+
+
+    // TODO: Move to separate test
+    /*
+    // Property 4: Corrected data forms unit sphere
+    // TODO: Flip terms to have soft iron in front, reference to paper on correction application
+    Eigen::MatrixX3d corrected = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
+    for (int i = 0; i < corrected.rows(); ++i) {
+        CHECK(corrected.row(i).norm() == doctest::Approx(field_strength).epsilon(0.01));
+    }
+    // Property 5: Correction inverts distortion
+    Eigen::Matrix3d distortion_matrix = Eigen::Matrix3d::Constant(cross_coupling);
+    distortion_matrix.diagonal() = scale;
+    Eigen::Matrix3d product = result.soft_iron_matrix * distortion_matrix;
+
+    // Should be close to identity
+    Eigen::Matrix3d identity = Eigen::Matrix3d::Identity();
+    CHECK((product - identity).norm() < 0.01);
+    */
+
 
     /*
     REQUIRE(result.soft_iron_matrix.rows() == 3);
@@ -198,4 +229,3 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
     CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.001));
     CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.001));
 */
-}
