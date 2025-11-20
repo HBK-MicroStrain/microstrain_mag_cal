@@ -203,34 +203,21 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
     CHECK(norms.maxCoeff() == doctest::Approx(field_strength).epsilon(0.01));
 }
 
-// TODO: Move to separate test
-    /*
-    // Property 5: Correction inverts distortion
-    Eigen::Matrix3d distortion_matrix = Eigen::Matrix3d::Constant(cross_coupling);
-    distortion_matrix.diagonal() = scale;
-    Eigen::Matrix3d product = result.soft_iron_matrix * distortion_matrix;
+MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_soft_iron_matrix_that_inverts_the_distortion_matrix")
+{
+    const Eigen::Vector3d scale_factor(1.1, 2.2, 3.3);
+    constexpr double cross_coupling = 0.5;
+    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
+        .addBias({2.1, 2.2, 2.3})
+        .addScaleFactor(scale_factor)
+        .addUniformCrossCoupling(cross_coupling)
+        .applyError();
+    constexpr double field_strength = 1;
+    const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    // Should be close to identity
-    Eigen::Matrix3d identity = Eigen::Matrix3d::Identity();
-    CHECK((product - identity).norm() < 0.01);
-    */
+    const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
-
-    /*
-    REQUIRE(result.soft_iron_matrix.rows() == 3);
-    REQUIRE(result.soft_iron_matrix.cols() == 3);
-
-    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(1.1).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0.5).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(0.5).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 0) == doctest::Approx(0.5).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(2.2).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 2) == doctest::Approx(0.5).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(2, 0) == doctest::Approx(0.5).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(2, 1) == doctest::Approx(0.5).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(2, 2) == doctest::Approx(3.3).epsilon(0.001));
-
-    CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.001));
-    CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.001));
-    CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.001));
-*/
+    Eigen::Matrix<double, 3, 3> distortion_matrix = Eigen::Matrix<double, 3, 3>::Constant(cross_coupling);
+    distortion_matrix.diagonal() = scale_factor;
+    CHECK((result.soft_iron_matrix * distortion_matrix - Eigen::Matrix3d::Identity()).norm() < 0.01);
+}
