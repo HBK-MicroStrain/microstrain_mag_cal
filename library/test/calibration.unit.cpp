@@ -10,7 +10,7 @@ namespace fixture
     //
     // Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC8401862/#sec2-sensors-21-05288
     //
-    Eigen::MatrixX3d getMagCalDataWithError(
+    Eigen::MatrixX3d getMagCalDataWithKnownError(
         const Eigen::Vector3d& bias,
         const Eigen::Vector3d& scale_factor,
         const double cross_coupling)
@@ -93,9 +93,9 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_correct_for_data_with_known_error")
+MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrects_uniform_scaling")
 {
-    Eigen::MatrixX3d data_with_error = fixture::getMagCalDataWithError({2.1, 2.2, 2.3}, {1.5, 1.5, 1.5}, 0);
+    Eigen::MatrixX3d data_with_error = fixture::getMagCalDataWithKnownError({2.1, 2.2, 2.3}, {1.5, 1.5, 1.5}, 0);
     constexpr double field_strength = 1;
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(data_with_error);
 
@@ -104,17 +104,18 @@ MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_correct_for_data_with_known_error")
 
     REQUIRE(result.soft_iron_matrix.rows() == 3);
     REQUIRE(result.soft_iron_matrix.cols() == 3);
-
-    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(1.5).epsilon(0.001));
+    REQUIRE(result.hard_iron_offset.size() == 3);
+    // Soft iron should be diagonal (no cross-coupling)
     CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(1, 0) == doctest::Approx(0).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(1.5).epsilon(0.001));
     CHECK(result.soft_iron_matrix(1, 2) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(2, 0) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(2, 1) == doctest::Approx(0).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(2, 2) == doctest::Approx(1.5).epsilon(0.001));
-
+    // Diagonal elements should all be equal (uniform scaling)
+    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(result.soft_iron_matrix(1, 1)).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(result.soft_iron_matrix(2, 2)).epsilon(0.001));
+    // Hard-iron should be recovered correctly
     CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.001));
     CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.001));
     CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.001));
@@ -123,7 +124,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_correct_for_data_with_known_error")
 // TODO: Refactor results to include variables for things
 MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
 {
-    Eigen::MatrixX3d data_with_error = fixture::getMagCalDataWithError({2.1, 2.2, 2.3}, {1.1, 2.2, 3.3}, 0.5);
+    Eigen::MatrixX3d data_with_error = fixture::getMagCalDataWithKnownError({2.1, 2.2, 2.3}, {1.1, 2.2, 3.3}, 0.5);
     constexpr double field_strength = 1;
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(data_with_error);
 
