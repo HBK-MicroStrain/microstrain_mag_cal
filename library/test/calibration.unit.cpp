@@ -2,6 +2,8 @@
 #include <microstrain_test/microstrain_test.hpp>
 #include "clean_data.hpp"
 
+using namespace microstrain_mag_cal;
+
 
 namespace fixture
 {
@@ -95,7 +97,7 @@ MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_handles_no_d
     Eigen::MatrixX3d empty_matrix;
     empty_matrix.resize(0, 3);
 
-    Eigen::RowVector3d result = microstrain_mag_cal::estimateInitialHardIronOffset(empty_matrix);
+    Eigen::RowVector3d result = estimateInitialHardIronOffset(empty_matrix);
 
     REQUIRE(result.cols() == 3);
     CHECK(result(0) == doctest::Approx(0.0).epsilon(0.001));
@@ -105,7 +107,7 @@ MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_handles_no_d
 
 MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_is_near_the_data_center")
 {
-    Eigen::RowVector3d result = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
+    Eigen::RowVector3d result = estimateInitialHardIronOffset(CHECK_POINTS);
 
     REQUIRE(result.cols() == 3);
     CHECK(result(0) == doctest::Approx(-0.161364).epsilon(0.001));
@@ -117,18 +119,18 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")
 {
     Eigen::MatrixX3d empty_matrix;
     empty_matrix.resize(0, 3);
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(empty_matrix);
+    const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(empty_matrix);
 
-    const double result = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(empty_matrix, initial_offset);
+    const double result = calculateMeanMeasuredFieldStrength(empty_matrix, initial_offset);
 
     CHECK(result == 0.0);
 }
 
 MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
 {
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
+    const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(CHECK_POINTS);
 
-    const double result = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(CHECK_POINTS, initial_offset);
+    const double result = calculateMeanMeasuredFieldStrength(CHECK_POINTS, initial_offset);
 
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
@@ -140,10 +142,9 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_provides_correction_matrix")
         .addUniformScaleFactor(1.5)
         .applyError();
     constexpr double field_strength = 1;
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(data_with_error);
+    const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const microstrain_mag_cal::FitResult result =
-        microstrain_mag_cal::fitSphere(data_with_error, field_strength, initial_offset);
+    const FitResult result = fitSphere(data_with_error, field_strength, initial_offset);
 
     /*
     REQUIRE(result.soft_iron_matrix.rows() == 3);
@@ -174,10 +175,9 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
         .addUniformCrossCoupling(0.5)
         .applyError();
     constexpr double field_strength = 1;
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(data_with_error);
+    const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const microstrain_mag_cal::FitResult result =
-        microstrain_mag_cal::fitEllipsoid(data_with_error, field_strength, initial_offset);
+    const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
     /*
     REQUIRE(result.soft_iron_matrix.rows() == 3);
