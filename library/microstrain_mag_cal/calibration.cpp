@@ -94,7 +94,7 @@ namespace microstrain_mag_cal
         return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false};
     }
 
-    bool verifyMatrixIsPositiveDefinite(const Eigen::Matrix<double, 3, 3> &matrix)
+    bool verifyMatrixIsPositiveDefinite(const Eigen::Matrix3d &matrix)
     {
         // This indicates insufficient data coverage or a bug in the fitting algorithm
         if ((Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>(matrix).eigenvalues().array() <= 0).any())
@@ -188,7 +188,7 @@ namespace microstrain_mag_cal
         }
 
         const double scale = std::sqrt(fit_parameters(0));
-        const Eigen::Matrix<double, 3, 3> soft_iron_matrix = Eigen::Matrix<double, 3, 3>::Identity() * scale;
+        const Eigen::Matrix3d soft_iron_matrix = Eigen::Matrix3d::Identity() * scale;
         const Eigen::Vector3d hard_iron_offset = fit_parameters.tail<3>();
 
         if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
