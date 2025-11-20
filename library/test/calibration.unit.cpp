@@ -203,7 +203,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
     CHECK(norms.maxCoeff() == doctest::Approx(field_strength).epsilon(0.01));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_soft_iron_matrix_that_inverts_the_distortion_matrix")
+MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distortion_matrix")
 {
     const Eigen::Vector3d scale_factor(1.1, 2.2, 3.3);
     constexpr double cross_coupling = 0.5;
