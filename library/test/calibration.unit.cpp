@@ -196,12 +196,11 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
-    Eigen::MatrixX3d corrected_data =
-        (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
+    Eigen::MatrixX3d corrected_data = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
 
-    Eigen::VectorXd norms = corrected_data.rowwise().norm();
-    const double max_error = (norms.array() - field_strength).abs().maxCoeff();
-    CHECK(max_error + 5 < 0.01 * field_strength);
+    const Eigen::VectorXd norms = corrected_data.rowwise().norm();
+    CHECK(norms.minCoeff() == doctest::Approx(field_strength).epsilon(0.01));
+    CHECK(norms.maxCoeff() == doctest::Approx(field_strength).epsilon(0.01));
 }
 
 // TODO: Move to separate test
