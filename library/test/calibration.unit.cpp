@@ -122,26 +122,27 @@ MICROSTRAIN_TEST_CASE("MVP", "Spherical_fit_matches_Inertial_connect")
 
 MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")
 {
-    constexpr double field_strength = 0.557;
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
+    Eigen::MatrixX3d data_with_error = fixture::getMagCalDataWithError({2.1, 2.2, 2.3}, {1.1, 2.2, 3.3}, 0.5);
+    constexpr double field_strength = 1;
+    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(data_with_error);
 
     const microstrain_mag_cal::FitResult result =
-        microstrain_mag_cal::fitEllipsoid(CHECK_POINTS, field_strength, initial_offset);
+        microstrain_mag_cal::fitEllipsoid(data_with_error, field_strength, initial_offset);
 
     REQUIRE(result.soft_iron_matrix.rows() == 3);
     REQUIRE(result.soft_iron_matrix.cols() == 3);
 
-    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(1.21213).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0.01196).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(-0.05057).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 0) == doctest::Approx(0.01196).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(1.35210).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 2) == doctest::Approx(0.06738).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(2, 0) == doctest::Approx(-0.05057).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(2, 1) == doctest::Approx(0.06738).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(2, 2) == doctest::Approx(1.34479).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(1.1).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0.5).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(0.5).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 0) == doctest::Approx(0.5).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(2.2).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 2) == doctest::Approx(0.5).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 0) == doctest::Approx(0.5).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 1) == doctest::Approx(0.5).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 2) == doctest::Approx(3.3).epsilon(0.001));
 
-    CHECK(result.hard_iron_offset(0) == doctest::Approx(0.00426).epsilon(0.001));
-    CHECK(result.hard_iron_offset(1) == doctest::Approx(0.10610).epsilon(0.001));
-    CHECK(result.hard_iron_offset(2) == doctest::Approx(0.17490).epsilon(0.001));
+    CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.001));
+    CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.001));
+    CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.001));
 }
