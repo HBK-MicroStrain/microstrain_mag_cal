@@ -180,11 +180,6 @@ MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_produces_valid_calibration_paramet
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
-    // Soft-iron matrix is invertible (positive definite), and thus a physically meaningful transformation.
-    Eigen::Vector3d eigenvalues = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>(result.soft_iron_matrix).eigenvalues();
-    CHECK(eigenvalues(0) > 0);
-    CHECK(eigenvalues(1) > 0);
-    CHECK(eigenvalues(2) > 0);
     // Hard-iron offset is extracted
     CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.01));
     CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.01));

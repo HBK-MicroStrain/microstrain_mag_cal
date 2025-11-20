@@ -94,6 +94,18 @@ namespace microstrain_mag_cal
         return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false};
     }
 
+    bool verifyMatrixIsPositiveDefinite(const Eigen::Matrix<double, 3, 3> &matrix)
+    {
+        // This indicates insufficient data coverage or a bug in the fitting algorithm
+        if ((Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>(matrix).eigenvalues().array() <= 0).any())
+        {
+            assert(false && "Matrix is not positive definite");
+            return false;
+        }
+
+        return true;
+    }
+
     template<typename FunctorType>
     bool optimizeFit(const Eigen::MatrixX3d &points, const double field_strength, Eigen::VectorXd &parameters)
     {
@@ -179,6 +191,11 @@ namespace microstrain_mag_cal
         const Eigen::Matrix<double, 3, 3> soft_iron_matrix = Eigen::Matrix<double, 3, 3>::Identity() * scale;
         const Eigen::Vector3d hard_iron_offset = fit_parameters.tail<3>();
 
+        if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
+        {
+            return noCalibrationApplied();
+        }
+
         return {soft_iron_matrix, hard_iron_offset, true};
     }
 
@@ -241,6 +258,11 @@ namespace microstrain_mag_cal
 
         const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(fit_parameters);
         const Eigen::Vector3d hard_iron_offset = fit_parameters.tail<3>();
+
+        if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
+        {
+            return noCalibrationApplied();
+        }
 
         return {soft_iron_matrix, hard_iron_offset, true};
     }
