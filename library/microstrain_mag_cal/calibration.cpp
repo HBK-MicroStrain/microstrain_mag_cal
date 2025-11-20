@@ -69,8 +69,8 @@ namespace microstrain_mag_cal
         FitFunctorBase(const Eigen::MatrixX3d& points, const double field_strength)
             : points(points), target_radius(field_strength) {}
 
-        int values() const { return static_cast<int>(points.rows()); }
-        int inputs() const { return NumParameters; }
+        [[nodiscard]] int values() const { return static_cast<int>(points.rows()); }
+        static int inputs() { return NumParameters; }
 
         // Common residual calculation --> delegates correction to each derived functor
         int operator()(const InputType& parameters, Eigen::VectorXd& residuals) const
@@ -91,7 +91,7 @@ namespace microstrain_mag_cal
     FitResult noCalibrationApplied()
     {
         // Identity matrix and zero vector applies no change.
-        return FitResult(Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false);
+        return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false};
     }
 
     template<typename FunctorType>
@@ -178,7 +178,7 @@ namespace microstrain_mag_cal
         const Eigen::Matrix<double, 3, 3> soft_iron_matrix = Eigen::Matrix<double, 3, 3>::Identity() * scale;
         const Eigen::Vector3d hard_iron_offset = fit_parameters.tail<3>();
 
-        return FitResult(soft_iron_matrix, hard_iron_offset, true);
+        return {soft_iron_matrix, hard_iron_offset, true};
     }
 
     // Upper and lower triangles are the same in a symmetric matrix!!
@@ -241,6 +241,6 @@ namespace microstrain_mag_cal
         const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(fit_parameters);
         const Eigen::Vector3d hard_iron_offset = fit_parameters.tail<3>();
 
-        return FitResult(soft_iron_matrix, hard_iron_offset, true);
+        return {soft_iron_matrix, hard_iron_offset, true};
     }
 }
