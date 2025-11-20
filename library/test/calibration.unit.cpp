@@ -146,25 +146,26 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_provides_correction_matrix")
 
     const FitResult result = fitSphere(data_with_error, field_strength, initial_offset);
 
-    /*
+    // Proper dimensions
     REQUIRE(result.soft_iron_matrix.rows() == 3);
     REQUIRE(result.soft_iron_matrix.cols() == 3);
     REQUIRE(result.hard_iron_offset.size() == 3);
-    // Soft iron should be diagonal (no cross-coupling)
+    // Diagonal (uniform scaling correction)
+    constexpr double expected_correction = 1 / 1.5;
+    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(expected_correction).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(expected_correction).epsilon(0.001));
+    CHECK(result.soft_iron_matrix(2, 2) == doctest::Approx(expected_correction).epsilon(0.001));
+    // Non-diagonal (no cross-coupling)
     CHECK(result.soft_iron_matrix(0, 1) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(0, 2) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(1, 0) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(1, 2) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(2, 0) == doctest::Approx(0).epsilon(0.001));
     CHECK(result.soft_iron_matrix(2, 1) == doctest::Approx(0).epsilon(0.001));
-    // Diagonal elements should all be equal (uniform scaling)
-    CHECK(result.soft_iron_matrix(0, 0) == doctest::Approx(result.soft_iron_matrix(1, 1)).epsilon(0.001));
-    CHECK(result.soft_iron_matrix(1, 1) == doctest::Approx(result.soft_iron_matrix(2, 2)).epsilon(0.001));
-    // Hard-iron should be recovered correctly
+    // Bias
     CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.001));
     CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.001));
     CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.001));
-*/
 }
 
 MICROSTRAIN_TEST_CASE("MVP", "Ellipsoidal_fit_matches_Inertial_connect")

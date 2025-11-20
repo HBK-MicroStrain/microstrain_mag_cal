@@ -157,6 +157,7 @@ namespace microstrain_mag_cal
     ///                       the reference is unknown.
     /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
     ///
+    /// TODO: Document that this returns the correction, not distortion.
     /// @returns Fit result containing hard-iron offset, uniform soft-iron scale factor, and whether
     ///          the fit succeeded. The units will be the same as the input data.
     ///
