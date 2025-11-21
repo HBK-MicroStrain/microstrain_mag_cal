@@ -22,37 +22,25 @@ namespace fixture
     public:
         explicit MagCalDataBuilder(const Eigen::MatrixX3d &clean_data) : m_clean_data(clean_data) {}
 
-        MagCalDataBuilder(const MagCalDataBuilder&) = delete;
-
-        MagCalDataBuilder operator=(const MagCalDataBuilder&) = delete;
-
-        MagCalDataBuilder& addBias(const Eigen::RowVector3d &bias)
+        void addBias(const Eigen::RowVector3d &bias)
         {
             m_bias = bias;
-
-            return *this;
         }
 
-        MagCalDataBuilder& addUniformScaleFactor(const double scale_factor)
+        void addUniformScaleFactor(const double scale_factor)
         {
             m_error_matrix.diagonal() = Eigen::Vector3d(scale_factor, scale_factor, scale_factor);
-
-            return *this;
         }
 
-        MagCalDataBuilder& addScaleFactor(const Eigen::Vector3d &scale_factor)
+        void addScaleFactor(const Eigen::Vector3d &scale_factor)
         {
             m_error_matrix.diagonal() = scale_factor;
-
-            return *this;
         }
 
-        MagCalDataBuilder& addUniformCrossCoupling(const double cross_coupling)
+        void addUniformCrossCoupling(const double cross_coupling)
         {
             m_error_matrix.triangularView<Eigen::StrictlyUpper>().setConstant(cross_coupling);
             m_error_matrix.triangularView<Eigen::StrictlyLower>().setConstant(cross_coupling);
-
-            return *this;
         }
 
         [[nodiscard]] Eigen::MatrixX3d applyError() const
@@ -220,10 +208,10 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
 
 MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_provides_correction_matrix")
 {
-    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
-        .addBias({2.1, 2.2, 2.3})
-        .addUniformScaleFactor(1.5)
-        .applyError();
+    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    builder.addBias({2.1, 2.2, 2.3});
+    builder.addUniformScaleFactor(1.5);
+    const Eigen::MatrixX3d data_with_error = builder.applyError();
     constexpr double field_strength = 1;
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
@@ -253,11 +241,11 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_provides_correction_matrix")
 
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_recovers_hard_iron_offset")
 {
-    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
-        .addBias({2.1, 2.2, 2.3})
-        .addScaleFactor({1.1, 2.2, 3.3})
-        .addUniformCrossCoupling(0.5)
-        .applyError();
+    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    builder.addBias({2.1, 2.2, 2.3});
+    builder.addScaleFactor({1.1, 2.2, 3.3});
+    builder.addUniformCrossCoupling(0.5);
+    const Eigen::MatrixX3d data_with_error = builder.applyError();
     constexpr double field_strength = 1;
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
@@ -270,11 +258,11 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_recovers_hard_iron_offset"
 
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of_reference_field_strength")
 {
-    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
-        .addBias({2.1, 2.2, 2.3})
-        .addScaleFactor({1.1, 2.2, 3.3})
-        .addUniformCrossCoupling(0.5)
-        .applyError();
+    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    builder.addBias({2.1, 2.2, 2.3});
+    builder.addScaleFactor({1.1, 2.2, 3.3});
+    builder.addUniformCrossCoupling(0.5);
+    const Eigen::MatrixX3d data_with_error = builder.applyError();
     constexpr double field_strength = 1;
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
