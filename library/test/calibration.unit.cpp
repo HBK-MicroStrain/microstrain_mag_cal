@@ -22,28 +22,32 @@ namespace fixture
     public:
         explicit MagCalDataBuilder(const Eigen::MatrixX3d &clean_data) : m_clean_data(clean_data) {}
 
-        MagCalDataBuilder addBias(const Eigen::RowVector3d &bias)
+        MagCalDataBuilder(const MagCalDataBuilder&) = delete;
+
+        MagCalDataBuilder operator=(const MagCalDataBuilder&) = delete;
+
+        MagCalDataBuilder& addBias(const Eigen::RowVector3d &bias)
         {
             m_bias = bias;
 
             return *this;
         }
 
-        MagCalDataBuilder addUniformScaleFactor(const double scale_factor)
+        MagCalDataBuilder& addUniformScaleFactor(const double scale_factor)
         {
             m_error_matrix.diagonal() = Eigen::Vector3d(scale_factor, scale_factor, scale_factor);
 
             return *this;
         }
 
-        MagCalDataBuilder addScaleFactor(const Eigen::Vector3d &scale_factor)
+        MagCalDataBuilder& addScaleFactor(const Eigen::Vector3d &scale_factor)
         {
             m_error_matrix.diagonal() = scale_factor;
 
             return *this;
         }
 
-        MagCalDataBuilder addUniformCrossCoupling(const double cross_coupling)
+        MagCalDataBuilder& addUniformCrossCoupling(const double cross_coupling)
         {
             m_error_matrix.triangularView<Eigen::StrictlyUpper>().setConstant(cross_coupling);
             m_error_matrix.triangularView<Eigen::StrictlyLower>().setConstant(cross_coupling);
@@ -81,8 +85,13 @@ namespace fixture
             return (m_clean_data * m_error_matrix.transpose()).rowwise() + m_bias;
         }
 
+        [[nodiscard]] Eigen::MatrixX3d getDistortionMatrix() const
+        {
+           return m_error_matrix;
+        }
+
     private:
-        const Eigen::MatrixX3d& m_clean_data;
+        const Eigen::MatrixX3d m_clean_data;  // Copying is safer here.
 
         Eigen::RowVector3d m_bias{0.0, 0.0, 0.0};
         Eigen::Matrix<double, 3, 3> m_error_matrix = Eigen::Matrix<double, 3, 3>::Identity();
@@ -279,20 +288,15 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
 
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distortion_matrix")
 {
-    const Eigen::Vector3d scale_factor(1.1, 2.2, 3.3);
-    constexpr double cross_coupling = 0.5;
-    const Eigen::MatrixX3d data_with_error = fixture::MagCalDataBuilder(fixture::CLEAN_DATA)
-        .addBias({2.1, 2.2, 2.3})
-        .addScaleFactor(scale_factor)
-        .addUniformCrossCoupling(cross_coupling)
-        .applyError();
+    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    builder.addBias({2.1, 2.2, 2.3});
+    builder.addScaleFactor({1.1, 2.2, 3.3});
+    builder.addUniformCrossCoupling(0.5);
+    const Eigen::MatrixX3d data_with_error = builder.applyError();
     constexpr double field_strength = 1;
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
-    // TODO: Add fixture for distortion matrix
-    Eigen::Matrix<double, 3, 3> distortion_matrix = Eigen::Matrix<double, 3, 3>::Constant(cross_coupling);
-    distortion_matrix.diagonal() = scale_factor;
-    CHECK((result.soft_iron_matrix * distortion_matrix - Eigen::Matrix3d::Identity()).norm() < 0.01);
+    CHECK((result.soft_iron_matrix * builder.getDistortionMatrix() - Eigen::Matrix3d::Identity()).norm() < 0.01);
 }
