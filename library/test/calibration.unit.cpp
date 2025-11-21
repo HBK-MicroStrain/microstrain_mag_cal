@@ -53,7 +53,37 @@ namespace fixture
 
         [[nodiscard]] Eigen::MatrixX3d applyError() const
         {
-            return (m_clean_data * m_error_matrix).rowwise() + m_bias;
+            // ----------------------------------------------
+            // Single mag cal point real-world physics model:
+            // ----------------------------------------------
+            //    m_r = E * m_t + b, where
+            //
+            //        m_r := 3x1 column vector of the raw mag cal reading
+            //          E := 3x3 error matrix
+            //        m_t := 3x1 column vector of the true mag cal value
+            //          b := 3x1 column vector of bias
+            //
+            // ----------------------------------------------
+            // This scales to a 3xN matrix, where each column is the 3x1 column vector of a single
+            // point of mag cal data.
+            //
+            // Our data is stored as the transpose of this: a Nx3 matrix, where each row is a
+            // 1x3 row vector of a single point of mag cal data.
+            //
+            // ----------------------------------------------
+            // To convert the model to our format:
+            // ----------------------------------------------
+            //    m_r^T = (E * m_t + b)^T = m_t^T * E^T + b^T, where
+            //
+            //        m_r^T := 1x3 row vector of raw mag cal data
+            //          E^T := Flipped 3x3 error matrix
+            //        m_t^T := 1x3 row vector of true mag cal data
+            //          b^T := 1x3 row vector of bias
+            //
+            // ----------------------------------------------
+            // Now, the data matrix is Nx3, where each row is the 1x3 row vector.
+            //
+            return (m_clean_data * m_error_matrix.transpose()).rowwise() + m_bias;
         }
 
     private:
@@ -196,8 +226,9 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
-    Eigen::MatrixX3d corrected_data = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
 
+    // TODO: Add fixture for correction
+    Eigen::MatrixX3d corrected_data = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
     const Eigen::VectorXd norms = corrected_data.rowwise().norm();
     CHECK(norms.minCoeff() == doctest::Approx(field_strength).epsilon(0.01));
     CHECK(norms.maxCoeff() == doctest::Approx(field_strength).epsilon(0.01));
@@ -217,6 +248,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distor
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
+    // TODO: Add fixture for distortion matrix
     Eigen::Matrix<double, 3, 3> distortion_matrix = Eigen::Matrix<double, 3, 3>::Constant(cross_coupling);
     distortion_matrix.diagonal() = scale_factor;
     CHECK((result.soft_iron_matrix * distortion_matrix - Eigen::Matrix3d::Identity()).norm() < 0.01);
