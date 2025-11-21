@@ -86,7 +86,7 @@ namespace microstrain_mag_cal
         const Eigen::Matrix3d A = fit_result.soft_iron_matrix.transpose() * fit_result.soft_iron_matrix;
 
         // Compute compensated magnetometer readings
-        const Eigen::MatrixX3d centered = points.rowwise() - fit_result.hard_iron_offset.transpose();
+        const Eigen::MatrixX3d centered = points.rowwise() - fit_result.hard_iron_offset;
 
         // For each point: compute (p - bias)^T * A * (p - bias)
         const Eigen::VectorXd quadratic_forms = (centered * A).cwiseProduct(centered).rowwise().sum();

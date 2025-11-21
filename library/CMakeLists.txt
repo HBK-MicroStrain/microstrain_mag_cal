@@ -21,9 +21,24 @@ FetchContent_MakeAvailable(Eigen)
 # ---------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.19)
+
 project(microstrain_mag_cal
     VERSION 0.0.0
 )
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Suppress unused variable warnings for Python paths. This is to counteract the annoying
+# behavior of automatically passing the Python path variables by some IDEs. We aren't
+# using Python as part of the project, only side scripts, so the variables aren't needed.
+if(DEFINED Python3_EXECUTABLE)
+    # Mark as used
+endif()
+if(DEFINED Python_EXECUTABLE)
+    # Mark as used
+endif()
 
 add_library(microstrain_mag_cal)
 
