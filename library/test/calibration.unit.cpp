@@ -168,7 +168,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distor
 }
 
 // TODO: Maybe integration test - runs a little slow
-MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_converges")
+MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrected_data_requires_no_further_correction")
 {
     fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -177,10 +177,10 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_converges")
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult result1 = fitEllipsoid(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
-    const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, result1);
-    const FitResult result2 = fitEllipsoid(corrected_data, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult initial_fit = fitEllipsoid(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, initial_fit);
+    const FitResult refined_fit = fitEllipsoid(corrected_data, fixture::FIELD_STRENGTH, initial_offset);
 
-    CHECK_MESSAGE(result2.soft_iron_matrix.isApprox(Eigen::Matrix3d::Identity(), 0.01), result2.soft_iron_matrix);
-    CHECK_MESSAGE(result2.hard_iron_offset.isApprox(Eigen::RowVector3d::Zero(), 0.01), result2.hard_iron_offset);
+    CHECK_MESSAGE(refined_fit.soft_iron_matrix.isApprox(Eigen::Matrix3d::Identity(), 0.01), refined_fit.soft_iron_matrix);
+    CHECK_MESSAGE(refined_fit.hard_iron_offset.isApprox(Eigen::RowVector3d::Zero(), 0.01), refined_fit.hard_iron_offset);
 }
