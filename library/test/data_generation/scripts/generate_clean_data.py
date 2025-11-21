@@ -64,6 +64,9 @@ def save_data_as_cpp_header(points_flattened, filepath, radius=1):
         file.write(f"namespace fixture\n")
         file.write(f"{{\n")
 
+        file.write(f"    static constexpr double FIELD_STRENGTH = {radius};\n")
+        file.write(f"\n")
+
         rows = points_flattened.shape[0]
         cols = points_flattened.shape[1]
 
