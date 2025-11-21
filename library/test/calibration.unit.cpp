@@ -53,34 +53,29 @@ namespace fixture
 
         [[nodiscard]] Eigen::MatrixX3d applyError() const
         {
-            // ----------------------------------------------
+            // -----------------------------------------------------------
             // Single mag cal point real-world physics model:
-            // ----------------------------------------------
-            //    m_r = E * m_t + b, where
+            // -----------------------------------------------------------
+            //    m_r = E * m_t + b, where:
             //
             //        m_r := 3x1 column vector of the raw mag cal reading
-            //          E := 3x3 error matrix
+            //          E := 3x3 error distortion matrix
             //        m_t := 3x1 column vector of the true mag cal value
             //          b := 3x1 column vector of bias
             //
-            // ----------------------------------------------
-            // This scales to a 3xN matrix, where each column is the 3x1 column vector of a single
-            // point of mag cal data.
-            //
-            // Our data is stored as the transpose of this: a Nx3 matrix, where each row is a
-            // 1x3 row vector of a single point of mag cal data.
-            //
-            // ----------------------------------------------
+            // -----------------------------------------------------------
             // To convert the model to our format:
-            // ----------------------------------------------
-            //    m_r^T = (E * m_t + b)^T = m_t^T * E^T + b^T, where
+            // -----------------------------------------------------------
+            //    m_r^T = (E * m_t + b)^T
+            //          = m_t^T * E^T + b^T, where:
             //
             //        m_r^T := 1x3 row vector of raw mag cal data
-            //          E^T := Flipped 3x3 error matrix
+            //          E^T := Flipped 3x3 error distortion matrix
             //        m_t^T := 1x3 row vector of true mag cal data
             //          b^T := 1x3 row vector of bias
             //
-            // ----------------------------------------------
+            // -----------------------------------------------------------
+            //
             // Now, the data matrix is Nx3, where each row is the 1x3 row vector.
             //
             return (m_clean_data * m_error_matrix.transpose()).rowwise() + m_bias;
@@ -92,6 +87,49 @@ namespace fixture
         Eigen::RowVector3d m_bias{0.0, 0.0, 0.0};
         Eigen::Matrix<double, 3, 3> m_error_matrix = Eigen::Matrix<double, 3, 3>::Identity();
     };
+
+
+    /// @brief Apply corrections to the given data.
+    ///
+    /// @param data Nx3 matrix of data with error to correct
+    /// @param error_correction 3x3 error correction matrix
+    /// @param bias 1x3 row vector of bias
+    ///
+    /// @returns Nx3 matrix containing the corrected data
+    ///
+    Eigen::MatrixX3d applyCorrections(
+        const Eigen::MatrixX3d &data,
+        const Eigen::Matrix3d &error_correction,
+        const Eigen::RowVector3d &bias)
+    {
+        // ---------------------------------------------------------------
+        // Correction equation is the inverse of the distortion equation:
+        // ---------------------------------------------------------------
+        //    m_t = E^-1 * (m_r - b), where:
+        //
+        //         m_t := 3x1 column vector of true mag cal data
+        //        E^-1 := The 3x3 error correction matrix
+        //         m_r := 3x1 column vector of raw mag cal data
+        //           b := 3x1 column vector of bias
+        //
+        // ---------------------------------------------------------------
+        // To convert the model to our format:
+        // ---------------------------------------------------------------
+        //     m_t^T = (E^-1 * (m_r - b))^T
+        //           = (m_r - b)^T * (E^-1)^T
+        //           = (m_r^T - b^T) * (E^-1)^T, where:
+        //
+        //            m_t^T := 1x3 row vector of true mag cal data
+        //         (E^-1)^T := Flipped 3x3 error correction matrix
+        //            m_r^T := 1x3 row vector of raw mag cal data
+        //              b^T := 1x3 row vector of bias
+        //
+        // ---------------------------------------------------------------
+        //
+        // Now, the data matrix is Nx3, where each row is the 1x3 row vector.
+        //
+        return (data.rowwise() - bias) * error_correction.transpose();
+    }
 }
 
 
@@ -228,7 +266,8 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
     // TODO: Add fixture for correction
-    Eigen::MatrixX3d corrected_data = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
+    //Eigen::MatrixX3d corrected_data = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
+    Eigen::MatrixX3d corrected_data = data_builder.applyCorrections(result.hard_iron_offset, result.soft_iron_matrix);
     const Eigen::VectorXd norms = corrected_data.rowwise().norm();
     CHECK(norms.minCoeff() == doctest::Approx(field_strength).epsilon(0.01));
     CHECK(norms.maxCoeff() == doctest::Approx(field_strength).epsilon(0.01));
