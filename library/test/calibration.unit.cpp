@@ -89,7 +89,7 @@ namespace fixture
     };
 
 
-    /// @brief Apply corrections to the given data.
+    /// @brief Applies corrections to the given data.
     ///
     /// @param data Nx3 matrix of data with error to correct
     /// @param error_correction 3x3 error correction matrix
@@ -129,6 +129,12 @@ namespace fixture
         // Now, the data matrix is Nx3, where each row is the 1x3 row vector.
         //
         return (data.rowwise() - bias) * error_correction.transpose();
+    }
+
+    /// @brief Convenience wrapper for fit result.
+    Eigen::MatrixX3d applyCorrections(const Eigen::MatrixX3d &data, const FitResult &result)
+    {
+        return applyCorrections(data, result.soft_iron_matrix, result.hard_iron_offset);
     }
 }
 
@@ -265,12 +271,10 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
-    // TODO: Add fixture for correction
-    //Eigen::MatrixX3d corrected_data = (data_with_error.rowwise() - result.hard_iron_offset) * result.soft_iron_matrix.transpose();
-    Eigen::MatrixX3d corrected_data = data_builder.applyCorrections(result.hard_iron_offset, result.soft_iron_matrix);
-    const Eigen::VectorXd norms = corrected_data.rowwise().norm();
-    CHECK(norms.minCoeff() == doctest::Approx(field_strength).epsilon(0.01));
-    CHECK(norms.maxCoeff() == doctest::Approx(field_strength).epsilon(0.01));
+    const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, result);
+    const Eigen::VectorXd data_field_strengths = corrected_data.rowwise().norm();
+    CHECK(data_field_strengths.minCoeff() == doctest::Approx(field_strength).epsilon(0.01));
+    CHECK(data_field_strengths.maxCoeff() == doctest::Approx(field_strength).epsilon(0.01));
 }
 
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distortion_matrix")
