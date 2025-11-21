@@ -286,5 +286,5 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distor
 
     const FitResult result = fitEllipsoid(data_with_error, field_strength, initial_offset);
 
-    CHECK((result.soft_iron_matrix * builder.getDistortionMatrix() - Eigen::Matrix3d::Identity()).norm() < 0.01);
+    CHECK((result.soft_iron_matrix * builder.getDistortionMatrix()).isApprox(Eigen::Matrix3d::Identity(), 0.01));
 }
