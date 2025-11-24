@@ -34,3 +34,5 @@ The conversion is done using the following formula:
 ```
 R_Gauss = R_Nanotesla * 0.00001
 ```
+
+It is recommended to use the *World Magnetic Model* (WMM) for the model in the calculator.
