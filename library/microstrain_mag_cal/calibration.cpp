@@ -149,7 +149,7 @@ namespace microstrain_mag_cal
             const double scale = std::sqrt(parameters(0));
             const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
 
-            return (point - hard_iron_offset) / scale;
+            return (point - hard_iron_offset) * scale;
         }
     };
 
