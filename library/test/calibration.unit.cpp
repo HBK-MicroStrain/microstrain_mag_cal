@@ -130,7 +130,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrected_data_requires_no_f
 
     const FitResult initial_fit = fitSphere(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
     const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, initial_fit);
-    const FitResult refined_fit = fitSphere(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult refined_fit = fitSphere(corrected_data, fixture::FIELD_STRENGTH, initial_offset);
 
     CHECK_MESSAGE(refined_fit.soft_iron_matrix.isApprox(Eigen::Matrix3d::Identity(), 0.01), refined_fit.soft_iron_matrix);
     CHECK_MESSAGE(refined_fit.hard_iron_offset.isApprox(Eigen::RowVector3d::Zero(), 0.01), refined_fit.hard_iron_offset);
