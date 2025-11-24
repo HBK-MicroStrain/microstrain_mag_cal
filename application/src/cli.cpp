@@ -61,7 +61,7 @@ int main(const int argc, char **argv)
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
-    app.add_option("-f,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+    app.add_option("-r,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-c,--spatial-coverage", arg_spatial_coverage, "Calculate the spatial coverage of the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
