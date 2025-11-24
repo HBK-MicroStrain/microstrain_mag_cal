@@ -57,11 +57,11 @@ int main(const int argc, char **argv)
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
     app.formatter(std::make_shared<HelpMessageFormatter>());
 
-    app.add_option("-f,--file", arg_filepath, "A binary file containing mip data to read from.")
+    app.add_option("file", arg_filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
-    app.add_option("-r,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+    app.add_option("-f,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-c,--spatial-coverage", arg_spatial_coverage, "Calculate the spatial coverage of the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
