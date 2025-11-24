@@ -26,8 +26,8 @@ calibration.
 The reference field strength can be retrieved from the
 [NOAA calculator](https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#igrfwmm). It will be
 the `Total Field` attribute in the calculator results. The result will likely be in
-[Nanotesla](https://en.wikipedia.org/wiki/Tesla_(unit)#Multiples), while the application expects it
-to be [Gauss](https://en.wikipedia.org/wiki/Gauss_(unit)#Unit_conversions). This conversion must be
+[Nanotesla](https://en.wikipedia.org/wiki/Tesla_(unit)), while the application expects it
+to be [Gauss](https://en.wikipedia.org/wiki/Gauss_(unit)). This conversion must be
 done manually; the application does not support it automatically (yet).
 
 The conversion is done using the following formula:
