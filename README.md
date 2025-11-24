@@ -2,7 +2,6 @@
 MVP library and commandline application for offline magnetometer calibration.
 
 ## CLI Usage
-<!-- TODO: Add full interface usage docs -->
 The CLI is run by the following command:
 ```
 ./offline_mag_cal [OPTIONS]
