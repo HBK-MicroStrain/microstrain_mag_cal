@@ -50,7 +50,7 @@ endif()
 cmake_minimum_required(VERSION 3.19)
 
 project(offline_mag_cal
-    VERSION 0.0.0
+    VERSION 0.0.1
 )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -84,3 +84,21 @@ target_link_libraries(offline_mag_cal_cli
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(scripts)
+
+# ---------------------------------------------------------------
+# Packaging
+# ---------------------------------------------------------------
+
+set(CPACK_PACKAGE_NAME "offline-mag-calTest")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
+# TODO: Set reusable description for README and here
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MVP commandline application for offline magnetometer calibration.")
+
+if(WIN32)
+    set(CPACK_GENERATOR "ZIP;NSIS")
+elseif(UNIX)
+    set(CPACK_GENERATOR "TGZ")
+endif()
+
+include(CPack)
