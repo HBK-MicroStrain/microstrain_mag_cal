@@ -83,3 +83,4 @@ target_link_libraries(offline_mag_cal_cli
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(scripts)
