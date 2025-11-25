@@ -1,3 +1,6 @@
-add_executable(set_calibration "set_calibration.cpp")
+add_executable(apply_calibration "apply_calibration.cpp")
 
-target_link_libraries(set_calibration ${MIP_LIBRARY})
+target_link_libraries(apply_calibration
+    ${MICROSTRAIN_LIBRARIES}
+    ${MIP_LIBRARIES}
+)
