@@ -1,5 +1,7 @@
 #include "calibration.hpp"
 
+#include <cassert>
+
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 

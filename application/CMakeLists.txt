@@ -86,6 +86,18 @@ add_subdirectory(test)
 add_subdirectory(scripts)
 
 # ---------------------------------------------------------------
+# Installing
+# ---------------------------------------------------------------
+
+install(TARGETS offline_mag_cal_cli
+    RUNTIME DESTINATION bin
+    COMPONENT application
+)
+
+# Only install specific components
+set(CPACK_COMPONENTS_ALL application)
+
+# ---------------------------------------------------------------
 # Packaging
 # ---------------------------------------------------------------
 
@@ -96,7 +108,7 @@ set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MVP commandline application for offline magnetometer calibration.")
 
 if(WIN32)
-    set(CPACK_GENERATOR "ZIP;NSIS")
+    set(CPACK_GENERATOR "ZIP")
 elseif(UNIX)
     set(CPACK_GENERATOR "TGZ")
 endif()
