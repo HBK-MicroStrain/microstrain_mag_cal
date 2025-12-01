@@ -87,21 +87,21 @@ add_subdirectory(test)
 add_subdirectory(scripts)
 
 # ---------------------------------------------------------------
-# Installing
+# Installation
 # ---------------------------------------------------------------
 
-install(PROGRAMS $<TARGET_FILE:${CLI}>
+# Install the executable
+install(TARGETS ${CLI}
     DESTINATION bin
     COMPONENT application
 )
-
-# Only install the required components
-set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};${PROJECT_NAME};application;/")
 
 # ---------------------------------------------------------------
 # Packaging
 # ---------------------------------------------------------------
 
+# Only package the required components
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};${PROJECT_NAME};application;/")
 set(CPACK_PACKAGE_NAME "offline-mag-cal")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
