@@ -7,14 +7,12 @@ namespace microstrain_mag_cal
 {
     struct FitResult
     {
-        FitResult(Eigen::Matrix3d soft_iron_matrix, Eigen::Vector3d hard_iron_offset, const bool succeeded)
-            : soft_iron_matrix(std::move(soft_iron_matrix)),
-              hard_iron_offset(std::move(hard_iron_offset)),
-              succeeded(succeeded) {}
+        static constexpr uint8_t FIT_OPTIMIZATION_FAILED          = 1;
+        static constexpr uint8_t FIT_MATRIX_NOT_POSITIVE_DEFINITE = 2;
 
-        const Eigen::Matrix3d soft_iron_matrix;
-        const Eigen::RowVector3d hard_iron_offset;
-        const bool succeeded;
+        Eigen::Matrix3d soft_iron_matrix;
+        Eigen::RowVector3d hard_iron_offset;
+        uint8_t error = 0;
     };
 
 

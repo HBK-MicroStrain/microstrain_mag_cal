@@ -22,9 +22,7 @@ FetchContent_MakeAvailable(Eigen)
 
 cmake_minimum_required(VERSION 3.19)
 
-project(microstrain_mag_cal
-    VERSION 0.0.0
-)
+project(microstrain_mag_cal VERSION 0.0.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

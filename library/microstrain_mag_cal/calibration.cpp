@@ -90,10 +90,10 @@ namespace microstrain_mag_cal
     };
 
     // Returns a fit result that leaves the calibration unchanged (doesn't apply).
-    FitResult noCalibrationApplied()
+    FitResult noCalibrationApplied(const uint8_t error)
     {
         // Identity matrix and zero vector applies no change.
-        return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), false};
+        return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), error};
     }
 
     bool verifyMatrixIsPositiveDefinite(const Eigen::Matrix3d &matrix)
@@ -186,7 +186,7 @@ namespace microstrain_mag_cal
 
         if (!optimizeFit<SphericalFitFunctor>(points, field_strength, fit_parameters))
         {
-            return noCalibrationApplied();
+            return noCalibrationApplied(FitResult::FIT_OPTIMIZATION_FAILED);
         }
 
         const double scale = std::sqrt(fit_parameters(0));
@@ -195,10 +195,10 @@ namespace microstrain_mag_cal
 
         if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
         {
-            return noCalibrationApplied();
+            return noCalibrationApplied(FitResult::FIT_MATRIX_NOT_POSITIVE_DEFINITE);
         }
 
-        return {soft_iron_matrix, hard_iron_offset, true};
+        return {soft_iron_matrix, hard_iron_offset};
     }
 
     // Upper and lower triangles are the same in a symmetric matrix!!
@@ -255,7 +255,7 @@ namespace microstrain_mag_cal
 
         if (!optimizeFit<EllipsoidalFitFunctor>(points, field_strength, fit_parameters))
         {
-            return noCalibrationApplied();
+            return noCalibrationApplied(FitResult::FIT_OPTIMIZATION_FAILED);
         }
 
         const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(fit_parameters);
@@ -263,9 +263,9 @@ namespace microstrain_mag_cal
 
         if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
         {
-            return noCalibrationApplied();
+            return noCalibrationApplied(FitResult::FIT_MATRIX_NOT_POSITIVE_DEFINITE);
         }
 
-        return {soft_iron_matrix, hard_iron_offset, true};
+        return {soft_iron_matrix, hard_iron_offset};
     }
 }

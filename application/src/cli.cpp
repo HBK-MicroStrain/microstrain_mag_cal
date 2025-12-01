@@ -23,6 +23,18 @@ public:
     }
 };
 
+std::string getErrorMessage(const uint8_t error)
+{
+    const std::string error_code = "(" + std::to_string(error) + ") ";
+
+    switch (error)
+    {
+        case microstrain_mag_cal::FitResult::FIT_OPTIMIZATION_FAILED: return error_code + "FIT OPTIMIZATION FAILED";
+        case microstrain_mag_cal::FitResult::FIT_MATRIX_NOT_POSITIVE_DEFINITE: return error_code + "FIT MATRIX NOT POSITIVE DEFINITE";
+        default: return error_code + "UNKNOWN ERROR";
+    }
+}
+
 // Console output after the fitting algorithms are run
 void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
 {
@@ -32,7 +44,15 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     printf("%s\n", fit_name.data());
     printf("%s\n\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
 
-    printf("Fit Result: %s\n\n", result.succeeded ? "SUCCEEDED" : "FAILED");
+    printf("Fit Result: ");
+    if (result.error)
+    {
+        printf("FAILED ---> Error: %s\n\n", getErrorMessage(result.error).c_str());
+    }
+    else
+    {
+        printf("SUCCEEDED\n\n");
+    }
 
     printf("Soft-Iron Matrix:\n");
     std::cout << result.soft_iron_matrix << "\n\n";
