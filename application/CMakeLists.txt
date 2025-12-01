@@ -57,20 +57,23 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(offline_mag_cal_core)
-add_executable(offline_mag_cal_cli)
+set(CORE "offline_mag_cal_core")
+set(CLI "offline_mag_cal_cli")
 
-set_target_properties(offline_mag_cal_cli
+add_library(${CORE})
+add_executable(${CLI})
+
+set_target_properties(${CLI}
     PROPERTIES
         OUTPUT_NAME offline-mag-cal
 )
 
-target_link_libraries(offline_mag_cal_core
+target_link_libraries(${CORE}
     Eigen3::Eigen
     microstrain_mag_cal
     ${MIP_LIBRARY}
 )
-target_link_libraries(offline_mag_cal_cli
+target_link_libraries(${CLI}
     PRIVATE
         CLI11::CLI11
         mio::mio
@@ -89,8 +92,8 @@ add_subdirectory(scripts)
 # Installing
 # ---------------------------------------------------------------
 
-install(TARGETS offline_mag_cal_cli
-    RUNTIME DESTINATION bin
+install(PROGRAMS $<TARGET_FILE:${CLI}>
+    DESTINATION bin
     COMPONENT application
 )
 
@@ -101,7 +104,7 @@ set(CPACK_COMPONENTS_ALL application)
 # Packaging
 # ---------------------------------------------------------------
 
-set(CPACK_PACKAGE_NAME "offline-mag-calTest")
+set(CPACK_PACKAGE_NAME "offline-mag-cal")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
 # TODO: Set reusable description for README and here
@@ -113,4 +116,19 @@ elseif(UNIX)
     set(CPACK_GENERATOR "TGZ")
 endif()
 
+# Force CPack to output its config in the current binary directory
+set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackConfig.cmake")
+set(CPACK_SOURCE_OUTPUT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackSourceConfig.cmake")
+
 include(CPack)
+
+# ---------------------------------------------------------------
+# CI/CD
+# ---------------------------------------------------------------
+
+# Convenience target to build and package the application (commandline).
+add_custom_target("package_${CLI}"
+    COMMAND ${CMAKE_CPACK_COMMAND} --config CPackConfig.cmake -C $<CONFIG>
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Packaging ${CLI}..."
+)
