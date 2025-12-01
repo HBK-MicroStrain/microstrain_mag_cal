@@ -97,8 +97,7 @@ install(PROGRAMS $<TARGET_FILE:${CLI}>
     COMPONENT application
 )
 
-# Only install specific components
-set(CPACK_COMPONENTS_ALL application)
+# Only install the required components
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};${PROJECT_NAME};application;/")
 
 # ---------------------------------------------------------------
