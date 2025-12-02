@@ -49,7 +49,9 @@ def generate_clean_magnetometer_data(num_coordinates, radius=1):
     #
     return np.stack([points_x, points_y, points_z], axis=2)
 
-def save_data_as_cpp_header(points_flattened, filepath, radius=1):
+def save_data_as_cpp_header(points_flattened, absolute_path, filename, radius=1):
+    filepath = (absolute_path / filename).with_suffix('.hpp')
+
     with open(filepath, "w") as file:
         file.write(f"/* \n")
         file.write(f" * Auto-generated test data file - DON'T EDIT MANUALLY!\n")
@@ -61,7 +63,7 @@ def save_data_as_cpp_header(points_flattened, filepath, radius=1):
         file.write(f"\n")
         file.write(f"#include <Eigen/Dense>\n")
         file.write(f"\n")
-        file.write(f"namespace fixture\n")
+        file.write(f"namespace fixture::{filename}\n")
         file.write(f"{{\n")
 
         file.write(f"    static constexpr double FIELD_STRENGTH = {radius};\n")
@@ -81,7 +83,7 @@ def save_data_as_cpp_header(points_flattened, filepath, radius=1):
         file.write(f"    }};\n")
         file.write(f"\n")
 
-        file.write(f"    static const Eigen::Map<const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor>> CLEAN_DATA(raw_data.data());\n")
+        file.write(f"    static const Eigen::Map<const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor>> DATA(raw_data.data());\n")
         file.write("}\n")
 
 
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     # Reference: See analysis script
     NUM_COORDINATES = 50
     RADIUS          = 1
-    FILENAME        = "clean_data.hpp"
+    FILENAME        = "clean_data"
 
 
     points = generate_clean_magnetometer_data(NUM_COORDINATES, radius=RADIUS)
@@ -100,6 +102,5 @@ if __name__ == "__main__":
         .parent  # Data directory
         .parent  # Test directory
         .resolve())
-    filepath = test_dir / FILENAME
 
-    save_data_as_cpp_header(points_flattened, filepath, radius=RADIUS)
+    save_data_as_cpp_header(points_flattened, test_dir, FILENAME, radius=RADIUS)

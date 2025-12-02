@@ -8,7 +8,7 @@
 
 #include <Eigen/Dense>
 
-namespace fixture
+namespace fixture::clean_data
 {
     static constexpr double FIELD_STRENGTH = 1;
 
@@ -1265,5 +1265,5 @@ namespace fixture
          1.224646799147353e-16,  -2.999519565323715e-32,  -1.000000000000000e+00
     };
 
-    static const Eigen::Map<const Eigen::Matrix<double, 1250, 3, Eigen::RowMajor>> CLEAN_DATA(raw_data.data());
+    static const Eigen::Map<const Eigen::Matrix<double, 1250, 3, Eigen::RowMajor>> DATA(raw_data.data());
 }
