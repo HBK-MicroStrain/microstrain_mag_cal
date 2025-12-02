@@ -90,7 +90,7 @@ namespace microstrain_mag_cal
     };
 
     // Returns a fit result that leaves the calibration unchanged (doesn't apply).
-    FitResult noCalibrationApplied(const uint8_t error)
+    FitResult noCalibrationApplied(const FitResult::Error error)
     {
         return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), error};
     }
@@ -108,7 +108,7 @@ namespace microstrain_mag_cal
     }
 
     template<typename FunctorType>
-    uint8_t optimizeFit(const Eigen::MatrixX3d &points, const double field_strength, Eigen::VectorXd &parameters)
+    FitResult::Error optimizeFit(const Eigen::MatrixX3d &points, const double field_strength, Eigen::VectorXd &parameters)
     {
         constexpr int MAX_ITERATIONS = 1000;
         constexpr double TOLERANCE = 1.0e-10;
@@ -116,7 +116,7 @@ namespace microstrain_mag_cal
         // Mathematical minimum for optimizing N parameters
         if (points.rows() < parameters.cols())
         {
-            return FitResult::FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA;
+            return FitResult::Error::FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA;
         }
 
         // Setup optimization
@@ -128,15 +128,14 @@ namespace microstrain_mag_cal
         solver.parameters.xtol = TOLERANCE;
 
         // Optimize
-        const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
-
-        if (status != Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall &&
+        if (const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
+            status != Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall &&
             status != Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall)
         {
-            return FitResult::FIT_OPTIMIZATION_DID_NOT_CONVERGE;
+            return FitResult::Error::FIT_OPTIMIZATION_DID_NOT_CONVERGE;
         }
 
-        return FitResult::FIT_OPTIMIZATION_SUCCEEDED;
+        return FitResult::Error::NONE;
     }
 
     struct SphericalFitFunctor : FitFunctorBase<SphericalFitFunctor, 4>
@@ -182,7 +181,8 @@ namespace microstrain_mag_cal
         fit_parameters(0) = 1.0;               // Scale^2
         fit_parameters.tail<3>() = initial_offset;  // Hard iron offset
 
-        if (const uint8_t error = optimizeFit<SphericalFitFunctor>(points, field_strength, fit_parameters))
+        if (const FitResult::Error error = optimizeFit<SphericalFitFunctor>(points, field_strength, fit_parameters);
+            error != FitResult::Error::NONE)
         {
             return noCalibrationApplied(error);
         }
@@ -193,7 +193,7 @@ namespace microstrain_mag_cal
 
         if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
         {
-            return noCalibrationApplied(FitResult::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
+            return noCalibrationApplied(FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
         }
 
         return {soft_iron_matrix, hard_iron_offset};
@@ -251,7 +251,8 @@ namespace microstrain_mag_cal
                                               1.0;
         fit_parameters.tail<3>() = initial_offset;  // Hard iron offset
 
-        if (const uint8_t error = optimizeFit<EllipsoidalFitFunctor>(points, field_strength, fit_parameters))
+        if (const FitResult::Error error = optimizeFit<EllipsoidalFitFunctor>(points, field_strength, fit_parameters);
+            error != FitResult::Error::NONE)
         {
             return noCalibrationApplied(error);
         }
@@ -261,7 +262,7 @@ namespace microstrain_mag_cal
 
         if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
         {
-            return noCalibrationApplied(FitResult::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
+            return noCalibrationApplied(FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
         }
 
         return {soft_iron_matrix, hard_iron_offset};

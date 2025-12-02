@@ -7,14 +7,17 @@ namespace microstrain_mag_cal
 {
     struct FitResult
     {
-        static constexpr uint8_t FIT_OPTIMIZATION_SUCCEEDED                   = 0;
-        static constexpr uint8_t FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA     = 1;
-        static constexpr uint8_t FIT_OPTIMIZATION_DID_NOT_CONVERGE            = 2;
-        static constexpr uint8_t FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE  = 3;
+        enum class Error : uint8_t
+        {
+            NONE,
+            FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA,
+            FIT_OPTIMIZATION_DID_NOT_CONVERGE,
+            FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE
+        };
 
         Eigen::Matrix3d soft_iron_matrix;
         Eigen::RowVector3d hard_iron_offset;
-        uint8_t error = 0;
+        Error error = Error::NONE;
     };
 
 
