@@ -29,9 +29,14 @@ std::string getErrorMessage(const uint8_t error)
 
     switch (error)
     {
-        case microstrain_mag_cal::FitResult::FIT_OPTIMIZATION_FAILED: return error_code + "FIT OPTIMIZATION FAILED";
-        case microstrain_mag_cal::FitResult::FIT_MATRIX_NOT_POSITIVE_DEFINITE: return error_code + "FIT MATRIX NOT POSITIVE DEFINITE";
-        default: return error_code + "UNKNOWN ERROR";
+        case microstrain_mag_cal::FitResult::FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA:
+            return error_code + "FIT OPTIMIZATION INSUFFICIENT INPUT DATA";
+        case microstrain_mag_cal::FitResult::FIT_OPTIMIZATION_DID_NOT_CONVERGE:
+            return error_code + "FIT OPTIMIZATION DID NOT CONVERGE";
+        case microstrain_mag_cal::FitResult::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE:
+            return error_code + "FIT CORRECTION MATRIX NOT POSITIVE DEFINITE";
+        default:
+            return error_code + "UNKNOWN ERROR";
     }
 }
 
@@ -47,7 +52,7 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     printf("Fit Result: ");
     if (result.error)
     {
-        printf("FAILED ---> Error: %s\n\n", getErrorMessage(result.error).c_str());
+        printf("FAILED ---> %s\n\n", getErrorMessage(result.error).c_str());
     }
     else
     {
