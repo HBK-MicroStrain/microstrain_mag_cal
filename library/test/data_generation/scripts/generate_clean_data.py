@@ -12,7 +12,8 @@ import pathlib
 import numpy as np
 
 
-def generate_clean_magnetometer_data(num_coordinates, radius=1):
+# Number of points might not be exact because of rounding.
+def generate_clean_magnetometer_data(num_points, radius=1):
     # References:
     #   * https://en.wikipedia.org/wiki/Spherical_coordinate_system
     #   * https://www.statisticshowto.com/spherical-coordinates/
@@ -31,8 +32,18 @@ def generate_clean_magnetometer_data(num_coordinates, radius=1):
     #
     # In other words, this uses the Physics convention for spherical coordinates.
 
-    points_theta = np.linspace(0, np.pi, int(num_coordinates / 2))
-    points_phi = np.linspace(0, 2 * np.pi, num_coordinates)
+    # This is being done to account for the coordinate combinations below.
+    # N_points = (N_coordinates / 2) * N_coordinates
+    # --> 2 * N_points = N_coordinates * N_coordinates
+    # --> 2 * N_points = N_coordinates^2
+    # --> sqrt(2 * N_points) = N_coordinates
+    # --> N_coordinates = sqrt(2 * N_points)
+    num_coordinates = int(np.sqrt(2 * num_points))
+
+    # Exclude poles for theta since all theta values at them collapse to the same point.
+    points_theta = np.linspace(0, np.pi, int(num_coordinates / 2) + 2)[1:-1]
+    # Don't include 2π for phi since 0 and 2π are the same angle.
+    points_phi = np.linspace(0, 2 * np.pi, num_coordinates, endpoint=False)
 
     theta_grid, phi_grid = np.meshgrid(points_theta, points_phi, indexing='ij')
     points_x = radius * np.sin(theta_grid) * np.cos(phi_grid)
@@ -89,12 +100,13 @@ def save_data_as_cpp_header(points_flattened, absolute_path, filename, radius=1)
 
 if __name__ == "__main__":
     # Reference: See analysis script
-    NUM_COORDINATES = 50
-    RADIUS          = 1
-    FILENAME        = "clean_data"
+    # TODO: Look into serializing data instead of writing to header file.
+    NUM_POINTS = 1250
+    RADIUS     = 1
+    FILENAME   = "clean_data"
 
 
-    points = generate_clean_magnetometer_data(NUM_COORDINATES, radius=RADIUS)
+    points = generate_clean_magnetometer_data(NUM_POINTS, radius=RADIUS)
     points_flattened = points.reshape(-1, 3)
 
     test_dir = (pathlib.Path(__file__)

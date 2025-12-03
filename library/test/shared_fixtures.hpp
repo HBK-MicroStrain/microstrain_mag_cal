@@ -17,7 +17,7 @@ namespace fixture
     class MagCalDataBuilder
     {
     public:
-        explicit MagCalDataBuilder(const Eigen::MatrixX3d &data) : m_base_data(data) {}
+        explicit MagCalDataBuilder(const Eigen::MatrixX3d &clean_data) : m_clean_data(clean_data) {}
 
         void addUniformBias(const double bias)
         {
@@ -72,7 +72,7 @@ namespace fixture
             //
             // Now, the data matrix is Nx3, where each row is the 1x3 row vector.
             //
-            return (m_base_data * m_error_matrix.transpose()).rowwise() + m_bias;
+            return (m_clean_data * m_error_matrix.transpose()).rowwise() + m_bias;
         }
 
         [[nodiscard]] Eigen::MatrixX3d getDistortionMatrix() const
@@ -81,7 +81,7 @@ namespace fixture
         }
 
     private:
-        const Eigen::MatrixX3d m_base_data;  // Copying is safer here.
+        const Eigen::MatrixX3d m_clean_data;  // Copying is safer here.
 
         Eigen::RowVector3d m_bias{0.0, 0.0, 0.0};
         Eigen::Matrix<double, 3, 3> m_error_matrix = Eigen::Matrix<double, 3, 3>::Identity();
