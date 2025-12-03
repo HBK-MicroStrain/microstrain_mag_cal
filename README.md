@@ -1,5 +1,5 @@
 # Offline Magnetometer Calibration
-MVP library and commandline application for offline magnetometer calibration.
+Library and command-line application for offline magnetometer calibration.
 
 ## CLI Usage
 The CLI is run by the following command:
