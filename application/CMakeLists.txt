@@ -126,7 +126,9 @@ include(CPack)
 
 # Convenience target to build and package the application (commandline).
 add_custom_target("package_${CLI}"
-    COMMAND ${CMAKE_CPACK_COMMAND} --config CPackConfig.cmake -C $<CONFIG>
+    # Want to specify the config on multi-config generators, but not single-config ones.
+    COMMAND ${CMAKE_CPACK_COMMAND} --config CPackConfig.cmake 
+            $<$<BOOL:$<CONFIG>>:-C> $<$<BOOL:$<CONFIG>>:$<CONFIG>>
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Packaging ${CLI}..."
 )
