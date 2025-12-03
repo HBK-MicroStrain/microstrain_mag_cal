@@ -1,6 +1,6 @@
 # Application User Guide
 
-## Using The CLI
+## CLI Usage
 The CLI is run by the following command:
 ```
 offline_mag_cal [OPTIONS]
@@ -35,3 +35,14 @@ R_Gauss = R_Nanotesla * 0.00001
 ```
 
 It is recommended to use the *World Magnetic Model* (WMM) for the model in the calculator.
+
+## Building Manually
+Make sure the project has been configured first. Once configured, build the application:
+```
+cmake --build build/application
+```
+
+After building, run this if you would like to create a distributable package as well:
+```
+cmake --build build/application --target package_offline_mag_cal_cli
+```

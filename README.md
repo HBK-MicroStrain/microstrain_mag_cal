@@ -3,7 +3,7 @@ Library and command-line application for offline magnetometer calibration.
 
 ## Usage
 See the following user guides:
- * [Calibration Fit Application](application/README.md) 
+ * [Application](application/README.md#cli-usage) 
  * [Library]()                                          
 
 ## Install
@@ -27,5 +27,5 @@ cmake -S . -B build
 
 Once the project has been configured, each component can be built individually. See the following 
 build guides:
-* [Calibration Fit Application](application/README.md)
+* [Application](application/README.md#building-manually)
 * [Library]()
