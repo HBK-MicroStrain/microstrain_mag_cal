@@ -1,11 +1,10 @@
 # Offline Magnetometer Calibration
 Library and command-line application for offline magnetometer calibration.
 
-<!-- TODO: Add README for library -->
 ## Usage
 See the following user guides:
  * [Application](application/README.md#cli-usage) 
- * [Library]()                                          
+ * [Library](library/README.md#usage)                                          
 
 ## Install
 See the [Releases](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases) page for downloads.
