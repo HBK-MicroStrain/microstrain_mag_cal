@@ -29,4 +29,4 @@ cmake -S . -B build
 Once the project has been configured, each component can be built individually. See the following 
 build guides:
 * [Application](application/README.md#building-manually)
-* [Library]()
+* [Library](library/README.md#building-manually)

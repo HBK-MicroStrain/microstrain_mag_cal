@@ -38,17 +38,19 @@ if(DEFINED Python_EXECUTABLE)
     # Mark as used
 endif()
 
-add_library(microstrain_mag_cal)
+set(LIBRARY "microstrain_mag_cal")
 
-target_include_directories(microstrain_mag_cal PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
+add_library(${LIBRARY})
 
-set_target_properties(microstrain_mag_cal PROPERTIES
+target_include_directories(${LIBRARY} PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
+
+set_target_properties(${LIBRARY} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     LINKER_LANGUAGE CXX
 )
 
-target_link_libraries(microstrain_mag_cal PUBLIC
+target_link_libraries(${LIBRARY} PUBLIC
     Eigen3::Eigen
 )
 
@@ -66,7 +68,7 @@ else()
     )
 endif()
 
-target_compile_options(microstrain_mag_cal PRIVATE
+target_compile_options(${LIBRARY} PRIVATE
     "${COMPILE_OPTIONS}"
 )
 
