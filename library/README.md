@@ -40,10 +40,11 @@ The currently supported fit functions are:
 
 | Function        | Correction                                                                    | Coefficients calibrated                                                                              |
 |-----------------|-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| Spherical fit   | $$ \mathbf{m}_\text{corr} = s \cdot (\mathbf{m}_\text{raw} - \mathbf{b}) $$   | - Hard-iron offset<br/> - Uniform scale factor                                                       |
-| Ellipsoidal fit | $$ \mathbf{m}_\text{corr} = \mathbf{A}(\mathbf{m}_\text{raw} - \mathbf{b}) $$ | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
+| Spherical fit   | $ \mathbf{m}\_\text{corr} = s \cdot (\mathbf{m}\_\text{raw} - \mathbf{b}) $   | - Hard-iron offset<br/> - Uniform scale factor                                                       |
+| Ellipsoidal fit | $ \mathbf{m}\_\text{corr} = \mathbf{A}(\mathbf{m}\_\text{raw} - \mathbf{b}) $ | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
 
 where,
+
 $$
 \begin{aligned}
 \mathbf{m}_\text{cal} &= \text{Corrected measurement vector} \\
