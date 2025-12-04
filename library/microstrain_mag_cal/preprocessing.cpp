@@ -27,7 +27,9 @@ namespace microstrain_mag_cal
     {
         if (m_unique_point_grid.isPointInUniqueVoxel(point))
         {
-            m_flattened_points.insert(m_flattened_points.end(), point.begin(), point.end());
+            m_flattened_points.push_back(point[0]);
+            m_flattened_points.push_back(point[1]);
+            m_flattened_points.push_back(point[2]);
         }
     }
 

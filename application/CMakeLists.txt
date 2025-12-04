@@ -49,28 +49,29 @@ endif()
 
 cmake_minimum_required(VERSION 3.19)
 
-project(offline_mag_cal
-    VERSION 0.0.0
-)
+project(offline_mag_cal VERSION 0.0.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(offline_mag_cal_core)
-add_executable(offline_mag_cal_cli)
+set(CORE "offline_mag_cal_core")
+set(CLI "offline_mag_cal_cli")
 
-set_target_properties(offline_mag_cal_cli
+add_library(${CORE})
+add_executable(${CLI})
+
+set_target_properties(${CLI}
     PROPERTIES
         OUTPUT_NAME offline-mag-cal
 )
 
-target_link_libraries(offline_mag_cal_core
+target_link_libraries(${CORE}
     Eigen3::Eigen
     microstrain_mag_cal
     ${MIP_LIBRARY}
 )
-target_link_libraries(offline_mag_cal_cli
+target_link_libraries(${CLI}
     PRIVATE
         CLI11::CLI11
         mio::mio
@@ -84,3 +85,50 @@ target_link_libraries(offline_mag_cal_cli
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(scripts)
+
+# ---------------------------------------------------------------
+# Installation
+# ---------------------------------------------------------------
+
+# Install the executable
+install(TARGETS ${CLI}
+    DESTINATION bin
+    COMPONENT application
+)
+
+# ---------------------------------------------------------------
+# Packaging
+# ---------------------------------------------------------------
+
+# Only package the required components
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};${PROJECT_NAME};application;/")
+set(CPACK_PACKAGE_NAME "offline-mag-cal")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
+# TODO: Set reusable description for README and here
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Commandline application for offline magnetometer calibration.")
+
+if(WIN32)
+    set(CPACK_GENERATOR "ZIP")
+elseif(UNIX)
+    set(CPACK_GENERATOR "TGZ")
+endif()
+
+# Force CPack to output its config in the current binary directory
+set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackConfig.cmake")
+set(CPACK_SOURCE_OUTPUT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackSourceConfig.cmake")
+
+include(CPack)
+
+# ---------------------------------------------------------------
+# CI/CD
+# ---------------------------------------------------------------
+
+# Convenience target to build and package the application (commandline).
+add_custom_target("package_${CLI}"
+    # Want to specify the config on multi-config generators, but not single-config ones.
+    COMMAND ${CMAKE_CPACK_COMMAND} --config CPackConfig.cmake 
+            $<$<BOOL:$<CONFIG>>:-C> $<$<BOOL:$<CONFIG>>:$<CONFIG>>
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Packaging ${CLI}..."
+)

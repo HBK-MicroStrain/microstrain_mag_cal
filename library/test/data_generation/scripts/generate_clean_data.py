@@ -12,7 +12,8 @@ import pathlib
 import numpy as np
 
 
-def generate_clean_magnetometer_data(num_coordinates, radius=1):
+# Number of points might not be exact because of rounding.
+def generate_clean_magnetometer_data(num_points, radius=1):
     # References:
     #   * https://en.wikipedia.org/wiki/Spherical_coordinate_system
     #   * https://www.statisticshowto.com/spherical-coordinates/
@@ -31,8 +32,18 @@ def generate_clean_magnetometer_data(num_coordinates, radius=1):
     #
     # In other words, this uses the Physics convention for spherical coordinates.
 
-    points_theta = np.linspace(0, np.pi, int(num_coordinates / 2))
-    points_phi = np.linspace(0, 2 * np.pi, num_coordinates)
+    # This is being done to account for the coordinate combinations below.
+    # N_points = (N_coordinates / 2) * N_coordinates
+    # --> 2 * N_points = N_coordinates * N_coordinates
+    # --> 2 * N_points = N_coordinates^2
+    # --> sqrt(2 * N_points) = N_coordinates
+    # --> N_coordinates = sqrt(2 * N_points)
+    num_coordinates = int(np.sqrt(2 * num_points))
+
+    # Exclude poles for theta since all theta values at them collapse to the same point.
+    points_theta = np.linspace(0, np.pi, int(num_coordinates / 2) + 2)[1:-1]
+    # Don't include 2π for phi since 0 and 2π are the same angle.
+    points_phi = np.linspace(0, 2 * np.pi, num_coordinates, endpoint=False)
 
     theta_grid, phi_grid = np.meshgrid(points_theta, points_phi, indexing='ij')
     points_x = radius * np.sin(theta_grid) * np.cos(phi_grid)
@@ -49,7 +60,9 @@ def generate_clean_magnetometer_data(num_coordinates, radius=1):
     #
     return np.stack([points_x, points_y, points_z], axis=2)
 
-def save_data_as_cpp_header(points_flattened, filepath, radius=1):
+def save_data_as_cpp_header(points_flattened, absolute_path, filename, radius=1):
+    filepath = (absolute_path / filename).with_suffix('.hpp')
+
     with open(filepath, "w") as file:
         file.write(f"/* \n")
         file.write(f" * Auto-generated test data file - DON'T EDIT MANUALLY!\n")
@@ -61,7 +74,7 @@ def save_data_as_cpp_header(points_flattened, filepath, radius=1):
         file.write(f"\n")
         file.write(f"#include <Eigen/Dense>\n")
         file.write(f"\n")
-        file.write(f"namespace fixture\n")
+        file.write(f"namespace fixture::{filename}\n")
         file.write(f"{{\n")
 
         file.write(f"    static constexpr double FIELD_STRENGTH = {radius};\n")
@@ -81,18 +94,19 @@ def save_data_as_cpp_header(points_flattened, filepath, radius=1):
         file.write(f"    }};\n")
         file.write(f"\n")
 
-        file.write(f"    static const Eigen::Map<const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor>> CLEAN_DATA(raw_data.data());\n")
+        file.write(f"    static const Eigen::Map<const Eigen::Matrix<double, {rows}, {cols}, Eigen::RowMajor>> DATA(raw_data.data());\n")
         file.write("}\n")
 
 
 if __name__ == "__main__":
     # Reference: See analysis script
-    NUM_COORDINATES = 50
-    RADIUS          = 1
-    FILENAME        = "clean_data.hpp"
+    # TODO: Look into serializing data instead of writing to header file.
+    NUM_POINTS = 1250
+    RADIUS     = 1
+    FILENAME   = "clean_data"
 
 
-    points = generate_clean_magnetometer_data(NUM_COORDINATES, radius=RADIUS)
+    points = generate_clean_magnetometer_data(NUM_POINTS, radius=RADIUS)
     points_flattened = points.reshape(-1, 3)
 
     test_dir = (pathlib.Path(__file__)
@@ -100,6 +114,5 @@ if __name__ == "__main__":
         .parent  # Data directory
         .parent  # Test directory
         .resolve())
-    filepath = test_dir / FILENAME
 
-    save_data_as_cpp_header(points_flattened, filepath, radius=RADIUS)
+    save_data_as_cpp_header(points_flattened, test_dir, FILENAME, radius=RADIUS)

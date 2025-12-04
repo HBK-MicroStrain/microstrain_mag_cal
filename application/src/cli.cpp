@@ -23,6 +23,23 @@ public:
     }
 };
 
+std::string getErrorMessage(const microstrain_mag_cal::FitResult::Error error)
+{
+    const std::string error_code = "(" + std::to_string(static_cast<uint8_t>(error)) + ") ";
+
+    switch (error)
+    {
+        case microstrain_mag_cal::FitResult::Error::FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA:
+            return error_code + "FIT OPTIMIZATION INSUFFICIENT INPUT DATA";
+        case microstrain_mag_cal::FitResult::Error::FIT_OPTIMIZATION_DID_NOT_CONVERGE:
+            return error_code + "FIT OPTIMIZATION DID NOT CONVERGE";
+        case microstrain_mag_cal::FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE:
+            return error_code + "FIT CORRECTION MATRIX NOT POSITIVE DEFINITE";
+        default:
+            return error_code + "UNKNOWN ERROR";
+    }
+}
+
 // Console output after the fitting algorithms are run
 void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
 {
@@ -32,7 +49,15 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     printf("%s\n", fit_name.data());
     printf("%s\n\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
 
-    printf("Fit Result: %s\n\n", result.succeeded ? "SUCCEEDED" : "FAILED");
+    printf("Fit Result: ");
+    if (result.error == microstrain_mag_cal::FitResult::Error::NONE)
+    {
+        printf("SUCCEEDED\n\n");
+    }
+    else
+    {
+        printf("FAILED ---> %s\n\n", getErrorMessage(result.error).c_str());
+    }
 
     printf("Soft-Iron Matrix:\n");
     std::cout << result.soft_iron_matrix << "\n\n";
@@ -91,7 +116,7 @@ int main(const int argc, char **argv)
     const Eigen::MatrixX3d points = mag_cal_core::extractPointMatrixFromRawData(data_view, arg_field_strength);
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
-    printf("Number Of Points: %lld\n\n", points.rows());
+    printf("Number Of Points: %zu\n\n", static_cast<size_t>(points.rows()));
 
     if (!arg_field_strength.has_value())
     {

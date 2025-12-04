@@ -1,38 +1,31 @@
 # Offline Magnetometer Calibration
-MVP library and commandline application for offline magnetometer calibration.
+Library and command-line application for offline magnetometer calibration.
 
-## CLI Usage
-The CLI is run by the following command:
-```
-./offline_mag_cal [OPTIONS]
-```
+## Usage
+See the following user guides:
+ * [Application](application/README.md#cli-usage) 
+ * [Library](library/README.md#usage)                                          
 
-For a list of options, run:
-```
-./offline_mag_cal --help
-```
+## Install
+See the [Releases](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases) page for downloads.
 
-### Example
-This example reads magnetometer data from the file `mag_cal_data.bin` and runs spherical and 
-ellipsoidal fits on the data:
-```
-./offline-mag-cal "mag_cal_test.bin" -s -e
-```
+### Pre-built
+Releases are currently distributed as a compressed folder containing the pre-built binaries.
 
-### Reference Field Strength
-Specifying the reference field strength for the location where data is sampled from will improve 
-calibration. 
+Each component is distributed separately. Download the folder for the desired component and version
+and unzip it.
 
-The reference field strength can be retrieved from the
-[NOAA calculator](https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#igrfwmm). It will be
-the `Total Field` attribute in the calculator results. The result will likely be in
-[Nanotesla](https://en.wikipedia.org/wiki/Tesla_(unit)), while the application expects it
-to be [Gauss](https://en.wikipedia.org/wiki/Gauss_(unit)). This conversion must be
-done manually; the application does not support it automatically (yet).
-
-The conversion is done using the following formula:
+### Building manually
+This project uses CMake. To configure it, first create a build directory in the project root:
 ```
-R_Gauss = R_Nanotesla * 0.00001
+mkdir build
+```
+Then, run the configure command:
+```
+cmake -S . -B build
 ```
 
-It is recommended to use the *World Magnetic Model* (WMM) for the model in the calculator.
+Once the project has been configured, each component can be built individually. See the following 
+build guides:
+* [Application](application/README.md#building-manually)
+* [Library](library/README.md#building-manually)

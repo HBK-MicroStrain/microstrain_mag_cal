@@ -19,6 +19,11 @@ namespace fixture
     public:
         explicit MagCalDataBuilder(const Eigen::MatrixX3d &clean_data) : m_clean_data(clean_data) {}
 
+        void addUniformBias(const double bias)
+        {
+            m_bias = Eigen::RowVector3d(bias, bias, bias);
+        }
+
         void addBias(const Eigen::RowVector3d &bias)
         {
             m_bias = bias;

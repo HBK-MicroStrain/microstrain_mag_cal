@@ -13,15 +13,13 @@ public:
     // Pass in mip fields to include in the packet. For example:
     //     ScaledMag{{ 1.0, 2.0, 3.0 }}, ScaledMag{{ 4.0, 5.0, 6.0 }}, ...
     template<typename... Args>
-    BinaryDataBuilder& addMipPacket(Args&&... args)
+    void addMipPacket(Args&&... args)
     {
         mip::PacketBuf packet(mip::data_sensor::DESCRIPTOR_SET);
         (packet.addField(std::forward<Args>(args)), ...);
         packet.finalize();
 
         m_data.insert(m_data.end(), packet.data().begin(), packet.data().end());
-
-        return *this;
     }
 
     microstrain::ConstU8ArrayView data() const
@@ -42,19 +40,16 @@ std::array CHECK_POINTS {
 
 MICROSTRAIN_TEST_CASE("MVP", "Mag_cal_data_can_be_extracted_from_binary_into_a_point_matrix")
 {
-    BinaryDataBuilder builder = BinaryDataBuilder()
-        .addMipPacket(
-            mip::data_sensor::ScaledMag{{CHECK_POINTS[0], CHECK_POINTS[1], CHECK_POINTS[2]}}
-        )
-        .addMipPacket(
-            mip::data_sensor::ScaledAccel{{0.0f, 0.0f, 0.0f}}, // Noise
-            mip::data_sensor::ScaledMag{{CHECK_POINTS[3], CHECK_POINTS[4], CHECK_POINTS[5]}}
-        )
-        .addMipPacket(
-            mip::data_sensor::ScaledAccel{{0.0f, 0.0f, 0.0f}}, // Noise
-            mip::data_sensor::ScaledMag{{CHECK_POINTS[6], CHECK_POINTS[7], CHECK_POINTS[8]}},
-            mip::data_sensor::ScaledGyro{{0.0f, 0.0f, 0.0f}}    // Noise
-        );
+    BinaryDataBuilder builder = BinaryDataBuilder();
+    builder.addMipPacket(
+        mip::data_sensor::ScaledMag{{CHECK_POINTS[0], CHECK_POINTS[1], CHECK_POINTS[2]}});
+    builder.addMipPacket(
+        mip::data_sensor::ScaledAccel{{0.0f, 0.0f, 0.0f}},
+        mip::data_sensor::ScaledMag{{CHECK_POINTS[3], CHECK_POINTS[4], CHECK_POINTS[5]}});
+    builder.addMipPacket(
+        mip::data_sensor::ScaledAccel{{0.0f, 0.0f, 0.0f}},
+        mip::data_sensor::ScaledMag{{CHECK_POINTS[6], CHECK_POINTS[7], CHECK_POINTS[8]}},
+        mip::data_sensor::ScaledGyro{{0.0f, 0.0f, 0.0f}});
     const microstrain::ConstU8ArrayView data_view = builder.data();
 
     Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data_view);

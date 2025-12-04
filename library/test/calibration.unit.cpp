@@ -78,13 +78,13 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
 
 MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_recovers_hard_iron_offset")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addUniformScaleFactor(1.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult result = fitSphere(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult result = fitSphere(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.01));
     CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.01));
@@ -93,44 +93,44 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_recovers_hard_iron_offset")
 
 MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrects_data_to_sphere_of_reference_field_strength")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addUniformScaleFactor(1.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult result = fitSphere(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult result = fitSphere(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, result);
     const Eigen::VectorXd data_field_strengths = corrected_data.rowwise().norm();
-    CHECK(data_field_strengths.minCoeff() == doctest::Approx(fixture::FIELD_STRENGTH).epsilon(0.01));
-    CHECK(data_field_strengths.maxCoeff() == doctest::Approx(fixture::FIELD_STRENGTH).epsilon(0.01));
+    CHECK(data_field_strengths.minCoeff() == doctest::Approx(fixture::clean_data::FIELD_STRENGTH).epsilon(0.01));
+    CHECK(data_field_strengths.maxCoeff() == doctest::Approx(fixture::clean_data::FIELD_STRENGTH).epsilon(0.01));
 }
 
 MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_produces_inverse_of_distortion_matrix")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addUniformScaleFactor(1.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult result = fitSphere(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult result = fitSphere(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     CHECK((result.soft_iron_matrix * builder.getDistortionMatrix()).isApprox(Eigen::Matrix3d::Identity(), 0.01));
 }
 
 MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrected_data_requires_no_further_correction")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addUniformScaleFactor(1.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult initial_fit = fitSphere(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult initial_fit = fitSphere(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
     const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, initial_fit);
-    const FitResult refined_fit = fitSphere(corrected_data, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult refined_fit = fitSphere(corrected_data, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     CHECK_MESSAGE(refined_fit.soft_iron_matrix.isApprox(Eigen::Matrix3d::Identity(), 0.01), refined_fit.soft_iron_matrix);
     CHECK_MESSAGE(refined_fit.hard_iron_offset.isApprox(Eigen::RowVector3d::Zero(), 0.01), refined_fit.hard_iron_offset);
@@ -138,14 +138,14 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrected_data_requires_no_f
 
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_recovers_hard_iron_offset")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addScaleFactor({1.1, 2.2, 3.3});
     builder.addUniformCrossCoupling(0.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult result = fitEllipsoid(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult result = fitEllipsoid(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     CHECK(result.hard_iron_offset(0) == doctest::Approx(2.1).epsilon(0.01));
     CHECK(result.hard_iron_offset(1) == doctest::Approx(2.2).epsilon(0.01));
@@ -154,31 +154,31 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_recovers_hard_iron_offset"
 
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of_reference_field_strength")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addScaleFactor({1.1, 2.2, 3.3});
     builder.addUniformCrossCoupling(0.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult result = fitEllipsoid(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult result = fitEllipsoid(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, result);
     const Eigen::VectorXd data_field_strengths = corrected_data.rowwise().norm();
-    CHECK(data_field_strengths.minCoeff() == doctest::Approx(fixture::FIELD_STRENGTH).epsilon(0.01));
-    CHECK(data_field_strengths.maxCoeff() == doctest::Approx(fixture::FIELD_STRENGTH).epsilon(0.01));
+    CHECK(data_field_strengths.minCoeff() == doctest::Approx(fixture::clean_data::FIELD_STRENGTH).epsilon(0.01));
+    CHECK(data_field_strengths.maxCoeff() == doctest::Approx(fixture::clean_data::FIELD_STRENGTH).epsilon(0.01));
 }
 
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distortion_matrix")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addScaleFactor({1.1, 2.2, 3.3});
     builder.addUniformCrossCoupling(0.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult result = fitEllipsoid(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult result = fitEllipsoid(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     CHECK((result.soft_iron_matrix * builder.getDistortionMatrix()).isApprox(Eigen::Matrix3d::Identity(), 0.01));
 }
@@ -186,16 +186,16 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distor
 // TODO: Maybe integration test - runs a little slow
 MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrected_data_requires_no_further_correction")
 {
-    fixture::MagCalDataBuilder builder(fixture::CLEAN_DATA);
+    fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
     builder.addScaleFactor({1.1, 2.2, 3.3});
     builder.addUniformCrossCoupling(0.5);
     const Eigen::MatrixX3d data_with_error = builder.applyError();
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(data_with_error);
 
-    const FitResult initial_fit = fitEllipsoid(data_with_error, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult initial_fit = fitEllipsoid(data_with_error, fixture::clean_data::FIELD_STRENGTH, initial_offset);
     const Eigen::MatrixX3d corrected_data = fixture::applyCorrections(data_with_error, initial_fit);
-    const FitResult refined_fit = fitEllipsoid(corrected_data, fixture::FIELD_STRENGTH, initial_offset);
+    const FitResult refined_fit = fitEllipsoid(corrected_data, fixture::clean_data::FIELD_STRENGTH, initial_offset);
 
     CHECK_MESSAGE(refined_fit.soft_iron_matrix.isApprox(Eigen::Matrix3d::Identity(), 0.01), refined_fit.soft_iron_matrix);
     CHECK_MESSAGE(refined_fit.hard_iron_offset.isApprox(Eigen::RowVector3d::Zero(), 0.01), refined_fit.hard_iron_offset);

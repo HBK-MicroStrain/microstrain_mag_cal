@@ -26,11 +26,15 @@ bool extractPoints(void *point_manager, const mip::PacketView *packet_view, cons
             }
 
             mip::Serializer serializer(field.payload());
-            std::array<float, 3> temp;
+            std::array<float, 3> temp{};
 
             for (uint8_t i = 0; i < 3; ++i)
             {
-                assert(serializer.extract(temp[i]));
+                if (const bool success = serializer.extract(temp[i]); !success)
+                {
+                    assert(false);
+                    throw std::runtime_error("ERROR: Serialized data parsing failed.");
+                }
             }
 
             m_point_manager->addPoint(temp);
