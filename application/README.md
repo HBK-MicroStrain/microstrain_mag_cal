@@ -37,7 +37,7 @@ R_Gauss = R_Nanotesla * 0.00001
 It is recommended to use the *World Magnetic Model* (WMM) for the model in the calculator.
 
 ## Building Manually
-Make sure the project has been configured first. Once configured, build the application:
+Make sure the project has been [configured](../README.md#building-manually) first. Once configured, build the application:
 ```
 cmake --build build/application
 ```

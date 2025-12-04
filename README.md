@@ -1,6 +1,7 @@
 # Offline Magnetometer Calibration
 Library and command-line application for offline magnetometer calibration.
 
+<!-- TODO: Add README for library -->
 ## Usage
 See the following user guides:
  * [Application](application/README.md#cli-usage) 
