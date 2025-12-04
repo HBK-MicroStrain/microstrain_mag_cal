@@ -38,10 +38,10 @@ const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result
 ### Fit functions
 The currently supported fit functions are:
 
-| Function        | Coefficients calibrated                                                                              |
-|-----------------|------------------------------------------------------------------------------------------------------|
-| Spherical fit   | - Hard-iron offset<br/> - Uniform scale factor                                                       |
-| Ellipsoidal fit | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
+| Function        | Math               | Coefficients calibrated                                                                              |
+|-----------------|--------------------|------------------------------------------------------------------------------------------------------|
+| Spherical fit   | <!-- TODO: Add --> | - Hard-iron offset<br/> - Uniform scale factor                                                       |
+| Ellipsoidal fit | <!-- TODO: Add --> | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
 
 ## Building Manually
 Make sure the project has been [configured](../README.md#building-manually) first. Once configured, build the library:
