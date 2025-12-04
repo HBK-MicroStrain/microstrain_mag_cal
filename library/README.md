@@ -38,10 +38,10 @@ const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result
 ### Fit functions
 The currently supported fit functions are:
 
-| Function        | Correction                                                                    | Coefficients calibrated                                                                              |
-|-----------------|-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| Spherical fit   | $ \mathbf{m}\_\text{corr} = s \cdot (\mathbf{m}\_\text{raw} - \mathbf{b}) $   | - Hard-iron offset<br/> - Uniform scale factor                                                       |
-| Ellipsoidal fit | $ \mathbf{m}\_\text{corr} = \mathbf{A}(\mathbf{m}\_\text{raw} - \mathbf{b}) $ | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
+| Function        | Correction                                                                  | Coefficients calibrated                                                                              |
+|-----------------|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| Spherical fit   | $\mathbf{m}\_\text{corr} = s \cdot (\mathbf{m}\_\text{raw} - \mathbf{b})$   | - Hard-iron offset<br/> - Uniform scale factor                                                       |
+| Ellipsoidal fit | $\mathbf{m}\_\text{corr} = \mathbf{A}(\mathbf{m}\_\text{raw} - \mathbf{b})$ | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
 
 where,
 
