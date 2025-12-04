@@ -47,5 +47,7 @@ cmake --build build/library
 
 After building, run this if you would like to create a distributable package as well:
 ```
-cmake --build build/application --target package_offline_mag_cal_cli
+cmake --build build/library --target package_microstrain_mag_cal
 ```
+
+The package will be in `build/library`.

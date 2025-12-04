@@ -46,3 +46,4 @@ After building, run this if you would like to create a distributable package as 
 ```
 cmake --build build/application --target package_offline_mag_cal_cli
 ```
+The package will be in `build/application`.
