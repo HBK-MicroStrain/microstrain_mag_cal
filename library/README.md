@@ -44,7 +44,6 @@ The currently supported fit functions are:
 | Ellipsoidal fit | $$ \mathbf{m}_\text{corr} = \mathbf{A}(\mathbf{m}_\text{raw} - \mathbf{b}) $$ | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
 
 where,
-
 $$
 \begin{aligned}
 \mathbf{m}_\text{cal} &= \text{Corrected measurement vector} \\
