@@ -103,10 +103,10 @@ install(TARGETS ${CLI}
 # Only package the required components
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};${PROJECT_NAME};application;/")
 set(CPACK_PACKAGE_NAME "offline-mag-cal")
-set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
 # TODO: Set reusable description for README and here
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MVP commandline application for offline magnetometer calibration.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Commandline application for offline magnetometer calibration.")
 
 if(WIN32)
     set(CPACK_GENERATOR "ZIP")
