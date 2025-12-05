@@ -2,10 +2,8 @@ name: CI
 
 on:
   workflow_dispatch:
-#  push:
-#    branches: [ main, develop ]
-#  pull_request:
-#    branches: [ main, develop ]
+  push:
+  pull_request:
 
 jobs:
   build:
