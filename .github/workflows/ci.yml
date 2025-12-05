@@ -53,15 +53,16 @@ jobs:
         build_type: [Release]
 
     steps:
-    # TODO: Remove if not needed
-    #- name: Checkout Code
-    #  uses: actions/checkout@v4
-
     - name: Download Build Artifacts
       uses: actions/download-artifact@v4
       with:
         name: build-${{ matrix.os }}-${{ matrix.build_type }}
         path: build/
+
+    - name: Set Executable Permissions
+      run: |
+        chmod +x build/library/test/library_unit_tests
+        chmod +x build/application/test/application_unit_tests
 
     - name: Run Unit Tests
       working-directory: ${{github.workspace}}/build
