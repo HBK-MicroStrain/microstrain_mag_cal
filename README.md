@@ -29,3 +29,12 @@ Once the project has been configured, each component can be built individually. 
 build guides:
 * [Application](application/README.md#building-manually)
 * [Library](library/README.md#building-manually)
+
+## Development
+The library and application are developed together under the same project. While they are each
+standalone, they should be treated as one during development.
+### Running tests
+Unit tests should be run after every code change to catch errors early:
+```
+ctest --test-dir build -L unit --output-on-failure --verbose --parallel
+```
