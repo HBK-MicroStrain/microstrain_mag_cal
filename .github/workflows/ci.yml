@@ -1,7 +1,7 @@
 name: CI
 
-# TODO: Solidify on section
-#on:
+on:
+  workflow_dispatch:
 #  push:
 #    branches: [ main, develop ]
 #  pull_request:
