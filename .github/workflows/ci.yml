@@ -60,6 +60,7 @@ jobs:
         path: build/
 
     - name: Set Executable Permissions
+      if: runner.os != 'Windows'
       run: |
         chmod +x build/library/test/library_unit_tests
         chmod +x build/application/test/application_unit_tests
