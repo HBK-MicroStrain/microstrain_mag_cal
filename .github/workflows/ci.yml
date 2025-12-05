@@ -1,0 +1,70 @@
+name: CI
+
+# TODO: Solidify on section
+#on:
+#  push:
+#    branches: [ main, develop ]
+#  pull_request:
+#    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Release]
+        include:
+          - os: windows-latest
+            cmake_generator: "Visual Studio 17 2022"
+          - os: ubuntu-latest
+            cmake_generator: "Unix Makefiles"
+          - os: macos-latest
+            cmake_generator: "Unix Makefiles"
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Configure CMake
+      run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -G "${{matrix.cmake_generator}}"
+
+    - name: Build Library
+      run: cmake --build ${{github.workspace}}/build/library --config ${{matrix.build_type}}
+
+    - name: Build Application
+      run: cmake --build ${{github.workspace}}/build/application --config ${{matrix.build_type}}
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-${{ matrix.os }}-${{ matrix.build_type }}
+        path: build/
+        retention-days: 7  # Adjust as needed
+
+  test:
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Release]
+
+    steps:
+    # TODO: Remove if not needed
+    #- name: Checkout Code
+    #  uses: actions/checkout@v4
+
+    - name: Download Build Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-${{ matrix.os }}-${{ matrix.build_type }}
+        path: build/
+
+    - name: Run Unit Tests
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{matrix.build_type}} -L unit --output-on-failure --verbose --parallel
