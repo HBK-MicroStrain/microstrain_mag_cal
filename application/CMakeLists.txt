@@ -52,13 +52,6 @@ cmake_minimum_required(VERSION 3.19)
 include(../cmake/git_version.cmake)
 get_project_version_from_git_tag("app" APP_FULL_VERSION APP_NUMERIC_VERSION)
 
-# Make CMake reconfigure if git tags change
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/.git/refs/tags")
-
-message(WARNING "APP NUMERIC VERSION: ${APP_NUMERIC_VERSION}")
-message(WARNING "APP FULL VERSION: ${APP_FULL_VERSION}")
-
 project(offline_mag_cal VERSION ${APP_NUMERIC_VERSION})
 set(PROJECT_VERSION ${APP_FULL_VERSION})
 

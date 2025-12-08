@@ -25,12 +25,6 @@ cmake_minimum_required(VERSION 3.19)
 include(../cmake/git_version.cmake)
 get_project_version_from_git_tag("lib" LIB_FULL_VERSION LIB_NUMERIC_VERSION)
 
-# Make CMake reconfigure if git tags change
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/.git/refs/tags")
-
-message(WARNING "LIB NUMERIC VERSION: ${LIB_NUMERIC_VERSION}")
-message(WARNING "LIB FULL VERSION: ${LIB_FULL_VERSION}")
 project(microstrain_mag_cal VERSION ${LIB_NUMERIC_VERSION})
 set(PROJECT_VERSION ${LIB_FULL_VERSION})
 

@@ -7,8 +7,8 @@
 #     PROJECT_PREFIX - The project prefix in the git tag ("lib" in "lib/v1.2.3").
 #
 # Returns:
-#     NUMERIC_VERSION_OUT: The extracted numeric version string (ex: "1.2.3").
 #        FULL_VERSION_OUT: The extracted full version string (ex: "beta-1.2.3").
+#     NUMERIC_VERSION_OUT: The extracted numeric version string (ex: "1.2.3").
 #
 function(get_project_version_from_git_tag PROJECT_PREFIX FULL_VERSION_OUT NUMERIC_VERSION_OUT)
     execute_process(
