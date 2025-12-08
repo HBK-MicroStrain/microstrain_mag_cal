@@ -1,9 +1,9 @@
-#include <microstrain_mag_cal/calibration.hpp>
+#include <mag_cal_core/calibration.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 #include "clean_data.hpp"
 #include "shared_fixtures.hpp"
 
-using namespace microstrain_mag_cal;
+using namespace mag_cal_core;
 
 
 // Data points taken from a real InertialConnect data capture. All expected values for tests are

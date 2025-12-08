@@ -6,7 +6,7 @@
 #include <unsupported/Eigen/NumericalDiff>
 
 
-namespace microstrain_mag_cal
+namespace mag_cal_core
 {
     /// @brief Estimates the initial hard-iron offset using the mean of all measurements.
     ///

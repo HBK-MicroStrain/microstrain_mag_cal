@@ -1,11 +1,11 @@
-#include <microstrain_mag_cal/preprocessing.hpp>
+#include <mag_cal_core/preprocessing.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 
 
 MICROSTRAIN_TEST_CASE("Preprocessing", "A_non_unique_point_cannot_be_added_to_the_point_manager")
 {
-    microstrain_mag_cal::VoxelGrid point_grid(1.0);
-    microstrain_mag_cal::PointManager point_manager(point_grid);
+    mag_cal_core::VoxelGrid point_grid(1.0);
+    mag_cal_core::PointManager point_manager(point_grid);
 
     point_manager.addPoint({1.0f, 2.0f, 3.0f});
     point_manager.addPoint({1.1f, 2.1f, 3.1f});
@@ -21,8 +21,8 @@ MICROSTRAIN_TEST_CASE("Preprocessing", "A_non_unique_point_cannot_be_added_to_th
 
 MICROSTRAIN_TEST_CASE("Preprocessing", "A_unique_point_can_be_added_to_the_point_manager")
 {
-    microstrain_mag_cal::VoxelGrid point_grid(1.0);
-    microstrain_mag_cal::PointManager point_manager(point_grid);
+    mag_cal_core::VoxelGrid point_grid(1.0);
+    mag_cal_core::PointManager point_manager(point_grid);
 
     point_manager.addPoint({1.0f, 2.0f, 3.0f});
     point_manager.addPoint({4.0f, 5.0f, 6.0f});

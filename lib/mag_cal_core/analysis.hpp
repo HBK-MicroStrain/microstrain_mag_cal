@@ -1,9 +1,9 @@
 #pragma once
 
-#include <microstrain_mag_cal/calibration.hpp>
+#include <mag_cal_core/calibration.hpp>
 
 
-namespace microstrain_mag_cal
+namespace mag_cal_core
 {
     double calculateSpatialCoverage(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
 
