@@ -26,6 +26,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
+        # Fetch all history and tags for proper versioning from tags.
+        fetch-depth: '0'
 
     - name: Configure CMake
       run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -G "${{matrix.cmake_generator}}"
