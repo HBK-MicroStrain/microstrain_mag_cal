@@ -1,22 +1,4 @@
 # ---------------------------------------------------------------
-# Dependencies
-# ---------------------------------------------------------------
-
-include(FetchContent)
-
-# NOTE: I had to do: `git config --global http.sslBackend schannel` to get the SSL certificates to
-# work in windows. Might be worth looking into whether it's better to do this or update OpenSSL
-# certificates manually.
-FetchContent_Declare(
-  Eigen
-  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-  GIT_TAG 5.0.0
-  GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(Eigen)
-
-# ---------------------------------------------------------------
 # Library setup
 # ---------------------------------------------------------------
 
@@ -88,41 +70,4 @@ add_subdirectory(test)
 install(TARGETS ${LIBRARY}
     DESTINATION bin
     COMPONENT library
-)
-
-# ---------------------------------------------------------------
-# Packaging
-# ---------------------------------------------------------------
-
-# Only package the required components
-set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};${PROJECT_NAME};library;/")
-set(CPACK_PACKAGE_NAME ${LIBRARY})
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
-# TODO: Set reusable description for README and here
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Library for offline magnetometer calibration.")
-
-if(WIN32)
-    set(CPACK_GENERATOR "ZIP")
-elseif(UNIX)
-    set(CPACK_GENERATOR "TGZ")
-endif()
-
-# Force CPack to output its config in the current binary directory
-set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackConfig.cmake")
-set(CPACK_SOURCE_OUTPUT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackSourceConfig.cmake")
-
-include(CPack)
-
-# ---------------------------------------------------------------
-# CI/CD
-# ---------------------------------------------------------------
-
-# Convenience target to build and package the application (commandline).
-add_custom_target("package_${LIBRARY}"
-    # Want to specify the config on multi-config generators, but not single-config ones.
-    COMMAND ${CMAKE_CPACK_COMMAND} --config CPackConfig.cmake
-    $<$<BOOL:$<CONFIG>>:-C> $<$<BOOL:$<CONFIG>>:$<CONFIG>>
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Packaging ${LIBRARY}..."
 )

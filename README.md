@@ -1,5 +1,5 @@
-# Offline Magnetometer Calibration
-Library and command-line application for offline magnetometer calibration.
+# MicroStrain Mag Cal
+Suite of library and tools for magnetometer calibration.
 
 ## Usage
 See the following user guides:
