@@ -49,11 +49,8 @@ endif()
 
 cmake_minimum_required(VERSION 3.19)
 
-include(../cmake/git_version.cmake)
-get_project_version_from_git_tag("app" APP_FULL_VERSION APP_NUMERIC_VERSION)
-
-project(offline_mag_cal VERSION ${APP_NUMERIC_VERSION})
-set(PROJECT_VERSION ${APP_FULL_VERSION})
+project(offline_mag_cal VERSION ${REPO_NUMERIC_VERSION})
+set(PROJECT_VERSION ${REPO_FULL_VERSION})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

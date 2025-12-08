@@ -22,11 +22,8 @@ FetchContent_MakeAvailable(Eigen)
 
 cmake_minimum_required(VERSION 3.19)
 
-include(../cmake/git_version.cmake)
-get_project_version_from_git_tag("lib" LIB_FULL_VERSION LIB_NUMERIC_VERSION)
-
-project(microstrain_mag_cal VERSION ${LIB_NUMERIC_VERSION})
-set(PROJECT_VERSION ${LIB_FULL_VERSION})
+project(microstrain_mag_cal VERSION ${REPO_NUMERIC_VERSION})
+set(PROJECT_VERSION ${REPO_FULL_VERSION})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
