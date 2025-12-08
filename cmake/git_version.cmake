@@ -7,21 +7,29 @@
 #     PROJECT_PREFIX - The project prefix in the git tag ("lib" in "lib/v1.2.3").
 #
 # Returns:
-#     VERSION_OUT - The extracted version string (ex: "1.2.3").
+#     NUMERIC_VERSION_OUT: The extracted numeric version string (ex: "1.2.3").
+#        FULL_VERSION_OUT: The extracted full version string (ex: "beta-1.2.3").
 #
-function(get_project_version_from_git_tag PROJECT_PREFIX VERSION_OUT)
+function(get_project_version_from_git_tag PROJECT_PREFIX FULL_VERSION_OUT NUMERIC_VERSION_OUT)
     execute_process(
-        COMMAND git describe --tags --match "${PROJECT_PREFIX}/v*" --always --dirty
+        COMMAND git describe --tags --match "${PROJECT_PREFIX}/v*" --dirty
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE GIT_TAG
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
     if(GIT_TAG)
-        # Strip project and 'v' (e.g., "lib/v1.2.3" -> "1.2.3")
-        string(REGEX REPLACE "^${PROJECT_PREFIX}/v" "" VERSION_STRING ${GIT_TAG})
+        # Extract full version (e.g., "lib/v1.2.3-alpha" -> "1.2.3-alpha")
+        string(REGEX REPLACE "^${PROJECT_PREFIX}/v" "" FULL_VERSION_STRING ${GIT_TAG})
+
+        # Extract just numeric version for CMake project() (ex: "lib/v1.2.3-alpha" -> "1.2.3"
+        string(REGEX REPLACE "^([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1" NUMERIC_VERSION_STRING "${FULL_VERSION_STRING}")
+
+        set(${NUMERIC_VERSION_OUT} ${NUMERIC_VERSION_STRING} PARENT_SCOPE)
+        set(${FULL_VERSION_OUT} ${FULL_VERSION_STRING} PARENT_SCOPE)
     else()
         message(WARNING "No git tag found matching '${PROJECT_PREFIX}/v*', using 0.0.0 as a fallback.")
-        set(${OUTPUT_VAR} "0.0.0" PARENT_SCOPE)
+        set(${NUMERIC_VERSION_OUT} "0.0.0" PARENT_SCOPE)
+        set(${FULL_VERSION_OUT} "0.0.0" PARENT_SCOPE)
     endif()
 endfunction()
