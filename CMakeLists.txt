@@ -8,8 +8,7 @@ cmake_minimum_required(VERSION 3.19)
 include(cmake/git_version.cmake)
 get_project_version_from_git_tag("v" REPO_FULL_VERSION REPO_NUMERIC_VERSION)
 
-# TODO: Rename project to microstrain_mag_cal
-project(parent VERSION ${REPO_NUMERIC_VERSION})
+project(microstrain_mag_cal VERSION ${REPO_NUMERIC_VERSION})
 set(PROJECT_VERSION ${REPO_FULL_VERSION})
 
 set(CMAKE_CXX_STANDARD 20)
@@ -72,7 +71,7 @@ endif()
 # ---------------------------------------------------------------
 
 add_subdirectory(lib)
-#add_subdirectory(application)
+add_subdirectory(app)
 
 # ---------------------------------------------------------------
 # Packaging
@@ -85,7 +84,7 @@ set(CPACK_PACKAGE_VENDOR "MicroStrain by HBK")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Suite of library and tools for magnetometer calibration.")
 
 # Install both components by default
-set(CPACK_COMPONENTS_ALL lib application)
+set(CPACK_COMPONENTS_ALL lib app)
 
 if(WIN32)
     set(CPACK_GENERATOR "ZIP")

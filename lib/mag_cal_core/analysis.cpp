@@ -11,7 +11,7 @@
 #endif
 
 
-namespace mag_cal_core
+namespace microstrain_mag_cal
 {
     /// Calculates the spatial coverage percentage from raw magnetometer measurements.
     ///

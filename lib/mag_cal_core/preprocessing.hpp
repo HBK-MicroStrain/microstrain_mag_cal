@@ -6,7 +6,7 @@
 #include <Eigen/Dense>
 
 
-namespace mag_cal_core
+namespace microstrain_mag_cal
 {
     struct VoxelKey
     {

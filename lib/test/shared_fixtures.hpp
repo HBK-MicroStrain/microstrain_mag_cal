@@ -131,7 +131,7 @@ namespace fixture
     }
 
     /// @brief Convenience wrapper for fit result.
-    inline Eigen::MatrixX3d applyCorrections(const Eigen::MatrixX3d &data, const mag_cal_core::FitResult &result)
+    inline Eigen::MatrixX3d applyCorrections(const Eigen::MatrixX3d &data, const microstrain_mag_cal::FitResult &result)
     {
         return applyCorrections(data, result.soft_iron_matrix, result.hard_iron_offset);
     }

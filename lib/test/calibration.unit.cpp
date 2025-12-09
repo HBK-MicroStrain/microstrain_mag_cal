@@ -3,7 +3,7 @@
 #include "clean_data.hpp"
 #include "shared_fixtures.hpp"
 
-using namespace mag_cal_core;
+using namespace microstrain_mag_cal;
 
 
 // Data points taken from a real InertialConnect data capture. All expected values for tests are

@@ -1,8 +1,8 @@
-#include <mag_cal_core.hpp>
+#include <app.hpp>
 
-#include <microstrain_mag_cal/analysis.hpp>
-#include <microstrain_mag_cal/calibration.hpp>
-#include <microstrain_mag_cal/preprocessing.hpp>
+#include <mag_cal_core/analysis.hpp>
+#include <mag_cal_core/calibration.hpp>
+#include <mag_cal_core/preprocessing.hpp>
 #include <mip/mip_parser.hpp>
 #include <mip/definitions/data_sensor.hpp>
 
@@ -44,7 +44,7 @@ bool extractPoints(void *point_manager, const mip::PacketView *packet_view, cons
     return true;
 }
 
-namespace mag_cal_core
+namespace app
 {
     Eigen::MatrixX3d extractPointMatrixFromRawData(
         const microstrain::ConstU8ArrayView &data_view,

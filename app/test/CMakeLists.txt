@@ -2,18 +2,16 @@
 # Test setup
 # ---------------------------------------------------------------
 
-set(LIB_UNIT_TESTS "lib_unit_tests")
+set(APP_UNIT_TESTS "app_unit_tests")
 
-add_executable(${LIB_UNIT_TESTS}
-    "analysis.unit.cpp"
-    "calibration.unit.cpp"
-    "preprocessing.unit.cpp"
+add_executable(${APP_UNIT_TESTS}
+    "app.unit.cpp"
 )
 
-target_link_libraries(${LIB_UNIT_TESTS}
+target_link_libraries(${APP_UNIT_TESTS}
     PRIVATE
         microstrain_test::cpp
-        ${LIB_CORE}
+        ${APP}
 )
 
 # ---------------------------------------------------------------
@@ -23,6 +21,6 @@ target_link_libraries(${LIB_UNIT_TESTS}
 include(${microstrain_test_SOURCE_DIR}/scripts/DiscoverTests.cmake)
 
 microstrain_discover_tests_cpp(
-    TARGET ${LIB_UNIT_TESTS}
+    TARGET ${APP_UNIT_TESTS}
     LABELS "unit"
 )

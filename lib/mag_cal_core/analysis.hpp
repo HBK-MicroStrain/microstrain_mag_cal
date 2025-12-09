@@ -3,7 +3,7 @@
 #include <mag_cal_core/calibration.hpp>
 
 
-namespace mag_cal_core
+namespace microstrain_mag_cal
 {
     double calculateSpatialCoverage(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
 

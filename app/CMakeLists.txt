@@ -27,48 +27,37 @@ FetchContent_MakeAvailable(cli11)
 FetchContent_MakeAvailable(mio)
 FetchContent_MakeAvailable(mip_sdk)
 
-
 # ---------------------------------------------------------------
 # Application setup
 # ---------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.19)
 
-project(offline_mag_cal VERSION ${REPO_NUMERIC_VERSION})
-set(PROJECT_VERSION ${REPO_FULL_VERSION})
+set(APP "main_app_backend")  # Main application logic
+set(CLI "main_app_cli")      # Command-line interface for app
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CORE "offline_mag_cal_core")
-set(CLI "offline_mag_cal_cli")
-
-add_library(${CORE})
+add_library(${APP})
 add_executable(${CLI})
 
-set_target_properties(${CLI}
-    PROPERTIES
-        OUTPUT_NAME offline-mag-cal
-)
+set_target_properties(${CLI} PROPERTIES OUTPUT_NAME microstrain_mag_cal)
 
-target_link_libraries(${CORE}
+target_link_libraries(${APP}
     Eigen3::Eigen
-    microstrain_mag_cal
+    mag_cal_core
     ${MIP_LIBRARY}
 )
 target_link_libraries(${CLI}
     PRIVATE
         CLI11::CLI11
         mio::mio
-        offline_mag_cal_core
+        ${APP}
 )
 
 # ---------------------------------------------------------------
 # Subdirectories
 # ---------------------------------------------------------------
 
-add_subdirectory(src)
+add_subdirectory(microstrain_mag_cal)
 add_subdirectory(test)
 add_subdirectory(scripts)
 
@@ -79,5 +68,5 @@ add_subdirectory(scripts)
 # Install the executable
 install(TARGETS ${CLI}
     DESTINATION bin
-    COMPONENT application
+    COMPONENT app
 )

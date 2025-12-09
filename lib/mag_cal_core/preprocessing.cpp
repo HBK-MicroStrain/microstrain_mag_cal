@@ -1,7 +1,7 @@
 #include "preprocessing.hpp"
 
 
-namespace mag_cal_core
+namespace microstrain_mag_cal
 {
     bool VoxelGrid::isPointInUniqueVoxel(const std::array<float, 3> &point)
     {
