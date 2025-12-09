@@ -1,4 +1,4 @@
-#include <app.hpp>
+#include <backend.hpp>
 
 #include <mag_cal_core/analysis.hpp>
 #include <mag_cal_core/calibration.hpp>
@@ -9,43 +9,43 @@
 using ScaledMag = mip::data_sensor::ScaledMag;
 
 
-// Extracts the points into the point manager. Called by the mip parser for each packet found.
-bool extractPoints(void *point_manager, const mip::PacketView *packet_view, const mip::Timestamp /* timestamp */)
+namespace backend
 {
-    assert(packet_view);
-
-    microstrain_mag_cal::PointManager *m_point_manager = static_cast<microstrain_mag_cal::PointManager*>(point_manager);
-
-    if (packet_view->descriptorSet() == ScaledMag::DESCRIPTOR_SET)
+    // Extracts the points into the point manager. Called by the mip parser for each packet found.
+    bool extractPoints(void *point_manager, const mip::PacketView *packet_view, const mip::Timestamp /* timestamp */)
     {
-        for (const mip::FieldView &field : *packet_view)
+        assert(packet_view);
+
+        microstrain_mag_cal::PointManager *m_point_manager = static_cast<microstrain_mag_cal::PointManager*>(point_manager);
+
+        if (packet_view->descriptorSet() == ScaledMag::DESCRIPTOR_SET)
         {
-            if (field.fieldDescriptor() != ScaledMag::FIELD_DESCRIPTOR)
+            for (const mip::FieldView &field : *packet_view)
             {
-                continue;
-            }
-
-            mip::Serializer serializer(field.payload());
-            std::array<float, 3> temp{};
-
-            for (uint8_t i = 0; i < 3; ++i)
-            {
-                if (const bool success = serializer.extract(temp[i]); !success)
+                if (field.fieldDescriptor() != ScaledMag::FIELD_DESCRIPTOR)
                 {
-                    assert(false);
-                    throw std::runtime_error("ERROR: Serialized data parsing failed.");
+                    continue;
                 }
-            }
 
-            m_point_manager->addPoint(temp);
+                mip::Serializer serializer(field.payload());
+                std::array<float, 3> temp{};
+
+                for (uint8_t i = 0; i < 3; ++i)
+                {
+                    if (const bool success = serializer.extract(temp[i]); !success)
+                    {
+                        assert(false);
+                        throw std::runtime_error("ERROR: Serialized data parsing failed.");
+                    }
+                }
+
+                m_point_manager->addPoint(temp);
+            }
         }
+
+        return true;
     }
 
-    return true;
-}
-
-namespace app
-{
     Eigen::MatrixX3d extractPointMatrixFromRawData(
         const microstrain::ConstU8ArrayView &data_view,
         const std::optional<double> reference_field_strength)

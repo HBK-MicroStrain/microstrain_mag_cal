@@ -2,16 +2,16 @@
 # Test setup
 # ---------------------------------------------------------------
 
-set(APP_UNIT_TESTS "app_unit_tests")
+set(BACKEND_UNIT_TESTS "backend_unit_tests")
 
-add_executable(${APP_UNIT_TESTS}
-    "app.unit.cpp"
+add_executable(${BACKEND_UNIT_TESTS}
+    "backend.unit.cpp"
 )
 
-target_link_libraries(${APP_UNIT_TESTS}
+target_link_libraries(${BACKEND_UNIT_TESTS}
     PRIVATE
         microstrain_test::cpp
-        ${APP}
+        ${BACKEND}
 )
 
 # ---------------------------------------------------------------
@@ -21,6 +21,6 @@ target_link_libraries(${APP_UNIT_TESTS}
 include(${microstrain_test_SOURCE_DIR}/scripts/DiscoverTests.cmake)
 
 microstrain_discover_tests_cpp(
-    TARGET ${APP_UNIT_TESTS}
+    TARGET ${BACKEND_UNIT_TESTS}
     LABELS "unit"
 )

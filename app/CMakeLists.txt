@@ -33,15 +33,15 @@ FetchContent_MakeAvailable(mip_sdk)
 
 cmake_minimum_required(VERSION 3.19)
 
-set(APP "main_app_backend")  # Main application logic
-set(CLI "main_app_cli")      # Command-line interface for app
+set(BACKEND "${PROJECT_NAME}_backend")  # Main application logic
+set(CLI "${PROJECT_NAME}_cli")          # Command-line interface for app
 
-add_library(${APP})
+add_library(${BACKEND})
 add_executable(${CLI})
 
-set_target_properties(${CLI} PROPERTIES OUTPUT_NAME microstrain_mag_cal)
+set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
-target_link_libraries(${APP}
+target_link_libraries(${BACKEND}
     Eigen3::Eigen
     mag_cal_core
     ${MIP_LIBRARY}
@@ -50,14 +50,14 @@ target_link_libraries(${CLI}
     PRIVATE
         CLI11::CLI11
         mio::mio
-        ${APP}
+        ${BACKEND}
 )
 
 # ---------------------------------------------------------------
 # Subdirectories
 # ---------------------------------------------------------------
 
-add_subdirectory(microstrain_mag_cal)
+add_subdirectory(${PROJECT_NAME})
 add_subdirectory(test)
 add_subdirectory(scripts)
 

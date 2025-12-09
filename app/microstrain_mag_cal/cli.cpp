@@ -4,7 +4,7 @@
 #include <CLI/CLI.hpp>
 #include <mio/mmap.hpp>
 
-#include <app.hpp>
+#include <backend.hpp>
 
 #include "mag_cal_core/analysis.hpp"
 #include "mag_cal_core/analysis.hpp"
@@ -115,7 +115,7 @@ int main(const int argc, char **argv)
 
     /*** Run the calculations ***/
 
-    const Eigen::MatrixX3d points = app::extractPointMatrixFromRawData(data_view, arg_field_strength);
+    const Eigen::MatrixX3d points = backend::extractPointMatrixFromRawData(data_view, arg_field_strength);
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
     printf("Number Of Points: %zu\n\n", static_cast<size_t>(points.rows()));
