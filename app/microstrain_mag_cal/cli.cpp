@@ -6,9 +6,9 @@
 
 #include <backend.hpp>
 
-#include "mag_cal_core/analysis.hpp"
-#include "mag_cal_core/analysis.hpp"
-#include "mag_cal_core/calibration.hpp"
+#include "microstrain_mag_cal/analysis.hpp"
+#include "microstrain_mag_cal/analysis.hpp"
+#include "microstrain_mag_cal/calibration.hpp"
 
 
 // Adds custom formatting for --help output.

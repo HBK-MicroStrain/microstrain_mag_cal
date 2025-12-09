@@ -1,4 +1,4 @@
-target_sources(${LIB_CORE} PRIVATE
+target_sources(${LIB} PRIVATE
     "analysis.hpp"
     "analysis.cpp"
     "calibration.cpp"

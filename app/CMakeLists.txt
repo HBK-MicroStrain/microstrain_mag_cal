@@ -43,7 +43,7 @@ set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 target_link_libraries(${BACKEND}
     Eigen3::Eigen
-    mag_cal_core
+    "lib${PROJECT_NAME}"
     ${MIP_LIBRARY}
 )
 target_link_libraries(${CLI}

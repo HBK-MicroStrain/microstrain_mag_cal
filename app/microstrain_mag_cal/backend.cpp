@@ -1,10 +1,14 @@
 #include <backend.hpp>
 
-#include <mag_cal_core/analysis.hpp>
-#include <mag_cal_core/calibration.hpp>
-#include <mag_cal_core/preprocessing.hpp>
+#include <microstrain_mag_cal/analysis.hpp>
+#include <microstrain_mag_cal/calibration.hpp>
+#include <microstrain_mag_cal/preprocessing.hpp>
 #include <mip/mip_parser.hpp>
 #include <mip/definitions/data_sensor.hpp>
+
+namespace microstrain_mag_cal {
+    class PointManager;
+}
 
 using ScaledMag = mip::data_sensor::ScaledMag;
 

@@ -12,27 +12,27 @@ if(DEFINED Python_EXECUTABLE)
     # Mark as used
 endif()
 
-set(LIB_CORE "mag_cal_core")
+set(LIB "lib${PROJECT_NAME}")
 
-add_library(${LIB_CORE})
+add_library(${LIB})
 
-target_include_directories(${LIB_CORE} PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
+target_include_directories(${LIB} PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
-set_target_properties(${LIB_CORE} PROPERTIES
+set_target_properties(${LIB} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     LINKER_LANGUAGE CXX
 )
 
-target_link_libraries(${LIB_CORE} PUBLIC Eigen3::Eigen)
+target_link_libraries(${LIB} PUBLIC Eigen3::Eigen)
 
-target_compile_options(${LIB_CORE} PRIVATE ${COMPILE_OPTIONS})
+target_compile_options(${LIB} PRIVATE ${COMPILE_OPTIONS})
 
 # ---------------------------------------------------------------
 # Subdirectories
 # ---------------------------------------------------------------
 
-add_subdirectory(${LIB_CORE})
+add_subdirectory(${PROJECT_NAME})
 add_subdirectory(test)
 
 # ---------------------------------------------------------------
@@ -40,7 +40,7 @@ add_subdirectory(test)
 # ---------------------------------------------------------------
 
 # Install the executable
-install(TARGETS ${LIB_CORE}
+install(TARGETS ${LIB}
     DESTINATION bin
     COMPONENT lib
 )

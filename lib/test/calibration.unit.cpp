@@ -1,4 +1,4 @@
-#include <mag_cal_core/calibration.hpp>
+#include <microstrain_mag_cal/calibration.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 #include "clean_data.hpp"
 #include "shared_fixtures.hpp"

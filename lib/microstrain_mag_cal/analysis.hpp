@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mag_cal_core/calibration.hpp>
+#include <microstrain_mag_cal/calibration.hpp>
 
 
 namespace microstrain_mag_cal
