@@ -37,32 +37,12 @@ jobs:
               -G "${{matrix.cmake_generator}}" 
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
+      run: |
+        cmake --build ${{github.workspace}}/build \
+              --config ${{matrix.build_type}} \
+              --parallel
 
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-${{ matrix.os }}-${{ matrix.build_type }}
-        path: build/
-        retention-days: 32  # Adjust as needed
-
-  test:
-    needs: build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        build_type: [Debug, Release]
-
-    steps:
-    - name: Download Build Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-${{ matrix.os }}-${{ matrix.build_type }}
-        path: build/
-
-    - name: Set Executable Permissions
+    - name: Set Test Executable Permissions
       if: runner.os != 'Windows'
       run: |
         chmod +x build/lib/test/lib_unit_tests
@@ -70,4 +50,18 @@ jobs:
 
     - name: Run Unit Tests
       working-directory: ${{github.workspace}}/build
-      run: ctest -C ${{matrix.build_type}} -L unit --output-on-failure --verbose --parallel
+      run: |
+        ctest -C ${{matrix.build_type}} \
+              -L unit \
+              --output-on-failure \
+              --parallel
+
+    # TODO: Configure to upload binaries for CD pipeline
+   # - name: Upload Build Artifacts
+   #   uses: actions/upload-artifact@v4
+   #   with:
+   #     name: build-${{ matrix.os }}-${{ matrix.build_type }}
+   #     path: build/
+   #     retention-days: 32  # Adjust as needed
+
+
