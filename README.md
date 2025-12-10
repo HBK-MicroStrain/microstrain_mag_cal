@@ -3,9 +3,7 @@
 [![Release](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal?label=Release)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
 [![Pre-Release](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal?include_prereleases&label=Pre-Release)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
 
-![Windows](https://img.shields.io/badge/Windows-blue)
-![Linux](https://img.shields.io/badge/Linux-blue)
-![macOS](https://img.shields.io/badge/macOS-blue)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
 
 Suite of library and tools for magnetometer calibration.
 
