@@ -30,11 +30,11 @@ jobs:
         fetch-depth: '0'
 
     - name: Configure CMake
-      run: >
-        cmake -S ${{github.workspace}} 
-              -B ${{github.workspace}}/build 
-              -DCMAKE_BUILD_TYPE=${{matrix.build_type}} 
-              -G "${{matrix.cmake_generator}}"
+      run: |
+        cmake -S ${{github.workspace}} \
+              -B ${{github.workspace}}/build \
+              -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
+              -G "${{matrix.cmake_generator}}" 
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
