@@ -63,12 +63,12 @@ jobs:
       continue-on-error: true
 
     - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
+      uses: EnricoMi/publish-unit-test-result-action/composite@v2
       if: always()
       with:
         files: |
           build/test-results.xml
-        check_name: "Test Results (${{ matrix.os }}-${{ matrix.build_type }})"
+        check_name: "Unit Test Results (${{ matrix.os }}-${{ matrix.build_type }})"
         comment_mode: always  # Set to 'always' if you want PR comments
 
 
