@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -62,14 +62,17 @@ jobs:
               --parallel
       continue-on-error: true
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/composite@v2
+    - name: Test Report
+      uses: dorny/test-reporter@v1
       if: always()
       with:
-        files: |
-          build/unit-test-results.xml
-        check_name: "Unit Test Results (${{ matrix.os }}-${{ matrix.build_type }})"
-        comment_mode: always  # Set to 'always' if you want PR comments
+        name: Tests (${{ matrix.os }}-${{ matrix.build_type }})
+        path: build/unit-test-results.xml
+        reporter: java-junit
+        fail-on-error: true
+        list-suites: all
+        list-tests: all
+        max-annotations: 50
 
 
     # TODO: Configure to upload binaries for CD pipeline
