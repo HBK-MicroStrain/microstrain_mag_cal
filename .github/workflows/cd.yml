@@ -39,3 +39,12 @@ jobs:
           cmake --build "${{github.workspace}}/build" \
                 --target package_microstrain_mag_cal \
                 --config Release
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/*.{zip,tar.gz,deb,rpm,dmg,pkg,exe}
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
