@@ -29,3 +29,15 @@ jobs:
           branch: main
           name: build-${{ matrix.os }}-Release
           path: build
+
+      - name: Configure CMake For Packaging
+        shell: bash
+        run: |
+          cmake -S "${{github.workspace}}" \
+                -B "${{github.workspace}}/build" \
+                -DCMAKE_BUILD_TYPE=Release
+
+      - name: Create Package
+        shell: bash
+        run: |
+          cmake --build build --target package_microstrain_mag_cal --config Release
