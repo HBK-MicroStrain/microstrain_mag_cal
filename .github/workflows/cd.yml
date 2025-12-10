@@ -26,7 +26,6 @@ jobs:
           workflow: ci.yml
           workflow_conclusion: success
           commit: ${{ github.sha }}
-          branch: main
           name: build-${{ matrix.os }}-Release
           path: build
 
