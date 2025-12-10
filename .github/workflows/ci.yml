@@ -58,7 +58,7 @@ jobs:
         ctest -C ${{matrix.build_type}} \
               -L unit \
               --output-on-failure \
-              --output-junit unit-test-results.xml
+              --output-junit unit-test-results.xml \
               --parallel
       continue-on-error: true
 
