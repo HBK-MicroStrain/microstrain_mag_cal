@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        build_type: [Release]
+        build_type: [Debug, Release]
         include:
           - os: windows-latest
             cmake_generator: "Visual Studio 17 2022"
@@ -32,18 +32,15 @@ jobs:
     - name: Configure CMake
       run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -G "${{matrix.cmake_generator}}"
 
-    - name: Build Library
-      run: cmake --build ${{github.workspace}}/build/library --config ${{matrix.build_type}}
-
-    - name: Build Application
-      run: cmake --build ${{github.workspace}}/build/application --config ${{matrix.build_type}}
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-${{ matrix.os }}-${{ matrix.build_type }}
         path: build/
-        retention-days: 7  # Adjust as needed
+        retention-days: 32  # Adjust as needed
 
   test:
     needs: build
@@ -52,7 +49,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        build_type: [Release]
+        build_type: [Debug, Release]
 
     steps:
     - name: Download Build Artifacts
@@ -64,8 +61,8 @@ jobs:
     - name: Set Executable Permissions
       if: runner.os != 'Windows'
       run: |
-        chmod +x build/library/test/library_unit_tests
-        chmod +x build/application/test/application_unit_tests
+        chmod +x build/lib/test/lib_unit_tests
+        chmod +x build/app/test/backend_unit_tests
 
     - name: Run Unit Tests
       working-directory: ${{github.workspace}}/build
