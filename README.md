@@ -1,8 +1,7 @@
 # MicroStrain Mag Cal
 [![CI](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/ci.yml/badge.svg)](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/ci.yml)
-
-[![Release](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
-[![Pre-Release](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal?include_prereleases)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
+[![Release](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal?label=Release)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
+[![Pre-Release](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal?include_prereleases&label=Pre-Release)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
 
 Suite of library and tools for magnetometer calibration.
 
