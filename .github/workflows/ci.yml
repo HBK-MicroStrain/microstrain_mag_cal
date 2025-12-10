@@ -32,15 +32,15 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: |
-        cmake -S ${{github.workspace}} \
-              -B ${{github.workspace}}/build \
+        cmake -S "${{github.workspace}}" \
+              -B "${{github.workspace}}/build" \
               -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
               -G "${{matrix.cmake_generator}}" 
 
     - name: Build
       shell: bash
       run: |
-        cmake --build ${{github.workspace}}/build \
+        cmake --build "${{github.workspace}}/build" \
               --config ${{matrix.build_type}} \
               --parallel
 
