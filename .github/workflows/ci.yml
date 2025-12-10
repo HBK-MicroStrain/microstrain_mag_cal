@@ -30,6 +30,7 @@ jobs:
         fetch-depth: '0'
 
     - name: Configure CMake
+      shell: bash
       run: |
         cmake -S ${{github.workspace}} \
               -B ${{github.workspace}}/build \
@@ -37,6 +38,7 @@ jobs:
               -G "${{matrix.cmake_generator}}" 
 
     - name: Build
+      shell: bash
       run: |
         cmake --build ${{github.workspace}}/build \
               --config ${{matrix.build_type}} \
@@ -44,12 +46,14 @@ jobs:
 
     - name: Set Test Executable Permissions
       if: runner.os != 'Windows'
+      shell: bash
       run: |
         chmod +x build/lib/test/lib_unit_tests
         chmod +x build/app/test/backend_unit_tests
 
     - name: Run Unit Tests
       working-directory: ${{github.workspace}}/build
+      shell: bash
       run: |
         ctest -C ${{matrix.build_type}} \
               -L unit \
