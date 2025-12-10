@@ -3,8 +3,8 @@ Suite of library and tools for magnetometer calibration.
 
 ## Usage
 See the following user guides:
- * [Application](application/README.md#cli-usage) 
- * [Library](library/README.md#usage)                                          
+ * [Application](app/README.md#cli-usage) 
+ * [Library](lib/README.md#usage)                                          
 
 ## Install
 See the [Releases](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases) page for downloads.
@@ -37,10 +37,11 @@ cmake --build <build_dir> --target package_microstrain_mag_cal
 The package will be in `<build-dir>`.
 
 ## Development
-The library and application are developed together under the same project. While they are each
-standalone, they should be treated as one during development.
+The library and application are developed together under the same project. They should be treated as 
+one during development.
+
 ### Running tests
 Unit tests should be run after every code change to catch errors early:
 ```
-ctest --test-dir build -L unit --output-on-failure --verbose --parallel
+ctest --test-dir <build-dir> -L unit --output-on-failure --verbose --parallel
 ```

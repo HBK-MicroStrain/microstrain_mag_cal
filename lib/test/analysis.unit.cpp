@@ -29,7 +29,7 @@ static constexpr std::array<double, 20 * 3> raw_points = {
 static const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
 
 
-MICROSTRAIN_TEST_CASE("Analysis", "Spatial_coverage_handles_no_data_points")
+MICROSTRAIN_TEST_CASE("Lib_Analysis", "Spatial_coverage_handles_no_data_points")
 {
     Eigen::MatrixX3d empty_matrix;
     empty_matrix.resize(0, 3);
@@ -40,7 +40,7 @@ MICROSTRAIN_TEST_CASE("Analysis", "Spatial_coverage_handles_no_data_points")
     CHECK(result == 0.0);
 }
 
-MICROSTRAIN_TEST_CASE("Analysis", "Spatial_coverage_matches_InertialConnect")
+MICROSTRAIN_TEST_CASE("Lib_Analysis", "Spatial_coverage_matches_InertialConnect")
 {
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(CHECK_POINTS);
 
@@ -49,7 +49,7 @@ MICROSTRAIN_TEST_CASE("Analysis", "Spatial_coverage_matches_InertialConnect")
     CHECK(result == doctest::Approx(3.125).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("Analysis", "Fit_RMSE_matches_InertialConnect")
+MICROSTRAIN_TEST_CASE("Lib_Analysis", "Fit_RMSE_matches_InertialConnect")
 {
     Eigen::Matrix<double, 3, 3> soft_iron_matrix;
     soft_iron_matrix <<

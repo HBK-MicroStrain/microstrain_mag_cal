@@ -38,7 +38,7 @@ std::array CHECK_POINTS {
 };
 
 
-MICROSTRAIN_TEST_CASE("MVP", "Mag_cal_data_can_be_extracted_from_binary_into_a_point_matrix")
+MICROSTRAIN_TEST_CASE("App_Backend", "Mag_cal_data_can_be_extracted_from_binary_into_a_point_matrix")
 {
     BinaryDataBuilder builder = BinaryDataBuilder();
     builder.addMipPacket(
