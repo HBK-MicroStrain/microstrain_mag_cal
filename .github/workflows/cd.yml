@@ -19,16 +19,6 @@ jobs:
           submodules: recursive
           fetch-depth: '0'
 
-      - name: Download CI Artifacts
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: ci.yml
-          workflow_conclusion: success
-          commit: ${{ github.sha }}
-          name: build-${{ matrix.os }}-Release
-          path: build
-
       - name: Configure CMake For Packaging
         shell: bash
         run: |

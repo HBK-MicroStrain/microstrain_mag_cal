@@ -73,16 +73,3 @@ jobs:
         list-suites: all
         list-tests: all
         max-annotations: 50
-
-    - name: Upload Build Artifacts
-      if: matrix.build_type == 'Release'
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-${{ matrix.os }}-Release
-        path: |
-          build/lib/**
-          build/app/**
-          build/bin/**
-          !build/**/*.obj
-          !build/**/*.o
-        retention-days: 32  # Adjust as needed
