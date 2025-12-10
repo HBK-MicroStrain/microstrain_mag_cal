@@ -19,14 +19,23 @@ jobs:
           submodules: recursive
           fetch-depth: '0'
 
-      - name: Configure CMake For Packaging
+      - name: Configure CMake
         shell: bash
         run: |
           cmake -S "${{github.workspace}}" \
                 -B "${{github.workspace}}/build" \
                 -DCMAKE_BUILD_TYPE=Release
 
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build "${{github.workspace}}/build" \
+             --config Release \
+             --parallel
+
       - name: Create Package
         shell: bash
         run: |
-          cmake --build build --target package_microstrain_mag_cal --config Release
+          cmake --build build \
+                --target package_microstrain_mag_cal \
+                --config Release
