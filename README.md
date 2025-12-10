@@ -10,9 +10,30 @@
 Suite of library and tools for magnetometer calibration.
 
 ## Usage
-See the following user guides:
- * [Application](app/README.md#cli-usage) 
- * [Library](lib/README.md#usage)                                          
+See the following usage guides:
+* [Application](app/README.md#cli-usage)
+* [Library](lib/README.md#usage)
+
+### Fit functions
+The core functionality in this suite revolves around fitting calibration coefficients. The currently
+supported fit functions are:
+
+| Function        | Correction                                                                  | Coefficients calibrated                                                                              |
+|-----------------|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| Spherical fit   | $\mathbf{m}\_\text{corr} = s \cdot (\mathbf{m}\_\text{raw} - \mathbf{b})$   | - Hard-iron offset<br/> - Uniform scale factor                                                       |
+| Ellipsoidal fit | $\mathbf{m}\_\text{corr} = \mathbf{A}(\mathbf{m}\_\text{raw} - \mathbf{b})$ | - Hard-iron offset<br/> - Non-uniform scale factor<br/>- Symmetric (non-uniform) cross-axis coupling |
+
+where,
+
+$$
+\begin{aligned}
+\mathbf{m}_\text{corr} &= \text{Corrected measurement vector} \\
+\mathbf{m}_\text{raw} &= \text{Raw measurement vector} \\
+\mathbf{b} &= \text{Hard-iron offset vector} \\
+s &= \text{Uniform scale factor} \\
+\mathbf{A} &= \text{Soft-iron matrix}
+\end{aligned}
+$$
 
 ## Install
 See the [Releases](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases) page for downloads.
