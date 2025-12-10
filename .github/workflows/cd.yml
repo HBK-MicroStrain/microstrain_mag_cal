@@ -6,7 +6,7 @@ on:
     tags: ['v*']
 
 jobs:
-  package:
+  release:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -43,8 +43,15 @@ jobs:
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/*.{zip,tar.gz,deb,rpm,dmg,pkg,exe}
+          files: |
+            build/*.zip
+            build/*.tar.gz
+            build/*.deb
+            build/*.rpm
+            build/*.dmg
+            build/*.pkg
+            build/*.exe
           generate_release_notes: true
-          fail_on_unmatched_files: false
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

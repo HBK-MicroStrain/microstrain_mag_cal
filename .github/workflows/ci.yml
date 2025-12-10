@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  integrate:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
