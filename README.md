@@ -27,7 +27,7 @@ cmake -S . -B <build-dir>
 
 Once the project has been configured, build it:
 ```
-cmake --build <build-dir>
+cmake --build <build-dir> --parallel
 ```
 
 After building, run this if you would like to create a distributable package as well:
@@ -43,5 +43,5 @@ one during development.
 ### Running tests
 Unit tests should be run after every code change to catch errors early:
 ```
-ctest --test-dir <build-dir> -L unit --output-on-failure --verbose --parallel
+ctest --test-dir <build-dir> -L unit --output-on-failure --parallel
 ```
