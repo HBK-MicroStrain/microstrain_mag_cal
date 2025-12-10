@@ -54,16 +54,3 @@ s &= \text{Uniform scale factor} \\
 \mathbf{A} &= \text{Soft-iron matrix}
 \end{aligned}
 $$
-
-## Building Manually
-Make sure the project has been [configured](../README.md#building-manually) first. Once configured, build the library:
-```
-cmake --build build/library
-```
-
-After building, run this if you would like to create a distributable package as well:
-```
-cmake --build build/library --target package_microstrain_mag_cal
-```
-
-The package will be in `build/library`.

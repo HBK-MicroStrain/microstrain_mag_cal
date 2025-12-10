@@ -36,7 +36,7 @@ cmake_minimum_required(VERSION 3.19)
 set(BACKEND "${PROJECT_NAME}_backend")  # Main application logic
 set(CLI "${PROJECT_NAME}_cli")          # Command-line interface for app
 
-add_library(${BACKEND})
+add_library(${BACKEND} STATIC)
 add_executable(${CLI})
 
 set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})

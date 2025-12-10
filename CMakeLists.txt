@@ -99,9 +99,9 @@ include(CPack)
 # ---------------------------------------------------------------
 
 # Convenience target to package the suite.
-add_custom_target("package_suite"
+add_custom_target("package_${PROJECT_NAME}"
     # Want to specify the config on multi-config generators, but not single-config ones.
     COMMAND ${CMAKE_CPACK_COMMAND} $<$<BOOL:$<CONFIG>>:-C> $<$<BOOL:$<CONFIG>>:$<CONFIG>>
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Packaging suite..."
+    COMMENT "Packaging ${PROJECT_NAME}..."
 )

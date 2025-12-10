@@ -16,6 +16,9 @@ set(LIB "lib${PROJECT_NAME}")
 
 add_library(${LIB})
 
+# Needed to avoid double "lib" on Linux, and follow platform convention on Windows.
+set_target_properties(${LIB} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+
 target_include_directories(${LIB} PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
 set_target_properties(${LIB} PROPERTIES

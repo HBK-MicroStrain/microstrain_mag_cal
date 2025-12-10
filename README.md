@@ -18,17 +18,23 @@ and unzip it.
 ### Building manually
 This project uses CMake. To configure it, first create a build directory in the project root:
 ```
-mkdir build
+mkdir <build-dir>
 ```
 Then, run the configure command:
 ```
-cmake -S . -B build
+cmake -S . -B <build-dir>
 ```
 
-Once the project has been configured, each component can be built individually. See the following 
-build guides:
-* [Application](application/README.md#building-manually)
-* [Library](library/README.md#building-manually)
+Once the project has been configured, build it:
+```
+cmake --build <build-dir>
+```
+
+After building, run this if you would like to create a distributable package as well:
+```
+cmake --build <build_dir> --target package_microstrain_mag_cal
+```
+The package will be in `<build-dir>`.
 
 ## Development
 The library and application are developed together under the same project. While they are each
