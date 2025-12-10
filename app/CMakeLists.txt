@@ -39,7 +39,8 @@ set(CLI "${PROJECT_NAME}_cli")          # Command-line interface for app
 add_library(${BACKEND} STATIC)
 add_executable(${CLI})
 
-set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+string(REPLACE "_" "-" EXECUTABLE_NAME ${PROJECT_NAME})
+set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_link_libraries(${BACKEND}
     Eigen3::Eigen
