@@ -67,7 +67,7 @@ jobs:
       if: always()
       with:
         files: |
-          build/test-results.xml
+          build/unit-test-results.xml
         check_name: "Unit Test Results (${{ matrix.os }}-${{ matrix.build_type }})"
         comment_mode: always  # Set to 'always' if you want PR comments
 
