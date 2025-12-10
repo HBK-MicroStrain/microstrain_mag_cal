@@ -36,6 +36,6 @@ jobs:
       - name: Create Package
         shell: bash
         run: |
-          cmake --build build \
+          cmake --build "${{github.workspace}}/build" \
                 --target package_microstrain_mag_cal \
                 --config Release
