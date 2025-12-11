@@ -72,13 +72,13 @@ jobs:
         run: |
           # Extract content between first two version headers (## version)
           # Matches both "## [1.0.0]" and "## 1.0.0" formats
-          awk '/^## [0-9]|^## \[/{if(++count==2) exit} count==1' CHANGELOG.md > /tmp/release-notes.md
+          awk '/^## [0-9]|^## \[/{if(++count==2) exit} count==1' CHANGELOG.md > "${{ runner.temp }}/release-notes.md"
           
           # Verify we got content
-          if [ ! -s /tmp/release-notes.md ]; then
+          if [ ! -s "${{ runner.temp }}/release-notes.md" ]; then
             echo "Warning: Could not extract changelog section"
             echo "## Changes" > "${{ runner.temp }}/release-notes.md"
-            echo "See CHANGELOG.md for details" >> /tmp/release-notes.md
+            echo "See CHANGELOG.md for details" >> "${{ runner.temp }}/release-notes.md"
           fi
 
       - name: Upload Release
