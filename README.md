@@ -9,7 +9,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
 
 <!-- Development/Standards -->
-[![Common Changelog](https://common-changelog.org/badge.svg)](https://common-changelog.org)
+[![Keep a Changelog](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-E05735)](https://keepachangelog.com/en/1.1.0/)
 
 Suite of library and tools for magnetometer calibration.
 
