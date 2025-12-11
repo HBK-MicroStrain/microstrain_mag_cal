@@ -73,6 +73,8 @@ jobs:
           files: |
             build/*.zip
             build/*.tar.gz
+            CHANGELOG.md
+          body_path: CHANGELOG.md
           generate_release_notes: true
           fail_on_unmatched_files: false
           prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
