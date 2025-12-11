@@ -52,7 +52,22 @@ jobs:
           echo "Found ${#packages[@]} package(s):"
           printf '%s\n' "${packages[@]}"
 
-      - name: Upload to Release
+      - name: Check If Pre-Release
+        id: prerelease
+        shell: bash
+        # If the version tag has a hyphen followed by characters, then it is a pre-release.
+        # Otherwise, it is a main release. For example: v1.1.3 would be a main release while
+        # v1.1.3-beta would be a pre-release.
+        run: |
+          if [[ "${{ github.ref_name }}" =~ -[a-zA-Z] ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "Tag '${{ github.ref_name }}' detected as pre-release"
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "Tag '${{ github.ref_name }}' detected as stable release"
+          fi
+
+      - name: Upload Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -60,5 +75,6 @@ jobs:
             build/*.tar.gz
           generate_release_notes: true
           fail_on_unmatched_files: false
+          prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
