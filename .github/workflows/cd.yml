@@ -40,13 +40,17 @@ jobs:
                 --target package_microstrain_mag_cal \
                 --config Release
 
-      - name: List Package Files
+      - name: Verify Package Exists
         shell: bash
         run: |
-          echo "Contents of build directory:"
-          ls -la "${{github.workspace}}/build" || dir "${{github.workspace}}\build"
-          echo "Looking for packages:"
-          find "${{github.workspace}}/build" -type f \( -name "*.zip" -o -name "*.tar.gz" -o -name "*.deb" -o -name "*.rpm" -o -name "*.dmg" -o -name "*.pkg" -o -name "*.exe" \) || true
+          shopt -s nullglob
+          packages=("${{github.workspace}}/build"/*.{tar.gz,zip})
+          if [ ${#packages[@]} -eq 0 ]; then
+            echo "Error: No package files found!"
+            exit 1
+          fi
+          echo "Found ${#packages[@]} package(s):"
+          printf '%s\n' "${packages[@]}"
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
@@ -54,12 +58,7 @@ jobs:
           files: |
             build/*.zip
             build/*.tar.gz
-            build/*.deb
-            build/*.rpm
-            build/*.dmg
-            build/*.pkg
-            build/*.exe
           generate_release_notes: true
-          fail_on_unmatched_files: true
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
