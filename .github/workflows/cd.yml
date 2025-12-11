@@ -67,6 +67,20 @@ jobs:
             echo "Tag '${{ github.ref_name }}' detected as stable release"
           fi
 
+      - name: Extract Release Notes
+        shell: bash
+        run: |
+          # Extract content between first two version headers (## version)
+          # Matches both "## [1.0.0]" and "## 1.0.0" formats
+          awk '/^## [0-9]|^## \[/{if(++count==2) exit} count==1' CHANGELOG.md > /tmp/release-notes.md
+          
+          # Verify we got content
+          if [ ! -s /tmp/release-notes.md ]; then
+            echo "Warning: Could not extract changelog section"
+            echo "## Changes" > /tmp/release-notes.md
+            echo "See CHANGELOG.md for details" >> /tmp/release-notes.md
+          fi
+
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         with:
@@ -74,7 +88,7 @@ jobs:
             build/*.zip
             build/*.tar.gz
             CHANGELOG.md
-          body_path: CHANGELOG.md
+          body_path: /tmp/release-notes.md
           generate_release_notes: true
           fail_on_unmatched_files: false
           prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
