@@ -77,7 +77,7 @@ jobs:
           # Verify we got content
           if [ ! -s /tmp/release-notes.md ]; then
             echo "Warning: Could not extract changelog section"
-            echo "## Changes" > /tmp/release-notes.md
+            echo "## Changes" > "${{ runner.temp }}/release-notes.md"
             echo "See CHANGELOG.md for details" >> /tmp/release-notes.md
           fi
 
