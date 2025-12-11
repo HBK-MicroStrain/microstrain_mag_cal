@@ -44,12 +44,12 @@ jobs:
               --config ${{matrix.build_type}} \
               --parallel
 
-    - name: Set Test Executable Permissions
-      if: runner.os != 'Windows'
-      shell: bash
-      run: |
-        chmod +x build/lib/test/lib_unit_tests
-        chmod +x build/app/test/backend_unit_tests
+    #- name: Set Test Executable Permissions
+    #  if: runner.os != 'Windows'
+    #  shell: bash
+    #  run: |
+    #    chmod +x build/lib/test/lib_unit_tests
+    #    chmod +x build/app/test/backend_unit_tests
 
     - name: Run Unit Tests
       working-directory: ${{github.workspace}}/build
