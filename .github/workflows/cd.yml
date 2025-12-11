@@ -40,6 +40,14 @@ jobs:
                 --target package_microstrain_mag_cal \
                 --config Release
 
+      - name: List Package Files
+        shell: bash
+        run: |
+          echo "Contents of build directory:"
+          ls -la "${{github.workspace}}/build" || dir "${{github.workspace}}\build"
+          echo "Looking for packages:"
+          find "${{github.workspace}}/build" -type f \( -name "*.zip" -o -name "*.tar.gz" -o -name "*.deb" -o -name "*.rpm" -o -name "*.dmg" -o -name "*.pkg" -o -name "*.exe" \) || true
+
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
