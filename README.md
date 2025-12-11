@@ -18,7 +18,7 @@ See the following usage guides:
 * [Application](app/README.md#cli-usage)
 * [Library](lib/README.md#usage)
 
-### Fit functions
+### Fit Functions
 The core functionality in this suite revolves around fitting calibration coefficients. The currently
 supported fit functions are:
 
@@ -31,13 +31,21 @@ where,
 
 $$
 \begin{aligned}
-\mathbf{m}_\text{corr} &= \text{Corrected measurement vector} \\
-\mathbf{m}_\text{raw} &= \text{Raw measurement vector} \\
-\mathbf{b} &= \text{Hard-iron offset vector} \\
-s &= \text{Uniform scale factor} \\
-\mathbf{A} &= \text{Soft-iron matrix}
+\mathbf{m}_\text{corr} &= \text{Corrected measurement (vector)} \\
+\mathbf{m}_\text{raw} &= \text{Raw measurement (vector)} \\
+\mathbf{b} &= \text{Hard-iron offset (vector)} \\
+s &= \text{Uniform scale factor (scalar)} \\
+\mathbf{A} &= \text{Soft-iron (matrix)}
 \end{aligned}
 $$
+
+### When To Use Each
+
+In general, *Spherical Fit* is more reliable but less accurate. *Ellipsoidal Fit* is much more
+accurate, but requires high spatial coverage (*> 60%*).
+
+A good rule of thumb is to start with *Spherical Fit* for a baseline. Then, an *Ellipsoidal Fit* can
+be run to see if it improves calibration over the baseline.
 
 ## Install
 See the [Releases](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases) page for downloads.
