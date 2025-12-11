@@ -1,4 +1,4 @@
-#include <mag_cal_core.hpp>
+#include <backend.hpp>
 
 #include <microstrain_test/microstrain_test.hpp>
 #include "mip/definitions/data_sensor.hpp"
@@ -38,7 +38,7 @@ std::array CHECK_POINTS {
 };
 
 
-MICROSTRAIN_TEST_CASE("MVP", "Mag_cal_data_can_be_extracted_from_binary_into_a_point_matrix")
+MICROSTRAIN_TEST_CASE("App_Backend", "Mag_cal_data_can_be_extracted_from_binary_into_a_point_matrix")
 {
     BinaryDataBuilder builder = BinaryDataBuilder();
     builder.addMipPacket(
@@ -52,7 +52,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Mag_cal_data_can_be_extracted_from_binary_into_a_p
         mip::data_sensor::ScaledGyro{{0.0f, 0.0f, 0.0f}});
     const microstrain::ConstU8ArrayView data_view = builder.data();
 
-    Eigen::MatrixX3d result = mag_cal_core::extractPointMatrixFromRawData(data_view);
+    Eigen::MatrixX3d result = backend::extractPointMatrixFromRawData(data_view);
 
     REQUIRE(result.rows() == 3);
     REQUIRE(result.cols() == 3);

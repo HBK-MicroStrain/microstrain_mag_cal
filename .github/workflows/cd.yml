@@ -1,0 +1,96 @@
+name: CD
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: '0'
+
+      - name: Configure CMake
+        shell: bash
+        run: |
+          cmake -S "${{github.workspace}}" \
+                -B "${{github.workspace}}/build" \
+                -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build "${{github.workspace}}/build" \
+             --config Release \
+             --parallel
+
+      - name: Create Package
+        shell: bash
+        run: |
+          cmake --build "${{github.workspace}}/build" \
+                --target package_microstrain_mag_cal \
+                --config Release
+
+      - name: Verify Package Exists
+        shell: bash
+        run: |
+          shopt -s nullglob
+          packages=("${{github.workspace}}/build"/*.{tar.gz,zip})
+          if [ ${#packages[@]} -eq 0 ]; then
+            echo "Error: No package files found!"
+            exit 1
+          fi
+          echo "Found ${#packages[@]} package(s):"
+          printf '%s\n' "${packages[@]}"
+
+      - name: Check If Pre-Release
+        id: prerelease
+        shell: bash
+        # If the version tag has a hyphen followed by characters, then it is a pre-release.
+        # Otherwise, it is a main release. For example: v1.1.3 would be a main release while
+        # v1.1.3-beta would be a pre-release.
+        run: |
+          if [[ "${{ github.ref_name }}" =~ -[a-zA-Z] ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "Tag '${{ github.ref_name }}' detected as pre-release"
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "Tag '${{ github.ref_name }}' detected as stable release"
+          fi
+
+      - name: Extract Release Notes
+        shell: bash
+        run: |
+          # Extract content between first two version headers (## version)
+          # Matches both "## [1.0.0]" and "## 1.0.0" formats
+          awk '/^## [0-9]|^## \[/{if(++count==2) exit} count==1' CHANGELOG.md > "${{ runner.temp }}/release-notes.md"
+          
+          # Verify we got content
+          if [ ! -s "${{ runner.temp }}/release-notes.md" ]; then
+            echo "Warning: Could not extract changelog section"
+            echo "## Changes" > "${{ runner.temp }}/release-notes.md"
+            echo "See CHANGELOG.md for details" >> "${{ runner.temp }}/release-notes.md"
+          fi
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/*.zip
+            build/*.tar.gz
+            CHANGELOG.md
+          body_path: "${{ runner.temp }}/release-notes.md"
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+          prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

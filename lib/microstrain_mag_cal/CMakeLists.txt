@@ -1,4 +1,4 @@
-target_sources(microstrain_mag_cal PRIVATE
+target_sources(${LIB} PRIVATE
     "analysis.hpp"
     "analysis.cpp"
     "calibration.cpp"

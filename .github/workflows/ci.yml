@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  integrate:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Debug, Release]
+        include:
+          - os: windows-latest
+            cmake_generator: "Visual Studio 17 2022"
+          - os: ubuntu-latest
+            cmake_generator: "Unix Makefiles"
+          - os: macos-latest
+            cmake_generator: "Unix Makefiles"
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: '0'
+
+    - name: Configure CMake
+      shell: bash
+      run: |
+        cmake -S "${{github.workspace}}" \
+              -B "${{github.workspace}}/build" \
+              -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
+              -G "${{matrix.cmake_generator}}" 
+
+    - name: Build
+      shell: bash
+      run: |
+        cmake --build "${{github.workspace}}/build" \
+              --config ${{matrix.build_type}} \
+              --parallel
+
+    - name: Run Unit Tests
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: |
+        ctest -C ${{matrix.build_type}} \
+              -L unit \
+              --output-on-failure \
+              --output-junit unit-test-results.xml \
+              --parallel
+      continue-on-error: true
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Tests (${{ matrix.os }}-${{ matrix.build_type }})
+        path: build/unit-test-results.xml
+        reporter: java-junit
+        fail-on-error: true
+        list-suites: all
+        list-tests: all
+        max-annotations: 50

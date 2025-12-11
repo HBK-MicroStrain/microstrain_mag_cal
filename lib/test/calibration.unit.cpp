@@ -33,7 +33,7 @@ static constexpr std::array<double, 20 * 3> raw_points = {
 static const Eigen::Matrix<double, 20, 3, Eigen::RowMajor> CHECK_POINTS(raw_points.data());
 
 
-MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_handles_no_data_points")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "The_initial_hard_iron_offset_estimate_handles_no_data_points")
 {
     Eigen::MatrixX3d empty_matrix;
     empty_matrix.resize(0, 3);
@@ -46,7 +46,7 @@ MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_handles_no_d
     CHECK(result(2) == doctest::Approx(0.0).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_is_near_the_data_center")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "The_initial_hard_iron_offset_estimate_is_near_the_data_center")
 {
     Eigen::RowVector3d result = estimateInitialHardIronOffset(CHECK_POINTS);
 
@@ -56,7 +56,7 @@ MICROSTRAIN_TEST_CASE("MVP", "The_initial_hard_iron_offset_estimate_is_near_the_
     CHECK(result(2) == doctest::Approx(0.240466).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Measured_field_strength_handles_no_data_points")
 {
     Eigen::MatrixX3d empty_matrix;
     empty_matrix.resize(0, 3);
@@ -67,7 +67,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_handles_no_data_points")
     CHECK(result == 0.0);
 }
 
-MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Measured_field_strength_matches_Inertial_connect")
 {
     const Eigen::RowVector3d initial_offset = estimateInitialHardIronOffset(CHECK_POINTS);
 
@@ -76,7 +76,7 @@ MICROSTRAIN_TEST_CASE("MVP", "Measured_field_strength_matches_Inertial_connect")
     CHECK(result == doctest::Approx(0.383).epsilon(0.001));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_recovers_hard_iron_offset")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Spherical_fit_recovers_hard_iron_offset")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -91,7 +91,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_recovers_hard_iron_offset")
     CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.01));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrects_data_to_sphere_of_reference_field_strength")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Spherical_fit_corrects_data_to_sphere_of_reference_field_strength")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -107,7 +107,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrects_data_to_sphere_of_r
     CHECK(data_field_strengths.maxCoeff() == doctest::Approx(fixture::clean_data::FIELD_STRENGTH).epsilon(0.01));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_produces_inverse_of_distortion_matrix")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Spherical_fit_produces_inverse_of_distortion_matrix")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -120,7 +120,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_produces_inverse_of_distorti
     CHECK((result.soft_iron_matrix * builder.getDistortionMatrix()).isApprox(Eigen::Matrix3d::Identity(), 0.01));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrected_data_requires_no_further_correction")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Spherical_fit_corrected_data_requires_no_further_correction")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -136,7 +136,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Spherical_fit_corrected_data_requires_no_f
     CHECK_MESSAGE(refined_fit.hard_iron_offset.isApprox(Eigen::RowVector3d::Zero(), 0.01), refined_fit.hard_iron_offset);
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_recovers_hard_iron_offset")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Ellipsoidal_fit_recovers_hard_iron_offset")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -152,7 +152,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_recovers_hard_iron_offset"
     CHECK(result.hard_iron_offset(2) == doctest::Approx(2.3).epsilon(0.01));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of_reference_field_strength")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of_reference_field_strength")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -169,7 +169,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrects_data_to_sphere_of
     CHECK(data_field_strengths.maxCoeff() == doctest::Approx(fixture::clean_data::FIELD_STRENGTH).epsilon(0.01));
 }
 
-MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distortion_matrix")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Ellipsoidal_fit_produces_inverse_of_distortion_matrix")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
@@ -184,7 +184,7 @@ MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_produces_inverse_of_distor
 }
 
 // TODO: Maybe integration test - runs a little slow
-MICROSTRAIN_TEST_CASE("Calibration", "Ellipsoidal_fit_corrected_data_requires_no_further_correction")
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Ellipsoidal_fit_corrected_data_requires_no_further_correction")
 {
     fixture::MagCalDataBuilder builder(fixture::clean_data::DATA);
     builder.addBias({2.1, 2.2, 2.3});
