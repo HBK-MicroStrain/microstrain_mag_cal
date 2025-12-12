@@ -11,20 +11,6 @@
 #include "microstrain_mag_cal/calibration.hpp"
 
 
-// Adds custom formatting for --help output.
-//
-// All settings that aren't overridden will retain their defaults.
-//
-class HelpMessageFormatter final : public CLI::Formatter
-{
-public:
-    // Output for usage line
-    std::string make_usage(const CLI::App* app, const std::string name) const override
-    {
-       return "USAGE: " + name + (app->get_help_ptr() != nullptr ? " [OPTIONS]" : "") + "\n";
-    }
-};
-
 std::string getErrorMessage(const microstrain_mag_cal::FitResult::Error error)
 {
     const std::string error_code = "(" + std::to_string(static_cast<uint8_t>(error)) + ") ";
@@ -82,7 +68,8 @@ int main(const int argc, char **argv)
     bool arg_ellipsoidal_fit = false;
 
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
-    app.formatter(std::make_shared<HelpMessageFormatter>());
+    // TODO: Refactor to get the app output name from CMake.
+    app.usage("Usage: microstrain_mag_cal <file> [OPTIONS]");
 
     app.add_option("file", arg_filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
