@@ -87,6 +87,6 @@ MICROSTRAIN_TEST_CASE("App_Backend", "The_correct_JSON_model_is_output_given_a_f
         }},
         {"hardIronOffset", {
             {"x", 10.0}, {"y", 11.0}, {"z", 12.0}
-        }},
+        }}
     });
 }

@@ -77,8 +77,31 @@ namespace backend
 
     // TODO: Maybe this should be moved to the library? Do we want to add that dependency?
     /// Converts a fit result to a json object
-    nlohmann::json convertFitResultToJson(microstrain_mag_cal::FitResult)
+    nlohmann::json convertFitResultToJson(const microstrain_mag_cal::FitResult &fit_result)
     {
+        nlohmann::json output;
 
+        output["fitResult"] =
+            (fit_result.error == microstrain_mag_cal::FitResult::Error::NONE) ? "SUCCEEDED" : "FAILED";
+
+        output["softIronMatrix"] = {
+            {"Sxx", fit_result.soft_iron_matrix(0, 0)},
+            {"Sxy", fit_result.soft_iron_matrix(0, 1)},
+            {"Sxz", fit_result.soft_iron_matrix(0, 2)},
+            {"Syx", fit_result.soft_iron_matrix(1, 0)},
+            {"Syy", fit_result.soft_iron_matrix(1, 1)},
+            {"Syz", fit_result.soft_iron_matrix(1, 2)},
+            {"Szx", fit_result.soft_iron_matrix(2, 0)},
+            {"Szy", fit_result.soft_iron_matrix(2, 1)},
+            {"Szz", fit_result.soft_iron_matrix(2, 2)},
+        };
+
+        output["hardIronOffset"] = {
+            {"x", fit_result.hard_iron_offset(0)},
+            {"y", fit_result.soft_iron_matrix(1)},
+            {"z", fit_result.soft_iron_matrix(2)},
+        };
+
+        return output;
     }
 }
