@@ -74,9 +74,9 @@ MICROSTRAIN_TEST_CASE("App_Backend", "The_correct_JSON_model_is_output_given_a_f
     soft_iron_matrix << 1.0, 2.0, 3.0,
                         4.0, 5.0, 6.0,
                         7.0, 8.0, 9.0;
-    microstrain_mag_cal::FitResult fit_result(soft_iron_matrix, hard_iron_offset);
+    const microstrain_mag_cal::FitResult fit_result(soft_iron_matrix, hard_iron_offset);
 
-    nlohmann::json result = convertFitResultToJSON(fit_result);
+    const nlohmann::json result = backend::convertFitResultToJson(fit_result);
 
     CHECK(result == {
         {"fitResult", "SUCCEEDED"},

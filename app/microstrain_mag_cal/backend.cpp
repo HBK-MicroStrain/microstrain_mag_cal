@@ -50,6 +50,7 @@ namespace backend
         return true;
     }
 
+    /// Extracts a matrix of points from raw binary data.
     Eigen::MatrixX3d extractPointMatrixFromRawData(
         const microstrain::ConstU8ArrayView &data_view,
         const std::optional<double> reference_field_strength)
@@ -72,5 +73,12 @@ namespace backend
         parser.parse(data_view.data(), data_view.size(), 0);
 
         return point_manager.getMatrix();
+    }
+
+    // TODO: Maybe this should be moved to the library? Do we want to add that dependency?
+    /// Converts a fit result to a json object
+    nlohmann::json convertFitResultToJson(microstrain_mag_cal::FitResult)
+    {
+
     }
 }
