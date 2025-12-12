@@ -1,6 +1,11 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Changed
+* New dependency on [nlohmann/json](https://github.com/nlohmann/json/tree/v3.12.0?tab=readme-ov-file#serialization--deserialization).
+
 ## 0.2.0-pre-alpha - 2025-12-11
 
 _Interface, packaging, and documentation changes. No new features were introduced._

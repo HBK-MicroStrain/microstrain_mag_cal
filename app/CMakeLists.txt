@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.19)
+
 # ---------------------------------------------------------------
 # Dependencies
 # ---------------------------------------------------------------
@@ -8,6 +10,12 @@ FetchContent_Declare(
     cli11
     GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
     GIT_TAG v2.6.1
+    GIT_SHALLOW TRUE
+)
+FetchContent_Declare(
+    json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
     GIT_SHALLOW TRUE
 )
 FetchContent_Declare(
@@ -24,14 +32,13 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(cli11)
+FetchContent_MakeAvailable(json)
 FetchContent_MakeAvailable(mio)
 FetchContent_MakeAvailable(mip_sdk)
 
 # ---------------------------------------------------------------
 # Application setup
 # ---------------------------------------------------------------
-
-cmake_minimum_required(VERSION 3.19)
 
 set(BACKEND "${PROJECT_NAME}_backend")  # Main application logic
 set(CLI "${PROJECT_NAME}_cli")          # Command-line interface for app
@@ -44,6 +51,7 @@ set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_link_libraries(${BACKEND}
     Eigen3::Eigen
+    nlohmann_json::nlohmann_json
     "lib${PROJECT_NAME}"
     ${MIP_LIBRARY}
 )
