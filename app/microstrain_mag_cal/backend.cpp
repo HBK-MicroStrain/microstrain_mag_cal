@@ -98,8 +98,8 @@ namespace backend
 
         output["hardIronOffset"] = {
             {"x", fit_result.hard_iron_offset(0)},
-            {"y", fit_result.soft_iron_matrix(1)},
-            {"z", fit_result.soft_iron_matrix(2)},
+            {"y", fit_result.hard_iron_offset(1)},
+            {"z", fit_result.hard_iron_offset(2)},
         };
 
         return output;

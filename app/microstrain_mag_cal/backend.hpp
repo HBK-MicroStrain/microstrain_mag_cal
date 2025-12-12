@@ -15,5 +15,5 @@ namespace backend
         const microstrain::ConstU8ArrayView &data_view,
         std::optional<double> reference_field_strength = std::nullopt);
 
-    nlohmann::json convertFitResultToJson(microstrain_mag_cal::FitResult);
+    nlohmann::json convertFitResultToJson(const microstrain_mag_cal::FitResult &result);
 }
