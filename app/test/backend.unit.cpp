@@ -78,17 +78,27 @@ MICROSTRAIN_TEST_CASE("App_Backend", "The_correct_JSON_model_is_output_given_a_f
 
     const nlohmann::json result = backend::convertFitResultToJson(fit_result);
 
-    const nlohmann::json expected = {
-        {"fitResult", "SUCCEEDED"},
-        {"softIronMatrix", {
-            {"Sxx", 1.0}, {"Sxy", 2.0}, {"Sxz", 3.0},
-            {"Syx", 4.0}, {"Syy", 5.0}, {"Syz", 6.0},
-            {"Szx", 7.0}, {"Szy", 8.0}, {"Szz", 9.0}
-        }},
-        {"hardIronOffset", {
-            {"x", 10.0}, {"y", 11.0}, {"z", 12.0}
-        }}
-    };
+    const nlohmann::json expected = nlohmann::json::parse(R"(
+      {
+        "fitResult": "SUCCEEDED",
+        "softIronMatrix": {
+          "Sxx": 1.0,
+          "Sxy": 2.0,
+          "Sxz": 3.0,
+          "Syx": 4.0,
+          "Syy": 5.0,
+          "Syz": 6.0,
+          "Szx": 7.0,
+          "Szy": 8.0,
+          "Szz": 9.0
+        },
+        "hardIronOffset": {
+          "x": 10.0,
+          "y": 11.0,
+          "z": 12.0
+        }
+      }
+    )");
 
     CHECK(result == expected);
 }
