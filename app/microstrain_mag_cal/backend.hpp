@@ -16,4 +16,7 @@ namespace backend
         std::optional<double> reference_field_strength = std::nullopt);
 
     nlohmann::json convertFitResultToJson(const microstrain_mag_cal::FitResult &result);
+
+    void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output);
+    void writeJsonToFile(const std::filesystem::path &filepath, const microstrain_mag_cal::FitResult& fit_result);
 }

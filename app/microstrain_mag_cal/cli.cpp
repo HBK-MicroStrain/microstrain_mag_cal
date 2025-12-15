@@ -140,10 +140,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            std::filesystem::path json_filepath = arg_output_json_directory / "spherical_fit.json";
-            nlohmann::json json_output = backend::convertFitResultToJson(fit_result);
-            std::ofstream json_file(json_filepath);
-            json_file << std::setw(2) << json_output;
+            backend::writeJsonToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
         }
     }
 
@@ -158,10 +155,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            std::filesystem::path json_filepath = arg_output_json_directory / "ellipsoidal_fit.json";
-            nlohmann::json json_output = backend::convertFitResultToJson(fit_result);
-            std::ofstream json_file(json_filepath);
-            json_file << std::setw(2) << json_output;
+            backend::writeJsonToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
         }
     }
 

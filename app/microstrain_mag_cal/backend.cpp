@@ -1,4 +1,5 @@
 #include <backend.hpp>
+#include <fstream>
 
 #include <microstrain_mag_cal/analysis.hpp>
 #include <microstrain_mag_cal/calibration.hpp>
@@ -103,5 +104,20 @@ namespace backend
         };
 
         return output;
+    }
+
+    void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output)
+    {
+        std::ofstream json_file(filepath);
+        json_file << std::setw(2) << json_output;
+    }
+
+    /// Convenience wrapper that automatically converts the fit result to JSON.
+    void writeJsonToFile(const std::filesystem::path &filepath, const microstrain_mag_cal::FitResult& fit_result)
+    {
+        const nlohmann::json json_output = backend::convertFitResultToJson(fit_result);
+
+        std::ofstream json_file(filepath);
+        json_file << std::setw(2) << json_output;
     }
 }
