@@ -49,7 +49,7 @@ set_target_properties(${APPLY_CLI} PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}-ap
 target_link_libraries(${BACKEND}
     Eigen3::Eigen
     "lib${PROJECT_NAME}"
-    ${MIP_LIBRARY}
+    ${MIP_LIBRARIES}
 )
 target_link_libraries(${CLI}
     PRIVATE
@@ -62,7 +62,8 @@ target_link_libraries(${APPLY_CLI}
         ${BACKEND}
         CLI11::CLI11
         Eigen3::Eigen
-        ${MIP_LIBRARY}
+        ${MIP_LIBRARIES}
+        ${MICROSTRAIN_LIBRARIES}
 )
 
 # ---------------------------------------------------------------
