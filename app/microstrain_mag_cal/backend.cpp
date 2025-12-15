@@ -1,5 +1,4 @@
 #include <backend.hpp>
-#include <fstream>
 
 #include <microstrain_mag_cal/analysis.hpp>
 #include <microstrain_mag_cal/calibration.hpp>
@@ -74,50 +73,5 @@ namespace backend
         parser.parse(data_view.data(), data_view.size(), 0);
 
         return point_manager.getMatrix();
-    }
-
-    // TODO: Maybe this should be moved to the library? Do we want to add that dependency?
-    /// Converts a fit result to a json object
-    nlohmann::json convertFitResultToJson(const microstrain_mag_cal::FitResult &fit_result)
-    {
-        nlohmann::json output;
-
-        output["fitResult"] =
-            (fit_result.error == microstrain_mag_cal::FitResult::Error::NONE) ? "SUCCEEDED" : "FAILED";
-
-        output["softIronMatrix"] = {
-            {"Sxx", fit_result.soft_iron_matrix(0, 0)},
-            {"Sxy", fit_result.soft_iron_matrix(0, 1)},
-            {"Sxz", fit_result.soft_iron_matrix(0, 2)},
-            {"Syx", fit_result.soft_iron_matrix(1, 0)},
-            {"Syy", fit_result.soft_iron_matrix(1, 1)},
-            {"Syz", fit_result.soft_iron_matrix(1, 2)},
-            {"Szx", fit_result.soft_iron_matrix(2, 0)},
-            {"Szy", fit_result.soft_iron_matrix(2, 1)},
-            {"Szz", fit_result.soft_iron_matrix(2, 2)},
-        };
-
-        output["hardIronOffset"] = {
-            {"x", fit_result.hard_iron_offset(0)},
-            {"y", fit_result.hard_iron_offset(1)},
-            {"z", fit_result.hard_iron_offset(2)},
-        };
-
-        return output;
-    }
-
-    void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output)
-    {
-        std::ofstream json_file(filepath);
-        json_file << std::setw(2) << json_output;
-    }
-
-    /// Convenience wrapper that automatically converts the fit result to JSON.
-    void writeJsonToFile(const std::filesystem::path &filepath, const microstrain_mag_cal::FitResult& fit_result)
-    {
-        const nlohmann::json json_output = backend::convertFitResultToJson(fit_result);
-
-        std::ofstream json_file(filepath);
-        json_file << std::setw(2) << json_output;
     }
 }

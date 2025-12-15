@@ -5,12 +5,11 @@
 #include <mio/mmap.hpp>
 
 #include <backend.hpp>
-
-#include "microstrain_mag_cal/analysis.hpp"
-#include "microstrain_mag_cal/analysis.hpp"
-#include "microstrain_mag_cal/calibration.hpp"
+#include <microstrain_mag_cal/analysis.hpp>
+#include <microstrain_mag_cal/calibration.hpp>
 
 
+// TODO: Move to library
 std::string getErrorMessage(const microstrain_mag_cal::FitResult::Error error)
 {
     const std::string error_code = "(" + std::to_string(static_cast<uint8_t>(error)) + ") ";
@@ -140,7 +139,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            backend::writeJsonToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
+            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
         }
     }
 
@@ -155,7 +154,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            backend::writeJsonToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
+            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
         }
     }
 

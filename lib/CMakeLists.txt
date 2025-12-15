@@ -1,8 +1,23 @@
+cmake_minimum_required(VERSION 3.19)
+
+# ---------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------
+
+include(FetchContent)
+
+FetchContent_Declare(
+    json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(json)
+
 # ---------------------------------------------------------------
 # Library Setup
 # ---------------------------------------------------------------
-
-cmake_minimum_required(VERSION 3.19)
 
 # Suppress unused variable warnings for Python paths.
 if(DEFINED Python3_EXECUTABLE)
@@ -27,7 +42,11 @@ set_target_properties(${LIB} PROPERTIES
     LINKER_LANGUAGE CXX
 )
 
-target_link_libraries(${LIB} PUBLIC Eigen3::Eigen)
+target_link_libraries(${LIB}
+    PUBLIC
+        Eigen3::Eigen
+        nlohmann_json::nlohmann_json
+)
 
 target_compile_options(${LIB} PRIVATE ${COMPILE_OPTIONS})
 

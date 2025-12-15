@@ -1,6 +1,7 @@
 #include "calibration.hpp"
 
 #include <cassert>
+#include <fstream>
 
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
@@ -266,5 +267,50 @@ namespace microstrain_mag_cal
         }
 
         return {soft_iron_matrix, hard_iron_offset};
+    }
+
+    /// Converts a fit result to a json object
+    nlohmann::json convertFitResultToJson(const microstrain_mag_cal::FitResult &fit_result)
+    {
+        nlohmann::json output;
+
+        output["fitResult"] =
+            (fit_result.error == microstrain_mag_cal::FitResult::Error::NONE) ? "SUCCEEDED" : "FAILED";
+
+        output["softIronMatrix"] = {
+            {"Sxx", fit_result.soft_iron_matrix(0, 0)},
+            {"Sxy", fit_result.soft_iron_matrix(0, 1)},
+            {"Sxz", fit_result.soft_iron_matrix(0, 2)},
+            {"Syx", fit_result.soft_iron_matrix(1, 0)},
+            {"Syy", fit_result.soft_iron_matrix(1, 1)},
+            {"Syz", fit_result.soft_iron_matrix(1, 2)},
+            {"Szx", fit_result.soft_iron_matrix(2, 0)},
+            {"Szy", fit_result.soft_iron_matrix(2, 1)},
+            {"Szz", fit_result.soft_iron_matrix(2, 2)},
+        };
+
+        output["hardIronOffset"] = {
+            {"x", fit_result.hard_iron_offset(0)},
+            {"y", fit_result.hard_iron_offset(1)},
+            {"z", fit_result.hard_iron_offset(2)},
+        };
+
+        return output;
+    }
+
+    /// @brief Writes the given json content to a file at the given filepath.
+    void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output)
+    {
+        std::ofstream json_file(filepath);
+        json_file << std::setw(2) << json_output;
+    }
+
+    /// @brief Convenience wrapper that automatically converts the fit result to JSON first.
+    void writeJsonToFile(const std::filesystem::path &filepath, const FitResult& fit_result)
+    {
+        const nlohmann::json json_output = convertFitResultToJson(fit_result);
+
+        std::ofstream json_file(filepath);
+        json_file << std::setw(2) << json_output;
     }
 }

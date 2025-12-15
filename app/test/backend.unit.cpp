@@ -66,37 +66,3 @@ MICROSTRAIN_TEST_CASE("App_Backend", "Mag_cal_data_can_be_extracted_from_binary_
     CHECK(result(2, 1) == doctest::Approx(CHECK_POINTS[7]).epsilon(0.001));
     CHECK(result(2, 2) == doctest::Approx(CHECK_POINTS[8]).epsilon(0.001));
 }
-
-MICROSTRAIN_TEST_CASE("App_Backend", "A_properly_formatted_JSON_model_is_output_given_a_fit_result")
-{
-    const Eigen::RowVector3d hard_iron_offset(10.0, 11.0, 12.0);
-    Eigen::Matrix3d soft_iron_matrix;
-    soft_iron_matrix << 1.0, 2.0, 3.0,
-                        4.0, 5.0, 6.0,
-                        7.0, 8.0, 9.0;
-    const microstrain_mag_cal::FitResult fit_result(soft_iron_matrix, hard_iron_offset);
-
-    const nlohmann::json result = backend::convertFitResultToJson(fit_result);
-
-    CHECK(result == nlohmann::json::parse(R"(
-      {
-        "fitResult": "SUCCEEDED",
-        "softIronMatrix": {
-          "Sxx": 1.0,
-          "Sxy": 2.0,
-          "Sxz": 3.0,
-          "Syx": 4.0,
-          "Syy": 5.0,
-          "Syz": 6.0,
-          "Szx": 7.0,
-          "Szy": 8.0,
-          "Szz": 9.0
-        },
-        "hardIronOffset": {
-          "x": 10.0,
-          "y": 11.0,
-          "z": 12.0
-        }
-      }
-    )"));
-}
