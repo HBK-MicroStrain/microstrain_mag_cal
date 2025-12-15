@@ -1,4 +1,4 @@
-# MicroStrain Mag Cal
+# MicroStrain MagCal
 <!-- Build and CI/CD Status -->
 [![CI](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/ci.yml/badge.svg)](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/ci.yml)
 [![CD](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/cd.yml/badge.svg)](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/cd.yml)
