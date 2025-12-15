@@ -1,8 +1,12 @@
+#include <filesystem>
+#include <fstream>
+
+#include <nlohmann/json.hpp>
+
 #include <microstrain/connections/serial/serial_connection.hpp>
 #include <mip/mip_interface.hpp>
-
 #include "mip/definitions/commands_3dm.hpp"
-#include "mip/definitions/commands_base.hpp"
+//#include "mip/definitions/commands_base.hpp"
 
 static constexpr const char *PORT_NAME = "COM37";
 static constexpr uint32_t    BAUDRATE  = 115200;
@@ -18,9 +22,22 @@ float SOFT_IRON_MATRIX[9] {
     -0.00461753,  0.0560697,  0.98104600
 };
 
+std::filesystem::path json_file = "C:/Users/AFARRELL/Downloads/ellipsoidal_fit.json";
+
 
 int main()
 {
+    printf("Reading from file: %s...\n", json_file.string().c_str());
+
+    std::ifstream file(json_file);
+    if (!file.is_open())
+    {
+        printf("ERROR: Could not open file: %s\n", json_file.string().c_str());
+        return 1;
+    }
+
+    nlohmann::json parsed_json = nlohmann::json::parse(file);
+
     printf("Applying calibration...\n");
 
     microstrain::connections::SerialConnection connection(PORT_NAME, BAUDRATE);
