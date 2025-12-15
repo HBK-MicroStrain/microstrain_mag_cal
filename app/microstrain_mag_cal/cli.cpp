@@ -61,7 +61,11 @@ int main(const int argc, char **argv)
 {
     /*** Parse commandline arguments ***/
 
-    std::filesystem::path arg_filepath;
+    // Required
+    std::filesystem::path arg_input_data_filepath;
+
+    // Optional
+    std::filesystem::path arg_output_json_directory;
     std::optional<double> arg_field_strength;
     bool arg_spatial_coverage = false;
     bool arg_spherical_fit = false;
@@ -71,7 +75,7 @@ int main(const int argc, char **argv)
     // TODO: Refactor to get the app output name from CMake.
     app.usage("Usage: microstrain_mag_cal <file> [OPTIONS]");
 
-    app.add_option("file", arg_filepath, "A binary file containing mip data to read from.")
+    app.add_option("file", arg_input_data_filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
@@ -83,13 +87,16 @@ int main(const int argc, char **argv)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-e,--ellipsoidal-fit", arg_ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    app.add_option("-j,--output-json", arg_output_json_directory, "Output the resulting calibration(s) as JSON to the given directory.")
+        ->check(CLI::ExistingDirectory)
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     CLI11_PARSE(app, argc, argv);
 
     /*** Create a read-only view of the input file ***/
 
     std::error_code error;
-    const mio::mmap_source file_view = mio::make_mmap_source(arg_filepath.string(), error);
+    const mio::mmap_source file_view = mio::make_mmap_source(arg_input_data_filepath.string(), error);
 
     if (error)
     {
@@ -130,6 +137,14 @@ int main(const int argc, char **argv)
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
 
         displayFitResult("Spherical Fit", fit_result, fit_RMSE);
+
+        if (!arg_output_json_directory.empty())
+        {
+            std::filesystem::path json_filepath = arg_output_json_directory / "spherical_fit.json";
+            nlohmann::json json_output = backend::convertFitResultToJson(fit_result);
+            std::ofstream json_file(json_filepath);
+            json_file << std::setw(2) << json_output;
+        }
     }
 
     if (arg_ellipsoidal_fit)
@@ -140,6 +155,14 @@ int main(const int argc, char **argv)
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
 
         displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
+
+        if (!arg_output_json_directory.empty())
+        {
+            std::filesystem::path json_filepath = arg_output_json_directory / "ellipsoidal_fit.json";
+            nlohmann::json json_output = backend::convertFitResultToJson(fit_result);
+            std::ofstream json_file(json_filepath);
+            json_file << std::setw(2) << json_output;
+        }
     }
 
     return 0;
