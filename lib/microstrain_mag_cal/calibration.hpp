@@ -21,6 +21,8 @@ namespace microstrain_mag_cal
         Eigen::Matrix3d soft_iron_matrix;
         Eigen::RowVector3d hard_iron_offset;
         Error error = Error::NONE;
+
+        static std::string getErrorMessage(const Error& error);
     };
 
 
