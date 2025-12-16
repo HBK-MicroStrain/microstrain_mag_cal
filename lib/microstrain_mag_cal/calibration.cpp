@@ -287,8 +287,8 @@ namespace microstrain_mag_cal
         return {soft_iron_matrix, hard_iron_offset};
     }
 
-    /// @brief Converts a fit result to a json object.
-    nlohmann::json convertFitResultToJson(const FitResult &fit_result)
+    /// @brief Serializes the fit result to a json object.
+    nlohmann::json serializeFitResult(const FitResult &fit_result)
     {
         nlohmann::json output;
 
@@ -315,7 +315,8 @@ namespace microstrain_mag_cal
         return output;
     }
 
-    FitResult parseCalibrationFromJson(const nlohmann::json &fit_result_json)
+    /// @brief Deserializes the json object into a fit result.
+    FitResult deserializeFitResult(const nlohmann::json &fit_result_json)
     {
         FitResult fit_result;
 
@@ -347,7 +348,7 @@ namespace microstrain_mag_cal
     /// @brief Convenience wrapper that automatically converts the fit result to JSON first.
     void writeJsonToFile(const std::filesystem::path &filepath, const FitResult& fit_result)
     {
-        const nlohmann::json json_output = convertFitResultToJson(fit_result);
+        const nlohmann::json json_output = serializeFitResult(fit_result);
 
         std::ofstream json_file(filepath);
         json_file << std::setw(2) << json_output;

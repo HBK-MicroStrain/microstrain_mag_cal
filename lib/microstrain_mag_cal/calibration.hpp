@@ -34,8 +34,8 @@ namespace microstrain_mag_cal
     FitResult fitSphere(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
     FitResult fitEllipsoid(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
 
-    nlohmann::json convertFitResultToJson(const FitResult &fit_result);
-    FitResult parseCalibrationFromJson(const nlohmann::json &fit_result_json);
+    nlohmann::json serializeFitResult(const FitResult &fit_result);
+    FitResult deserializeFitResult(const nlohmann::json &fit_result_json);
 
     void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output);
     void writeJsonToFile(const std::filesystem::path &filepath, const FitResult& fit_result);

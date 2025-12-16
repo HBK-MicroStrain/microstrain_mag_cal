@@ -211,8 +211,8 @@ MICROSTRAIN_TEST_CASE("Lib_Calibration", "A_calibration_fit_result_can_be_serial
     original_fit_result.hard_iron_offset <<
         10.0, 11.0, 12.0;
 
-    const nlohmann::json fit_result_json = convertFitResultToJson(original_fit_result);
-    const FitResult parsed_fit_result = parseCalibrationFromJson(fit_result_json);
+    const nlohmann::json fit_result_json = serializeFitResult(original_fit_result);
+    const FitResult parsed_fit_result = deserializeFitResult(fit_result_json);
 
     CHECK(parsed_fit_result == original_fit_result);
 }
