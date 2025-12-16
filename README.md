@@ -40,16 +40,20 @@ $$
 ### Soft-Iron Matrix
 
 $$
-\mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\
+\mathbf{A} = 
+\begin{bmatrix} 
+a_{xx} & a_{xy} & a_{xz} \\
 a_{yx} & a_{yy} & a_{yz} \\
-a_{zx} & a_{zy} & a_{zz} \end{bmatrix}
+a_{zx} & a_{zy} & a_{zz} 
+\end{bmatrix}
 $$
 
 where,
 
 $$
 \begin{aligned}
-\mathbf{A} = \text{Soft-iron (matrix)}
+a_{ii} &= \text{Scale factor for axis } i \\
+a_{ij} &= \text{Cross-axis coupling where axis } j \text{ affects axis } i, \; i \neq j
 \end{aligned}
 $$
 
