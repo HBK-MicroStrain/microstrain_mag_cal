@@ -53,7 +53,7 @@ where,
 $$
 \begin{aligned}
 a_{ii} &= \text{Scale factor for axis } i \\
-a_{ij} &= \text{Cross-axis coupling where axis } j \text{ affects axis } i, \; i \neq j
+a_{ij} &= \text{Cross-axis coupling where axis } j \text{ affects axis } i, \text{ } i \neq j
 \end{aligned}
 $$
 
