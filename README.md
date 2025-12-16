@@ -19,7 +19,7 @@ See the following usage guides:
 * [Library](lib/README.md#usage)
 
 ### Fit Functions
-The core functionality in this suite revolves around fitting the calibration coefficients. The currently
+The core functionality of this suite revolves around fitting calibration coefficients. The currently
 supported fit functions are:
 
 | Function        | Correction                                                                  | Coefficients calibrated                                                                              |
@@ -81,7 +81,7 @@ a_{ij} &= \text{Cross-axis coupling where axis } j \text{ affects axis } i, \tex
 \end{aligned}
 $$
 
-### When To Use Each
+### When To Use Each Fit Function
 
 In general, *Spherical Fit* is more reliable but less accurate. *Ellipsoidal Fit* is much more
 accurate, but requires high spatial coverage (*> 60%*).
