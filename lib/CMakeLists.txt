@@ -45,6 +45,7 @@ set_target_properties(${LIB} PROPERTIES
 target_link_libraries(${LIB}
     PUBLIC
         Eigen3::Eigen
+        magic_enum::magic_enum
         nlohmann_json::nlohmann_json
 )
 

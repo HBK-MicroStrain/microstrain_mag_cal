@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include <Eigen/Dense>
+#include <magic_enum/magic_enum.hpp>
 #include <nlohmann/json.hpp>
 
 
@@ -32,8 +33,38 @@ namespace microstrain_mag_cal
     FitResult fitSphere(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
     FitResult fitEllipsoid(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
 
-    nlohmann::json convertFitResultToJson(const FitResult &result);
+    nlohmann::json convertFitResultToJson(const FitResult &fit_result);
+    FitResult parseCalibrationFromJson(const nlohmann::json &fit_result_json);
 
     void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output);
     void writeJsonToFile(const std::filesystem::path &filepath, const FitResult& fit_result);
 }
+
+
+// JSON serializer for fit result
+template <>
+struct nlohmann::adl_serializer<microstrain_mag_cal::FitResult::Error>
+{
+    static void to_json(json& j, const microstrain_mag_cal::FitResult::Error& e)
+    {
+        j = magic_enum::enum_name(e);
+    }
+
+    static void from_json(const json& j, microstrain_mag_cal::FitResult::Error& e)
+    {
+        const std::string str = j.get<std::string>();
+
+        if (const std::optional<microstrain_mag_cal::FitResult::Error> opt =
+                magic_enum::enum_cast<microstrain_mag_cal::FitResult::Error>(str);
+            opt.has_value())
+        {
+            e = opt.value();
+        }
+        else
+        {
+            const std::string type_name = std::string(magic_enum::enum_type_name<microstrain_mag_cal::FitResult::Error>());
+
+            throw std::invalid_argument("Invalid " + type_name + " enum value: " + str);
+        }
+    }
+};

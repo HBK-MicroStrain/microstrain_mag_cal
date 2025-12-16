@@ -10,7 +10,7 @@
 namespace microstrain_mag_cal
 {
     /// @brief Gets the human-readable message for an error code.
-    std::string FitResult::getErrorMessage(const FitResult::Error& error)
+    std::string FitResult::getErrorMessage(const Error& error)
     {
         const std::string error_code = "(" + std::to_string(static_cast<uint8_t>(error)) + ") ";
 
@@ -287,13 +287,12 @@ namespace microstrain_mag_cal
         return {soft_iron_matrix, hard_iron_offset};
     }
 
-    /// Converts a fit result to a json object
-    nlohmann::json convertFitResultToJson(const microstrain_mag_cal::FitResult &fit_result)
+    /// @brief Converts a fit result to a json object.
+    nlohmann::json convertFitResultToJson(const FitResult &fit_result)
     {
         nlohmann::json output;
 
-        output["fitResult"] =
-            (fit_result.error == microstrain_mag_cal::FitResult::Error::NONE) ? "SUCCEEDED" : "FAILED";
+        output["fitResult"] = (fit_result.error == FitResult::Error::NONE) ? "SUCCEEDED" : "FAILED";
 
         output["softIronMatrix"] = {
             {"xx", fit_result.soft_iron_matrix(0, 0)},
@@ -314,6 +313,28 @@ namespace microstrain_mag_cal
         };
 
         return output;
+    }
+
+    FitResult parseCalibrationFromJson(const nlohmann::json &fit_result_json)
+    {
+        FitResult fit_result;
+
+        fit_result.error = fit_result_json["error"].get<FitResult::Error>();
+
+        const nlohmann::json& soft_iron = fit_result_json["softIronMatrix"];
+        fit_result.soft_iron_matrix <<
+            soft_iron["xx"].get<double>(), soft_iron["xy"].get<double>(), soft_iron["xz"].get<double>(),
+            soft_iron["yx"].get<double>(), soft_iron["yy"].get<double>(), soft_iron["yz"].get<double>(),
+            soft_iron["zx"].get<double>(), soft_iron["zy"].get<double>(), soft_iron["zz"].get<double>();
+
+        // Parse hard iron offset
+        const nlohmann::json& hard_iron = fit_result_json["hardIronOffset"];
+        fit_result.hard_iron_offset <<
+            hard_iron["x"].get<double>(),
+            hard_iron["y"].get<double>(),
+            hard_iron["z"].get<double>();
+
+        return fit_result;
     }
 
     /// @brief Writes the given json content to a file at the given filepath.

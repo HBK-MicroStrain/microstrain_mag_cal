@@ -239,7 +239,7 @@ MICROSTRAIN_TEST_CASE("Lib_Calibration", "The_calibration_coefficients_can_be_pa
 {
     nlohmann::json input_json = nlohmann::json::parse(R"(
       {
-        "fitResult": "SUCCEEDED",
+        "error": "NONE",
         "softIronMatrix": {
           "xx": 1.0,
           "xy": 2.0,
