@@ -216,15 +216,15 @@ MICROSTRAIN_TEST_CASE("Lib_Calibration", "A_properly_formatted_JSON_model_is_out
       {
         "fitResult": "SUCCEEDED",
         "softIronMatrix": {
-          "Sxx": 1.0,
-          "Sxy": 2.0,
-          "Sxz": 3.0,
-          "Syx": 4.0,
-          "Syy": 5.0,
-          "Syz": 6.0,
-          "Szx": 7.0,
-          "Szy": 8.0,
-          "Szz": 9.0
+          "xx": 1.0,
+          "xy": 2.0,
+          "xz": 3.0,
+          "yx": 4.0,
+          "yy": 5.0,
+          "yz": 6.0,
+          "zx": 7.0,
+          "zy": 8.0,
+          "zz": 9.0
         },
         "hardIronOffset": {
           "x": 10.0,

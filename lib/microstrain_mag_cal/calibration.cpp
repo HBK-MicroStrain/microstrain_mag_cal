@@ -296,15 +296,15 @@ namespace microstrain_mag_cal
             (fit_result.error == microstrain_mag_cal::FitResult::Error::NONE) ? "SUCCEEDED" : "FAILED";
 
         output["softIronMatrix"] = {
-            {"Sxx", fit_result.soft_iron_matrix(0, 0)},
-            {"Sxy", fit_result.soft_iron_matrix(0, 1)},
-            {"Sxz", fit_result.soft_iron_matrix(0, 2)},
-            {"Syx", fit_result.soft_iron_matrix(1, 0)},
-            {"Syy", fit_result.soft_iron_matrix(1, 1)},
-            {"Syz", fit_result.soft_iron_matrix(1, 2)},
-            {"Szx", fit_result.soft_iron_matrix(2, 0)},
-            {"Szy", fit_result.soft_iron_matrix(2, 1)},
-            {"Szz", fit_result.soft_iron_matrix(2, 2)},
+            {"xx", fit_result.soft_iron_matrix(0, 0)},
+            {"xy", fit_result.soft_iron_matrix(0, 1)},
+            {"xz", fit_result.soft_iron_matrix(0, 2)},
+            {"yx", fit_result.soft_iron_matrix(1, 0)},
+            {"yy", fit_result.soft_iron_matrix(1, 1)},
+            {"yz", fit_result.soft_iron_matrix(1, 2)},
+            {"zx", fit_result.soft_iron_matrix(2, 0)},
+            {"zy", fit_result.soft_iron_matrix(2, 1)},
+            {"zz", fit_result.soft_iron_matrix(2, 2)},
         };
 
         output["hardIronOffset"] = {
