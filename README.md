@@ -40,7 +40,9 @@ $$
 #### Soft-Iron Matrix
 
 $$
-\mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\ a_{yx} & a_{yy} & a_{yz} \\ a_{zx} & a_{zy} & a_{zz} \end{bmatrix}
+\mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\ 
+                             a_{yx} & a_{yy} & a_{yz} \\ 
+                             a_{zx} & a_{zy} & a_{zz} \end{bmatrix}
 $$
 
 where,
