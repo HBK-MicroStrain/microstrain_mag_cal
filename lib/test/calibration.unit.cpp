@@ -234,3 +234,40 @@ MICROSTRAIN_TEST_CASE("Lib_Calibration", "A_properly_formatted_JSON_model_is_out
       }
     )"));
 }
+
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "The_calibration_coefficients_can_be_parsed_from_JSON")
+{
+    nlohmann::json input_json = nlohmann::json::parse(R"(
+      {
+        "fitResult": "SUCCEEDED",
+        "softIronMatrix": {
+          "xx": 1.0,
+          "xy": 2.0,
+          "xz": 3.0,
+          "yx": 4.0,
+          "yy": 5.0,
+          "yz": 6.0,
+          "zx": 7.0,
+          "zy": 8.0,
+          "zz": 9.0
+        },
+        "hardIronOffset": {
+          "x": 10.0,
+          "y": 11.0,
+          "z": 12.0
+        }
+      }
+    )");
+
+    const FitResult result = parseCalibrationFromJson(input_json);
+
+    Eigen::Matrix3d soft_iron_matrix;
+    soft_iron_matrix << 1.0, 2.0, 3.0,
+                        4.0, 5.0, 6.0,
+                        7.0, 8.0, 9.0;
+    Eigen::RowVector3d hard_iron_offset(10.0, 11.0, 12.0);
+
+    CHECK(result.error == FitResult::Error::NONE);
+    CHECK_MESSAGE(result.soft_iron_matrix.isApprox(soft_iron_matrix, 0.01), result.soft_iron_matrix);
+    CHECK_MESSAGE(result.hard_iron_offset.isApprox(hard_iron_offset, 0.01), result.hard_iron_offset);
+}
