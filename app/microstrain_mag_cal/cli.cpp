@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <CLI/CLI.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <mio/mmap.hpp>
 
 #include <backend.hpp>
@@ -18,15 +19,8 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     printf("%s\n", fit_name.data());
     printf("%s\n\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
 
-    printf("Fit Result: ");
-    if (result.error == microstrain_mag_cal::FitResult::Error::NONE)
-    {
-        printf("SUCCEEDED\n\n");
-    }
-    else
-    {
-        printf("FAILED ---> %s\n\n", microstrain_mag_cal::FitResult::getErrorMessage(result.error).c_str());
-    }
+    const std::string_view error_name = magic_enum::enum_name(result.error);
+    std::cout << "Error: " << (error_name.empty() ? "UNKNOWN" : error_name) << "\n\n";
 
     printf("Soft-Iron Matrix:\n");
     std::cout << result.soft_iron_matrix << "\n\n";

@@ -55,6 +55,7 @@ target_link_libraries(${CLI}
     PRIVATE
         ${BACKEND}
         CLI11::CLI11
+        magic_enum::magic_enum
         mio::mio
 )
 target_link_libraries(${APPLY_CLI}
