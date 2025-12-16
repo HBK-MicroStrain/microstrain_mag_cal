@@ -31,9 +31,7 @@ where,
 
 $$
 \begin{aligned}
-b_x &= \text{Hard-iron bias in x-axis (Gauss)} \\
-b_y &= \text{Hard-iron bias in y-axis (Gauss)} \\
-b_z &= \text{Hard-iron bias in z-axis (Gauss)}
+b_i = \text{Hard-iron bias for axis } i \text{ (Gauss)}
 \end{aligned}
 $$
 
