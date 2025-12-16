@@ -21,15 +21,30 @@ See the following usage guides:
 ### Calibration Coefficients
 The following coefficients are used to provide corrections to the device: 
 
-$\mathbf{b} = \begin{bmatrix} b_x \\ b_y \\ b_z \end{bmatrix}$
+**Hard-Iron Offset**:
 
-$\mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\ a_{yx} & a_{yy} & a_{yz} \\ a_{zx} & a_{zy} & a_{zz} \end{bmatrix}$
+$$
+\mathbf{b} = \begin{bmatrix} b_x \\ b_y \\ b_z \end{bmatrix}
+$$
 
 where,
 
 $$
 \begin{aligned}
 \mathbf{b} &= \text{Hard-iron offset (vector)} \\
+\end{aligned}
+$$
+
+**Soft-Iron Matrix**:
+
+$$
+\mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\ a_{yx} & a_{yy} & a_{yz} \\ a_{zx} & a_{zy} & a_{zz} \end{bmatrix}
+$$
+
+where,
+
+$$
+\begin{aligned}
 \mathbf{A} &= \text{Soft-iron (matrix)}
 \end{aligned}
 $$
