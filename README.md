@@ -33,7 +33,7 @@ where,
 
 $$
 \begin{aligned}
-\mathbf{b} &= \text{Hard-iron offset (vector)} \\
+\mathbf{b} = \text{Hard-iron offset (vector)} \\
 \end{aligned}
 $$
 
@@ -49,7 +49,7 @@ where,
 
 $$
 \begin{aligned}
-\mathbf{A} &= \text{Soft-iron (matrix)}
+\mathbf{A} = \text{Soft-iron (matrix)}
 \end{aligned}
 $$
 
