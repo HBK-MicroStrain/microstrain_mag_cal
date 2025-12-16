@@ -9,6 +9,23 @@
 
 namespace microstrain_mag_cal
 {
+    bool operator==(const FitResult& lhs, const FitResult& rhs)
+    {
+        return lhs.error == rhs.error &&
+               lhs.hard_iron_offset.isApprox(rhs.hard_iron_offset, 0.001) &&
+               lhs.soft_iron_matrix.isApprox(rhs.soft_iron_matrix, 0.001);
+    }
+
+    std::ostream& operator<<(std::ostream& os, const FitResult& result)
+    {
+        os << "FitResult:\n"
+           << "  Error: " << magic_enum::enum_name(result.error) << "\n"
+           << "  Hard Iron Offset: " << "[" << result.hard_iron_offset << "]\n"
+           << "  Soft Iron Matrix:\n" << "[" << result.soft_iron_matrix << "]\n";
+
+        return os;
+    }
+
     /// @brief Gets the human-readable message for an error code.
     std::string FitResult::getErrorMessage(const Error& error)
     {
@@ -26,6 +43,7 @@ namespace microstrain_mag_cal
                 return error_code + "UNKNOWN ERROR";
         }
     }
+
 
     /// @brief Estimates the initial hard-iron offset using the mean of all measurements.
     ///
