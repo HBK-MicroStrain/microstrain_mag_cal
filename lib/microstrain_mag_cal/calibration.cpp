@@ -292,7 +292,7 @@ namespace microstrain_mag_cal
     {
         nlohmann::json output;
 
-        output["fitResult"] = (fit_result.error == FitResult::Error::NONE) ? "SUCCEEDED" : "FAILED";
+        output["error"] = fit_result.error;
 
         output["softIronMatrix"] = {
             {"xx", fit_result.soft_iron_matrix(0, 0)},

@@ -214,7 +214,7 @@ MICROSTRAIN_TEST_CASE("Lib_Calibration", "A_properly_formatted_JSON_model_is_out
 
     CHECK(result == nlohmann::json::parse(R"(
       {
-        "fitResult": "SUCCEEDED",
+        "error": "NONE",
         "softIronMatrix": {
           "xx": 1.0,
           "xy": 2.0,
