@@ -13,36 +13,33 @@
 
 Suite of library and tools for magnetometer calibration.
 
-## Usage
-See the following usage guides:
-* [Application](app/README.md#cli-usage)
-* [Library](lib/README.md#usage)
+## Calibration Coefficients
+The following coefficients are used to provide corrections to the device:
 
-### Calibration Coefficients
-The following coefficients are used to provide corrections to the device: 
-
-#### Hard-Iron Offset
+### Hard-Iron Offset
 
 $$
-\mathbf{b} = \begin{bmatrix} b_x \\ 
-                             b_y \\ 
-                             b_z \end{bmatrix}
+\mathbf{b} = \begin{bmatrix} b_x \\
+b_y \\
+b_z \end{bmatrix}
 $$
 
 where,
 
 $$
 \begin{aligned}
-\mathbf{b} = \text{Hard-iron offset (vector)} \\
+b_x &= \text{Hard-iron bias in x-axis (Gauss)} \\
+b_y &= \text{Hard-iron bias in y-axis (Gauss)} \\
+b_z &= \text{Hard-iron bias in z-axis (Gauss)}
 \end{aligned}
 $$
 
-#### Soft-Iron Matrix
+### Soft-Iron Matrix
 
 $$
-\mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\ 
-                             a_{yx} & a_{yy} & a_{yz} \\ 
-                             a_{zx} & a_{zy} & a_{zz} \end{bmatrix}
+\mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\
+a_{yx} & a_{yy} & a_{yz} \\
+a_{zx} & a_{zy} & a_{zz} \end{bmatrix}
 $$
 
 where,
@@ -52,6 +49,11 @@ $$
 \mathbf{A} = \text{Soft-iron (matrix)}
 \end{aligned}
 $$
+
+## Usage
+See the following usage guides:
+* [Application](app/README.md#cli-usage)
+* [Library](lib/README.md#usage)
 
 ### Fit Functions
 The core functionality in this suite revolves around fitting the calibration coefficients. The currently
