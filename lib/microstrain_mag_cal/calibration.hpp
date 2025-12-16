@@ -23,8 +23,6 @@ namespace microstrain_mag_cal
         Eigen::RowVector3d hard_iron_offset;
         Error error = Error::NONE;
 
-        static std::string getErrorMessage(const Error& error);
-
         friend bool operator==(const FitResult& lhs, const FitResult& rhs);
         friend std::ostream& operator<<(std::ostream& os, const FitResult& result);
     };

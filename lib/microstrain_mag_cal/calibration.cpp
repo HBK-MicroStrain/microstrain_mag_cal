@@ -26,24 +26,6 @@ namespace microstrain_mag_cal
         return os;
     }
 
-    /// @brief Gets the human-readable message for an error code.
-    std::string FitResult::getErrorMessage(const Error& error)
-    {
-        const std::string error_code = "(" + std::to_string(static_cast<uint8_t>(error)) + ") ";
-
-        switch (error)
-        {
-            case Error::FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA:
-                return error_code + "FIT OPTIMIZATION INSUFFICIENT INPUT DATA";
-            case Error::FIT_OPTIMIZATION_DID_NOT_CONVERGE:
-                return error_code + "FIT OPTIMIZATION DID NOT CONVERGE";
-            case Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE:
-                return error_code + "FIT CORRECTION MATRIX NOT POSITIVE DEFINITE";
-            default:
-                return error_code + "UNKNOWN ERROR";
-        }
-    }
-
 
     /// @brief Estimates the initial hard-iron offset using the mean of all measurements.
     ///
