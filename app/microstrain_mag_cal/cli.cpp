@@ -53,8 +53,7 @@ int main(const int argc, char **argv)
     bool arg_ellipsoidal_fit = false;
 
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
-    // TODO: Refactor to get the app output name from CMake.
-    app.usage("Usage: microstrain_mag_cal <file> [OPTIONS]");
+    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
 
     app.add_option("file", arg_input_data_filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
