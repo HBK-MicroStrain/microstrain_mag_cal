@@ -21,13 +21,9 @@ See the following usage guides:
 ### Calibration Coefficients
 The following coefficients are used to provide corrections to the device: 
 
-$\mathbf{b} = \begin{bmatrix} b_x \\ 
-                              b_y \\ 
-                              b_z \end{bmatrix}$
+$\mathbf{b} = \begin{bmatrix} b_x \\ b_y \\ b_z \end{bmatrix}$
 
-$ \mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\
-                               a_{yx} & a_{yy} & a_{yz} \\
-                               a_{zx} & a_{zy} & a_{zz} \end{bmatrix}$
+$ \mathbf{A} = \begin{bmatrix} a_{xx} & a_{xy} & a_{xz} \\ a_{yx} & a_{yy} & a_{yz} \\ a_{zx} & a_{zy} & a_{zz} \end{bmatrix}$
 
 where,
 
@@ -37,7 +33,6 @@ $$
 \mathbf{A} &= \text{Soft-iron (matrix)}
 \end{aligned}
 $$
-
 
 ### Fit Functions
 The core functionality in this suite revolves around fitting the calibration coefficients. The currently
