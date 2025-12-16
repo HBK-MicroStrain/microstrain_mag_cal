@@ -19,7 +19,7 @@ See the following usage guides:
 * [Library](lib/README.md#usage)
 
 ### Fit Functions
-The core functionality in this suite revolves around fitting calibration coefficients. The currently
+The core functionality of this suite revolves around fitting calibration coefficients. The currently
 supported fit functions are:
 
 | Function        | Correction                                                                  | Coefficients calibrated                                                                              |
@@ -39,7 +39,49 @@ s &= \text{Uniform scale factor (scalar)} \\
 \end{aligned}
 $$
 
-### When To Use Each
+### Calibration Coefficients
+The following coefficients are used to provide corrections to the device:
+
+#### Hard-Iron Offset
+
+$$
+\mathbf{b} =
+\begin{bmatrix}
+b_x \\
+b_y \\
+b_z
+\end{bmatrix}
+$$
+
+where,
+
+$$
+\begin{aligned}
+b_i = \text{Hard-iron bias for axis } i \text{ (Gauss)}
+\end{aligned}
+$$
+
+#### Soft-Iron Matrix
+
+$$
+\mathbf{A} =
+\begin{bmatrix}
+a_{xx} & a_{xy} & a_{xz} \\
+a_{yx} & a_{yy} & a_{yz} \\
+a_{zx} & a_{zy} & a_{zz}
+\end{bmatrix}
+$$
+
+where,
+
+$$
+\begin{aligned}
+a_{ii} &= \text{Scale factor for axis } i \\
+a_{ij} &= \text{Cross-axis coupling where axis } j \text{ affects axis } i, \text{ } i \neq j
+\end{aligned}
+$$
+
+### When To Use Each Fit Function
 
 In general, *Spherical Fit* is more reliable but less accurate. *Ellipsoidal Fit* is much more
 accurate, but requires high spatial coverage (*> 60%*).
