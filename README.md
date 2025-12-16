@@ -19,9 +19,12 @@ The following coefficients are used to provide corrections to the device:
 ### Hard-Iron Offset
 
 $$
-\mathbf{b} = \begin{bmatrix} b_x \\
+\mathbf{b} = 
+\begin{bmatrix} 
+b_x \\
 b_y \\
-b_z \end{bmatrix}
+b_z 
+\end{bmatrix}
 $$
 
 where,
