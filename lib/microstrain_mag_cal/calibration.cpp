@@ -345,12 +345,9 @@ namespace microstrain_mag_cal
         json_file << std::setw(2) << json_output;
     }
 
-    /// @brief Convenience wrapper that automatically converts the fit result to JSON first.
+    /// @brief Convenience wrapper that automatically serializes the fit result to JSON first.
     void writeJsonToFile(const std::filesystem::path &filepath, const FitResult& fit_result)
     {
-        const nlohmann::json json_output = serializeFitResult(fit_result);
-
-        std::ofstream json_file(filepath);
-        json_file << std::setw(2) << json_output;
+        writeJsonToFile(filepath, serializeFitResult(fit_result));
     }
 }
