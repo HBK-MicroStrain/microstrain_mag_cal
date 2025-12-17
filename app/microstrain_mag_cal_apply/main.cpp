@@ -9,9 +9,6 @@
 #include <mip/mip_interface.hpp>
 #include "mip/definitions/commands_3dm.hpp"
 
-static constexpr const char *PORT_NAME = "COM37";
-static constexpr uint32_t    BAUDRATE  = 115200;
-
 // TODO: Where to put this? Can move to app backend or is there some microstrain utility module or something
 //       where this could be useful?
 // TODO: Add test with same data types as soft-iron matrix and hard-iron offset to check row-major/column-major
@@ -25,19 +22,27 @@ std::vector<T> toArray(const Eigen::MatrixBase<Derived>& matrix)
     return std::vector<T>(converted.data(), converted.data() + converted.size());
 }
 
-
 int main(const int argc, char **argv)
 {
-    // Required arguments
+    // Required
     std::filesystem::path arg_calibration_filepath;
+    std::string arg_port_name;
+
+    // Optional
+    std::uint32_t arg_baudrate = 115200;
 
     CLI::App app{"Command-line tool to apply a magnetometer calibration to a device."};
-    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
+    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <calibration_file> <port_name> [OPTIONS]");
 
-    app.add_option("file", arg_calibration_filepath, "JSON file containing a calibration to apply.")
+    app.add_option("calibration_file", arg_calibration_filepath, "JSON file containing a calibration to apply.")
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
+    app.add_option("port_name", arg_port_name, "Name of the port for the device to connect to.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
+        ->required();
+    app.add_option("-b,--baudrate", arg_baudrate, "Baudrate of the device to connect to (defaults to 115200).")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     CLI11_PARSE(app, argc, argv);
 
@@ -57,18 +62,18 @@ int main(const int argc, char **argv)
         return 1;
     }
 
-    microstrain::connections::SerialConnection connection(PORT_NAME, BAUDRATE);
+    microstrain::connections::SerialConnection connection(arg_port_name, arg_baudrate);
 
     if (!connection.connect())
     {
         printf("ERROR: Failed to connect to device with\n");
-        printf("    --->     Port: %s\n", PORT_NAME);
-        printf("    ---> Baudrate: %d", BAUDRATE);
+        printf("    --->     Port: %s\n", arg_port_name.c_str());
+        printf("    ---> Baudrate: %d", arg_baudrate);
 
         return 1;
     }
 
-    mip::Interface device(&connection, mip::C::mip_timeout_from_baudrate(BAUDRATE), 2000);
+    mip::Interface device(&connection, mip::C::mip_timeout_from_baudrate(arg_baudrate), 2000);
 
     if (!mip::commands_3dm::writeMagHardIronOffset(device, toArray<float>(fit_result.hard_iron_offset).data()))
     {
