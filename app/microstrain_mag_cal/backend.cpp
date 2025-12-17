@@ -50,6 +50,7 @@ namespace backend
         return true;
     }
 
+    /// Extracts a matrix of points from raw binary data.
     Eigen::MatrixX3d extractPointMatrixFromRawData(
         const microstrain::ConstU8ArrayView &data_view,
         const std::optional<double> reference_field_strength)

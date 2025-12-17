@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.19)
+
 # ---------------------------------------------------------------
 # Dependencies
 # ---------------------------------------------------------------
@@ -24,14 +26,13 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(cli11)
+FetchContent_MakeAvailable(json)
 FetchContent_MakeAvailable(mio)
 FetchContent_MakeAvailable(mip_sdk)
 
 # ---------------------------------------------------------------
 # Application setup
 # ---------------------------------------------------------------
-
-cmake_minimum_required(VERSION 3.19)
 
 set(BACKEND "${PROJECT_NAME}_backend")  # Main application logic
 set(CLI "${PROJECT_NAME}_cli")          # Command-line interface for app

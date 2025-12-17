@@ -5,42 +5,9 @@
 #include <mio/mmap.hpp>
 
 #include <backend.hpp>
+#include <microstrain_mag_cal/analysis.hpp>
+#include <microstrain_mag_cal/calibration.hpp>
 
-#include "microstrain_mag_cal/analysis.hpp"
-#include "microstrain_mag_cal/analysis.hpp"
-#include "microstrain_mag_cal/calibration.hpp"
-
-
-// Adds custom formatting for --help output.
-//
-// All settings that aren't overridden will retain their defaults.
-//
-class HelpMessageFormatter final : public CLI::Formatter
-{
-public:
-    // Output for usage line
-    std::string make_usage(const CLI::App* app, const std::string name) const override
-    {
-       return "USAGE: " + name + (app->get_help_ptr() != nullptr ? " [OPTIONS]" : "") + "\n";
-    }
-};
-
-std::string getErrorMessage(const microstrain_mag_cal::FitResult::Error error)
-{
-    const std::string error_code = "(" + std::to_string(static_cast<uint8_t>(error)) + ") ";
-
-    switch (error)
-    {
-        case microstrain_mag_cal::FitResult::Error::FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA:
-            return error_code + "FIT OPTIMIZATION INSUFFICIENT INPUT DATA";
-        case microstrain_mag_cal::FitResult::Error::FIT_OPTIMIZATION_DID_NOT_CONVERGE:
-            return error_code + "FIT OPTIMIZATION DID NOT CONVERGE";
-        case microstrain_mag_cal::FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE:
-            return error_code + "FIT CORRECTION MATRIX NOT POSITIVE DEFINITE";
-        default:
-            return error_code + "UNKNOWN ERROR";
-    }
-}
 
 // Console output after the fitting algorithms are run
 void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
@@ -58,7 +25,7 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     }
     else
     {
-        printf("FAILED ---> %s\n\n", getErrorMessage(result.error).c_str());
+        printf("FAILED ---> %s\n\n", microstrain_mag_cal::FitResult::getErrorMessage(result.error).c_str());
     }
 
     printf("Soft-Iron Matrix:\n");
@@ -75,16 +42,20 @@ int main(const int argc, char **argv)
 {
     /*** Parse commandline arguments ***/
 
-    std::filesystem::path arg_filepath;
+    // Required
+    std::filesystem::path arg_input_data_filepath;
+
+    // Optional
+    std::filesystem::path arg_output_json_directory;
     std::optional<double> arg_field_strength;
     bool arg_spatial_coverage = false;
     bool arg_spherical_fit = false;
     bool arg_ellipsoidal_fit = false;
 
     CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
-    app.formatter(std::make_shared<HelpMessageFormatter>());
+    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
 
-    app.add_option("file", arg_filepath, "A binary file containing mip data to read from.")
+    app.add_option("file", arg_input_data_filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
@@ -96,13 +67,16 @@ int main(const int argc, char **argv)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-e,--ellipsoidal-fit", arg_ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    app.add_option("-j,--output-json", arg_output_json_directory, "Output the resulting calibration(s) as JSON to the given directory.")
+        ->check(CLI::ExistingDirectory)
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     CLI11_PARSE(app, argc, argv);
 
     /*** Create a read-only view of the input file ***/
 
     std::error_code error;
-    const mio::mmap_source file_view = mio::make_mmap_source(arg_filepath.string(), error);
+    const mio::mmap_source file_view = mio::make_mmap_source(arg_input_data_filepath.string(), error);
 
     if (error)
     {
@@ -143,6 +117,11 @@ int main(const int argc, char **argv)
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
 
         displayFitResult("Spherical Fit", fit_result, fit_RMSE);
+
+        if (!arg_output_json_directory.empty())
+        {
+            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
+        }
     }
 
     if (arg_ellipsoidal_fit)
@@ -153,6 +132,11 @@ int main(const int argc, char **argv)
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
 
         displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
+
+        if (!arg_output_json_directory.empty())
+        {
+            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
+        }
     }
 
     return 0;

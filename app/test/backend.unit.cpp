@@ -1,8 +1,8 @@
 #include <backend.hpp>
 
+#include <microstrain_mag_cal/analysis.hpp>
 #include <microstrain_test/microstrain_test.hpp>
-#include "mip/definitions/data_sensor.hpp"
-
+#include <mip/definitions/data_sensor.hpp>
 
 // This factory class allows us to create controllable and replicable fake binary data.
 class BinaryDataBuilder

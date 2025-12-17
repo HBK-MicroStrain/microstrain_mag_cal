@@ -200,3 +200,37 @@ MICROSTRAIN_TEST_CASE("Lib_Calibration", "Ellipsoidal_fit_corrected_data_require
     CHECK_MESSAGE(refined_fit.soft_iron_matrix.isApprox(Eigen::Matrix3d::Identity(), 0.01), refined_fit.soft_iron_matrix);
     CHECK_MESSAGE(refined_fit.hard_iron_offset.isApprox(Eigen::RowVector3d::Zero(), 0.01), refined_fit.hard_iron_offset);
 }
+
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "A_properly_formatted_JSON_model_is_output_given_a_fit_result")
+{
+    const Eigen::RowVector3d hard_iron_offset(10.0, 11.0, 12.0);
+    Eigen::Matrix3d soft_iron_matrix;
+    soft_iron_matrix << 1.0, 2.0, 3.0,
+                        4.0, 5.0, 6.0,
+                        7.0, 8.0, 9.0;
+    const FitResult fit_result(soft_iron_matrix, hard_iron_offset);
+
+    const nlohmann::json result = convertFitResultToJson(fit_result);
+
+    CHECK(result == nlohmann::json::parse(R"(
+      {
+        "fitResult": "SUCCEEDED",
+        "softIronMatrix": {
+          "xx": 1.0,
+          "xy": 2.0,
+          "xz": 3.0,
+          "yx": 4.0,
+          "yy": 5.0,
+          "yz": 6.0,
+          "zx": 7.0,
+          "zy": 8.0,
+          "zz": 9.0
+        },
+        "hardIronOffset": {
+          "x": 10.0,
+          "y": 11.0,
+          "z": 12.0
+        }
+      }
+    )"));
+}

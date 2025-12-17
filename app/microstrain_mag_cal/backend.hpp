@@ -4,9 +4,9 @@
 
 #include <Eigen/Dense>
 
-#include "microstrain/array_view.hpp"
+#include <microstrain/array_view.hpp>
 #include <microstrain/platform.h>  // Needed to fix OS-specific naming conflicts
-
+#include <microstrain_mag_cal/calibration.hpp>
 
 namespace backend
 {
