@@ -1,12 +1,12 @@
 #include <filesystem>
-#include <fstream>
+#include <iostream>
 
 #include <nlohmann/json.hpp>
 
 #include <microstrain/connections/serial/serial_connection.hpp>
+#include <microstrain_mag_cal/analysis.hpp>
 #include <mip/mip_interface.hpp>
 #include "mip/definitions/commands_3dm.hpp"
-//#include "mip/definitions/commands_base.hpp"
 
 static constexpr const char *PORT_NAME = "COM37";
 static constexpr uint32_t    BAUDRATE  = 115200;
@@ -27,18 +27,19 @@ std::filesystem::path json_file = "C:/Users/AFARRELL/Downloads/ellipsoidal_fit.j
 
 int main()
 {
-    printf("Reading from file: %s...\n", json_file.string().c_str());
+    microstrain_mag_cal::FitResult fit_result = microstrain_mag_cal::deserializeFitResultFromFile(json_file);
 
-    std::ifstream file(json_file);
-    if (!file.is_open())
+    if (fit_result.error == microstrain_mag_cal::FitResult::Error::DESERIALIZATION_COULD_NOT_OPEN_FILE)
     {
-        printf("ERROR: Could not open file: %s\n", json_file.string().c_str());
+        printf("ERROR: Could not open file to deserialize: %s", json_file.filename().string().c_str());
+
         return 1;
     }
 
-    nlohmann::json parsed_json = nlohmann::json::parse(file);
-
-    printf("Applying calibration...\n");
+    if (fit_result.error != microstrain_mag_cal::FitResult::Error::NONE)
+    {
+        std::cout << "WARNING: Applying calibration that contains error code: " << magic_enum::enum_name(fit_result.error);
+    }
 
     microstrain::connections::SerialConnection connection(PORT_NAME, BAUDRATE);
 
@@ -69,5 +70,5 @@ int main()
         }
     }
 
-    printf("Done.\n");
+    return 0;
 }

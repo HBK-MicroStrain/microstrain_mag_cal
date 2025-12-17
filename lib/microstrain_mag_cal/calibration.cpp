@@ -26,6 +26,12 @@ namespace microstrain_mag_cal
         return os;
     }
 
+    /// @brief Returns a fit result that leaves the calibration unchanged (doesn't apply).
+    FitResult FitResult::noCorrection(const Error &error)
+    {
+        return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), error};
+    }
+
 
     /// @brief Estimates the initial hard-iron offset using the mean of all measurements.
     ///
@@ -107,12 +113,6 @@ namespace microstrain_mag_cal
             return 0;
         }
     };
-
-    // Returns a fit result that leaves the calibration unchanged (doesn't apply).
-    FitResult noCalibrationApplied(const FitResult::Error error)
-    {
-        return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), error};
-    }
 
     bool verifyMatrixIsPositiveDefinite(const Eigen::Matrix3d &matrix)
     {
@@ -203,7 +203,7 @@ namespace microstrain_mag_cal
         if (const FitResult::Error error = optimizeFit<SphericalFitFunctor>(points, field_strength, fit_parameters);
             error != FitResult::Error::NONE)
         {
-            return noCalibrationApplied(error);
+            return FitResult::noCorrection(error);
         }
 
         const double scale = std::sqrt(fit_parameters(0));
@@ -212,7 +212,7 @@ namespace microstrain_mag_cal
 
         if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
         {
-            return noCalibrationApplied(FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
+            return FitResult::noCorrection(FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
         }
 
         return {soft_iron_matrix, hard_iron_offset};
@@ -273,7 +273,7 @@ namespace microstrain_mag_cal
         if (const FitResult::Error error = optimizeFit<EllipsoidalFitFunctor>(points, field_strength, fit_parameters);
             error != FitResult::Error::NONE)
         {
-            return noCalibrationApplied(error);
+            return FitResult::noCorrection(error);
         }
 
         const Eigen::Matrix3d soft_iron_matrix = createSymmetricMatrixFromUpperTriangle(fit_parameters);
@@ -281,7 +281,7 @@ namespace microstrain_mag_cal
 
         if (!verifyMatrixIsPositiveDefinite(soft_iron_matrix))
         {
-            return noCalibrationApplied(FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
+            return FitResult::noCorrection(FitResult::Error::FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE);
         }
 
         return {soft_iron_matrix, hard_iron_offset};
@@ -315,6 +315,12 @@ namespace microstrain_mag_cal
         return output;
     }
 
+    /// @brief Serializes the fit result to a json object and then writes it to the given file.
+    void serializeFitResultToFile(const std::filesystem::path &filepath, const FitResult& fit_result)
+    {
+        writeJsonToFile(filepath, serializeFitResult(fit_result));
+    }
+
     /// @brief Deserializes the json object into a fit result.
     FitResult deserializeFitResult(const nlohmann::json &fit_result_json)
     {
@@ -338,16 +344,22 @@ namespace microstrain_mag_cal
         return fit_result;
     }
 
-    /// @brief Writes the given json content to a file at the given filepath.
+    FitResult deserializeFitResultFromFile(const std::filesystem::path& filepath)
+    {
+        std::ifstream file(filepath);
+
+        if (!file.is_open())
+        {
+            return FitResult::noCorrection(FitResult::Error::DESERIALIZATION_COULD_NOT_OPEN_FILE);
+        }
+
+        return deserializeFitResult(nlohmann::json::parse(file));
+    }
+
+    /// @brief Writes the json content to the given file.
     void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output)
     {
         std::ofstream json_file(filepath);
         json_file << std::setw(2) << json_output;
-    }
-
-    /// @brief Convenience wrapper that automatically serializes the fit result to JSON first.
-    void writeJsonToFile(const std::filesystem::path &filepath, const FitResult& fit_result)
-    {
-        writeJsonToFile(filepath, serializeFitResult(fit_result));
     }
 }

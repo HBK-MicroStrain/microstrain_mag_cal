@@ -16,7 +16,8 @@ namespace microstrain_mag_cal
             NONE,
             FIT_OPTIMIZATION_INSUFFICIENT_INPUT_DATA,
             FIT_OPTIMIZATION_DID_NOT_CONVERGE,
-            FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE
+            FIT_CORRECTION_MATRIX_NOT_POSITIVE_DEFINITE,
+            DESERIALIZATION_COULD_NOT_OPEN_FILE
         };
 
         Eigen::Matrix3d soft_iron_matrix;
@@ -25,6 +26,8 @@ namespace microstrain_mag_cal
 
         friend bool operator==(const FitResult& lhs, const FitResult& rhs);
         friend std::ostream& operator<<(std::ostream& os, const FitResult& result);
+
+        static FitResult noCorrection(const Error &error);
     };
 
 
@@ -35,10 +38,12 @@ namespace microstrain_mag_cal
     FitResult fitEllipsoid(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
 
     nlohmann::json serializeFitResult(const FitResult &fit_result);
+    void serializeFitResultToFile(const std::filesystem::path &filepath, const FitResult& fit_result);
+
     FitResult deserializeFitResult(const nlohmann::json &fit_result_json);
+    FitResult deserializeFitResultFromFile(const std::filesystem::path& filepath);
 
     void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output);
-    void writeJsonToFile(const std::filesystem::path &filepath, const FitResult& fit_result);
 }
 
 

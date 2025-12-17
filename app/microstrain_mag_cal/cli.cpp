@@ -114,7 +114,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
+            microstrain_mag_cal::serializeFitResultToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
         }
     }
 
@@ -129,7 +129,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
+            microstrain_mag_cal::serializeFitResultToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
         }
     }
 
