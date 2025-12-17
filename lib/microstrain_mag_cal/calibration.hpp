@@ -51,12 +51,23 @@ namespace microstrain_mag_cal
     ///
     /// @param container The Eigen container to convert. Can be any Eigen container.
     ///
-    /// @returns Vector of type T in the order of the Eigen container (row-major or column-major).
+    /// @returns Vector of type T elements in row-major order from the Eigen container.
     template<typename T, typename Derived>
     std::vector<T> toVector(const Eigen::MatrixBase<Derived>& container)
     {
-        using MatrixTemplate = Eigen::Matrix<T, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>;
-        MatrixTemplate converted = container.template cast<T>().eval();
+        constexpr int Options = (Derived::RowsAtCompileTime == 1 || Derived::ColsAtCompileTime == 1)
+            ? Derived::Options  // Keep original options for vectors
+            : Eigen::RowMajor;
+
+        using MatrixTemplate = Eigen::Matrix<
+            T,
+            Derived::RowsAtCompileTime,
+            Derived::ColsAtCompileTime,
+            Options,
+            Derived::MaxRowsAtCompileTime,
+            Derived::MaxColsAtCompileTime>;
+
+        MatrixTemplate converted = container.template cast<T>();
 
         return std::vector<T>(converted.data(), converted.data() + converted.size());
     }
