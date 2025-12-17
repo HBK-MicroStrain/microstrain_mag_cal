@@ -44,6 +44,22 @@ namespace microstrain_mag_cal
     FitResult deserializeFitResultFromFile(const std::filesystem::path& filepath);
 
     void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output);
+
+    /// @brief Converts an Eigen container to vector.
+    ///
+    /// @tparam T Type of the data contained within the Eigen container.
+    ///
+    /// @param container The Eigen container to convert. Can be any Eigen container.
+    ///
+    /// @returns Vector of type T in the order of the Eigen container (row-major or column-major).
+    template<typename T, typename Derived>
+    std::vector<T> toVector(const Eigen::MatrixBase<Derived>& container)
+    {
+        using MatrixTemplate = Eigen::Matrix<T, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>;
+        MatrixTemplate converted = container.template cast<T>().eval();
+
+        return std::vector<T>(converted.data(), converted.data() + converted.size());
+    }
 }
 
 

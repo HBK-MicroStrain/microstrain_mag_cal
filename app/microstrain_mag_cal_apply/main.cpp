@@ -9,19 +9,6 @@
 #include <mip/mip_interface.hpp>
 #include "mip/definitions/commands_3dm.hpp"
 
-// TODO: Where to put this? Can move to app backend or is there some microstrain utility module or something
-//       where this could be useful?
-// TODO: Add test with same data types as soft-iron matrix and hard-iron offset to check row-major/column-major
-//       compatibility (i.e. want to make sure it's in the proper format when written to the device.
-template<typename T, typename Derived>
-std::vector<T> toArray(const Eigen::MatrixBase<Derived>& matrix)
-{
-    using MatrixTemplate = Eigen::Matrix<T, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>;
-    MatrixTemplate converted = matrix.template cast<T>().eval();
-
-    return std::vector<T>(converted.data(), converted.data() + converted.size());
-}
-
 int main(const int argc, char **argv)
 {
     // Required
@@ -75,7 +62,10 @@ int main(const int argc, char **argv)
 
     mip::Interface device(&connection, mip::C::mip_timeout_from_baudrate(arg_baudrate), 2000);
 
-    if (!mip::commands_3dm::writeMagHardIronOffset(device, toArray<float>(fit_result.hard_iron_offset).data()))
+    const std::vector<float> hard_iron_offset = microstrain_mag_cal::toVector<float>(fit_result.hard_iron_offset);
+    const std::vector<float> soft_iron_matrix = microstrain_mag_cal::toVector<float>(fit_result.soft_iron_matrix);
+
+    if (!mip::commands_3dm::writeMagHardIronOffset(device, hard_iron_offset.data()))
     {
         printf("ERROR: Writing hard-iron offset failed.");
 
@@ -89,7 +79,7 @@ int main(const int argc, char **argv)
         return 1;
     }
 
-    if (!mip::commands_3dm::writeMagSoftIronMatrix(device, toArray<float>(fit_result.soft_iron_matrix).data()))
+    if (!mip::commands_3dm::writeMagSoftIronMatrix(device, soft_iron_matrix.data()))
     {
         printf("ERROR: Writing soft-iron matrix failed.");
 
