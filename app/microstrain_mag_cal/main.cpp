@@ -46,7 +46,7 @@ int main(const int argc, char **argv)
     bool arg_spherical_fit = false;
     bool arg_ellipsoidal_fit = false;
 
-    CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
+    CLI::App app{"Tool to fit magnetometer calibrations for a device."};
     app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
 
     app.add_option("file", arg_input_data_filepath, "A binary file containing mip data to read from.")
