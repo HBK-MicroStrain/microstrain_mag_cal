@@ -216,3 +216,35 @@ MICROSTRAIN_TEST_CASE("Lib_Calibration", "A_calibration_fit_result_can_be_serial
 
     CHECK(parsed_fit_result == original_fit_result);
 }
+
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Converting_an_Eigen_matrix_to_a_regular_container_preserves_row_major_element_order")
+{
+    Eigen::Matrix3d eigen_container;
+    eigen_container <<
+        1.0f, 2.0f, 3.0f,
+        4.0f, 5.0f, 6.0f,
+        7.0f, 8.0f, 9.0f;
+
+    const std::vector<float> result = toVector<float>(eigen_container);
+
+    CHECK(result[0] == 1.0f);
+    CHECK(result[1] == 2.0f);
+    CHECK(result[2] == 3.0f);
+    CHECK(result[3] == 4.0f);
+    CHECK(result[4] == 5.0f);
+    CHECK(result[5] == 6.0f);
+    CHECK(result[6] == 7.0f);
+    CHECK(result[7] == 8.0f);
+    CHECK(result[8] == 9.0f);
+}
+
+MICROSTRAIN_TEST_CASE("Lib_Calibration", "Converting_an_Eigen_vector_to_a_regular_container_preserves_row_major_element_order")
+{
+    const Eigen::Vector3d eigen_container(1.0, 2.0, 3.0);
+
+    const std::vector<float> result = toVector<float>(eigen_container);
+
+    CHECK(result[0] == 1.0f);
+    CHECK(result[1] == 2.0f);
+    CHECK(result[2] == 3.0f);
+}
