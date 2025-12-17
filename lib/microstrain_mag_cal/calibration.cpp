@@ -315,7 +315,7 @@ namespace microstrain_mag_cal
         return output;
     }
 
-    /// @brief Serializes the fit result to a json object and then writes it to the given file.
+    /// @brief Serializes the fit result to json and writes it to the given file.
     void serializeFitResultToFile(const std::filesystem::path &filepath, const FitResult& fit_result)
     {
         writeJsonToFile(filepath, serializeFitResult(fit_result));

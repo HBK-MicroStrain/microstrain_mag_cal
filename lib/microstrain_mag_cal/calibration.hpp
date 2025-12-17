@@ -51,26 +51,26 @@ namespace microstrain_mag_cal
 template <>
 struct nlohmann::adl_serializer<microstrain_mag_cal::FitResult::Error>
 {
-    static void to_json(json& j, const microstrain_mag_cal::FitResult::Error& e)
+    static void to_json(json& error_json, const microstrain_mag_cal::FitResult::Error& error)
     {
-        j = magic_enum::enum_name(e);
+        error_json = magic_enum::enum_name(error);
     }
 
-    static void from_json(const json& j, microstrain_mag_cal::FitResult::Error& e)
+    static void from_json(const json& error_json, microstrain_mag_cal::FitResult::Error& error)
     {
-        const std::string str = j.get<std::string>();
+        const std::string error_string = error_json.get<std::string>();
 
-        if (const std::optional<microstrain_mag_cal::FitResult::Error> opt =
-                magic_enum::enum_cast<microstrain_mag_cal::FitResult::Error>(str);
-            opt.has_value())
+        if (const std::optional<microstrain_mag_cal::FitResult::Error> error_opt =
+                magic_enum::enum_cast<microstrain_mag_cal::FitResult::Error>(error_string);
+            error_opt.has_value())
         {
-            e = opt.value();
+            error = error_opt.value();
         }
         else
         {
             const std::string type_name = std::string(magic_enum::enum_type_name<microstrain_mag_cal::FitResult::Error>());
 
-            throw std::invalid_argument("Invalid " + type_name + " enum value: " + str);
+            throw std::invalid_argument("Invalid " + type_name + " enum value: " + error_string);
         }
     }
 };
