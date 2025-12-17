@@ -9,6 +9,12 @@
 
 namespace microstrain_mag_cal
 {
+    /// @brief Returns a fit result that leaves the calibration unchanged (doesn't apply).
+    FitResult FitResult::noCorrection(const Error &error)
+    {
+        return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), error};
+    }
+
     bool operator==(const FitResult& lhs, const FitResult& rhs)
     {
         return lhs.error == rhs.error &&
@@ -24,12 +30,6 @@ namespace microstrain_mag_cal
            << "  Soft Iron Matrix:\n" << "[" << result.soft_iron_matrix << "]\n";
 
         return os;
-    }
-
-    /// @brief Returns a fit result that leaves the calibration unchanged (doesn't apply).
-    FitResult FitResult::noCorrection(const Error &error)
-    {
-        return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), error};
     }
 
 

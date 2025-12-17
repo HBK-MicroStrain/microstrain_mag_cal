@@ -11,18 +11,19 @@
 static constexpr const char *PORT_NAME = "COM37";
 static constexpr uint32_t    BAUDRATE  = 115200;
 
-float HARD_IRON_OFFSET[3] {
-    -0.0851329,
-     0.0874525,
-     0.2101710
-};
-float SOFT_IRON_MATRIX[9] {
-     0.84556900, -0.0505522, -0.00461753,
-    -0.05055220,  0.8868560,  0.05606970,
-    -0.00461753,  0.0560697,  0.98104600
-};
-
 std::filesystem::path json_file = "C:/Users/AFARRELL/Downloads/ellipsoidal_fit.json";
+
+
+// TODO: Where to put this? Can move to app backend or is there some microstrain utility module or something
+//       where this could be useful?
+template<typename T, typename Derived>
+std::vector<T> toArray(const Eigen::MatrixBase<Derived>& matrix)
+{
+    using MatrixTemplate = Eigen::Matrix<T, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>;
+    MatrixTemplate converted = matrix.template cast<T>().eval();
+
+    return std::vector<T>(converted.data(), converted.data() + converted.size());
+}
 
 
 int main()
@@ -50,7 +51,7 @@ int main()
 
     mip::Interface device(&connection, mip::C::mip_timeout_from_baudrate(BAUDRATE), 2000);
 
-    if (!mip::commands_3dm::writeMagHardIronOffset(device, HARD_IRON_OFFSET))
+    if (!mip::commands_3dm::writeMagHardIronOffset(device, toArray<float>(fit_result.hard_iron_offset).data()))
     {
         printf("ERROR: Updating hard-iron offset failed.");
 
@@ -60,7 +61,7 @@ int main()
         }
     }
 
-    if (!mip::commands_3dm::writeMagSoftIronMatrix(device, SOFT_IRON_MATRIX))
+    if (!mip::commands_3dm::writeMagSoftIronMatrix(device, toArray<float>(fit_result.soft_iron_matrix).data()))
     {
         printf("ERROR: Updating soft-iron matrix failed.");
 
