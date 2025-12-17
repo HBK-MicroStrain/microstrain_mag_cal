@@ -56,8 +56,8 @@ namespace microstrain_mag_cal
     std::vector<T> toVector(const Eigen::MatrixBase<Derived>& container)
     {
         constexpr int Options = (Derived::RowsAtCompileTime == 1 || Derived::ColsAtCompileTime == 1)
-            ? Derived::Options  // Keep original options for vectors
-            : Eigen::RowMajor;
+            ? static_cast<int>(Derived::Options)  // Keep original options for vectors
+            : static_cast<int>(Eigen::RowMajor);
 
         using MatrixTemplate = Eigen::Matrix<
             T,
