@@ -14,6 +14,7 @@
 struct ProgramArgs
 {
     std::filesystem::path calibration_filepath;
+
     std::string port_name;
     std::uint32_t baudrate = 115200;
 };
@@ -24,7 +25,6 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
     app.description("Tool for applying a magnetometer calibration to a device.");
     app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <calibration_file> <port_name> [OPTIONS]");
 
-    // Required
     app.add_option("calibration_file", args.calibration_filepath, "JSON file containing a calibration to apply.")
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
@@ -33,7 +33,6 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
 
-    // Optional
     app.add_option("-b,--baudrate", args.baudrate, "Baudrate of the device to connect to (defaults to 115200).")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 }

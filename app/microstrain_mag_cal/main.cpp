@@ -35,17 +35,13 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
 // TODO: Move to view module
 struct ProgramArgs
 {
-    // Required
     std::filesystem::path input_data_filepath;
 
-    // Optional: Primary Operations
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
 
-    // Optional: Configuration/Modifiers
     std::optional<double> field_strength;
 
-    // Optional: Output Options
     bool display_analysis = false;
     std::filesystem::path output_json_directory;
 };
@@ -56,23 +52,19 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
     app.description("Tool to fit magnetometer calibrations for a device.");
     app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
 
-    // Required
     app.add_option("file", args.input_data_filepath, "A binary file containing mip data to read from.")
         ->check(CLI::ExistingFile)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
 
-    // Optional: Primary Operations
     app.add_flag("-s,--spherical-fit", args.spherical_fit, "Perform a spherical fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-e,--ellipsoidal-fit", args.ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
-    // Optional: Configuration/Modifiers
     app.add_option("-f,--field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
-    // Optional: Output Options
     app.add_flag("-a,--display-analysis", args.display_analysis, "Display comprehensive analysis output.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_option("-j,--output-json", args.output_json_directory, "Write the resulting calibration(s) to JSON file(s) in the given directory.")
@@ -120,7 +112,8 @@ int main(const int argc, char **argv)
 
     if (!args.field_strength.has_value())
     {
-        // TODO: Output message informing of this
+        printf("No reference field strength specified. Estimating field strength from the data...\n");
+
         args.field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
 
