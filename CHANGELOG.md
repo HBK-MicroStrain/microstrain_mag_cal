@@ -12,8 +12,10 @@ _First major changes from feedback_.
 - `microstrain-mag-cal`: Option to output calibration results to json file(s).
 - `microstrain-mag-cal`: Verbose analysis option for data analysis output.
 - `microstrain-mag-cal-apply`: Separate CLI tool to apply calibrations to a device.
-- `Documentation`: Added guide for new apply tool to application usage guide.
-- `Documentation`: Added example workflow guide for both app tools together.
+- `Documentation`: Guide for new apply tool to application usage guide.
+- `Documentation`: Example workflow guide for both app tools together.
+- `Documentation`: Section for calibration coefficients to README.
+- `Documentation`: Section for when to use each fit function to README.
 
 ### Changed
 - `Documentation`: Renamed app and library READMEs to USAGE_GUIDE.
