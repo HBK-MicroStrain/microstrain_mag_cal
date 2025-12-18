@@ -11,14 +11,16 @@
 
 
 // TODO: Move to view module
-struct ProgramArgs {
+struct ProgramArgs
+{
     std::filesystem::path calibration_filepath;
     std::string port_name;
     std::uint32_t baudrate = 115200;
 };
 
 // TODO: Move to view module
-void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[]) {
+void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
+{
     app.description("Tool for applying a magnetometer calibration to a device.");
     app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <calibration_file> <port_name> [OPTIONS]");
 
