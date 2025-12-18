@@ -48,12 +48,12 @@ struct ProgramArgs
 {
     std::filesystem::path input_data_filepath;
 
+    bool display_analysis = false;
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
 
     std::optional<double> field_strength;
 
-    bool display_analysis = false;
     std::filesystem::path output_json_directory;
 };
 
@@ -68,16 +68,20 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
 
-    app.add_flag("-s,--spherical-fit", args.spherical_fit, "Perform a spherical fit on the input data.")
+    CLI::Option_group* core = app.add_option_group("Core", "Core functionality of the tool.");
+
+    core->add_flag("-a,--display-analysis", args.display_analysis, "Display comprehensive analysis output.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-e,--ellipsoidal-fit", args.ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
+    core->add_flag("-s,--spherical-fit", args.spherical_fit, "Perform a spherical fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    core->add_flag("-e,--ellipsoidal-fit", args.ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+    core->require_option(1, 0);
 
     app.add_option("-f,--field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
-    app.add_flag("-a,--display-analysis", args.display_analysis, "Display comprehensive analysis output.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_option("-j,--output-json", args.output_json_directory, "Write the resulting calibration(s) to JSON file(s) in the given directory.")
         ->check(CLI::ExistingDirectory)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
@@ -123,7 +127,7 @@ int main(const int argc, char **argv)
 
     if (!args.field_strength.has_value())
     {
-        printf("\nNOTE: Using estimate of field strength.\n");
+        printf("\nNOTE: Using estimate for field strength.\n");
 
         args.field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
