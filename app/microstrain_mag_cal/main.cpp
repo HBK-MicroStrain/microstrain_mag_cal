@@ -10,9 +10,12 @@
 #include <microstrain_mag_cal/calibration.hpp>
 
 
+using microstrain_mag_cal::FitResult;
+
+
 // TODO: Move to view module
 // Console output after the fitting algorithms are run
-void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
+void displayFitResult(const std::string &fit_name, const FitResult &result, const double fit_RMSE)
 {
 
     printf("\n");
@@ -21,7 +24,7 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     printf("--------------------------------------------------\n");
 
     std::string result_output = "SUCCESS";
-    if (result.error != microstrain_mag_cal::FitResult::Error::NONE)
+    if (result.error != FitResult::Error::NONE)
     {
         result_output = "FAIL - ";
         const std::string_view error_name = magic_enum::enum_name(result.error);
@@ -139,9 +142,7 @@ int main(const int argc, char **argv)
     // TODO: Cleanup following sections
     if (args.spherical_fit)
     {
-        const microstrain_mag_cal::FitResult fit_result =
-            microstrain_mag_cal::fitSphere(points, args.field_strength.value(), initial_offset);
-
+        const FitResult fit_result = microstrain_mag_cal::fitSphere(points, args.field_strength.value(), initial_offset);
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
         displayFitResult("Spherical Fit", fit_result, fit_RMSE);
@@ -154,9 +155,7 @@ int main(const int argc, char **argv)
 
     if (args.ellipsoidal_fit)
     {
-        const microstrain_mag_cal::FitResult fit_result =
-            microstrain_mag_cal::fitEllipsoid(points, args.field_strength.value(), initial_offset);
-
+        const FitResult fit_result = microstrain_mag_cal::fitEllipsoid(points, args.field_strength.value(), initial_offset);
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
         displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
