@@ -19,8 +19,14 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     printf("%s\n", fit_name.data());
     printf("--------------------------------------------------\n");
 
-    const std::string_view error_name = magic_enum::enum_name(result.error);
-    std::cout << "Error: " << (error_name.empty() ? "UNKNOWN" : error_name) << "\n\n";
+    std::string result_output = "SUCCESS";
+    if (result.error != microstrain_mag_cal::FitResult::Error::NONE)
+    {
+        result_output = "FAIL - ";
+        const std::string_view error_name = magic_enum::enum_name(result.error);
+        result_output += error_name.empty() ? "UNKNOWN" : error_name;
+    }
+    printf("Result: %s\n\n", result_output.c_str());
 
     printf("Soft-Iron Matrix:\n");
     std::cout << result.soft_iron_matrix << "\n\n";
