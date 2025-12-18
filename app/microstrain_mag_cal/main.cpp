@@ -10,132 +10,164 @@
 #include <microstrain_mag_cal/calibration.hpp>
 
 
-// Console output after the fitting algorithms are run
-void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
-{
-    static constexpr int MIN_SUPPORTED_TERMINAL_WIDTH = 50;
+using microstrain_mag_cal::FitResult;
 
-    printf("%s\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
+
+// TODO: Move to view module
+// Console output after the fitting algorithms are run
+void displayFitResult(const std::string &fit_name, const FitResult &result, const double fit_RMSE)
+{
+
+    printf("\n");
+    printf("--------------------------------------------------\n");
     printf("%s\n", fit_name.data());
-    printf("%s\n\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
+    printf("--------------------------------------------------\n");
 
     std::string result_output = "SUCCESS";
-    if (result.error != microstrain_mag_cal::FitResult::Error::NONE)
+    if (result.error != FitResult::Error::NONE)
     {
         result_output = "FAIL - ";
         const std::string_view error_name = magic_enum::enum_name(result.error);
         result_output += error_name.empty() ? "UNKNOWN" : error_name;
     }
-    printf("Result: %s\n\n", result_output.c_str());
+    printf("  Result: %s\n\n", result_output.c_str());
 
-    printf("Soft-Iron Matrix:\n");
-    std::cout << result.soft_iron_matrix << "\n\n";
+    printf("  Soft-Iron Matrix:\n");
+    const Eigen::IOFormat fmt(6, 0, " ", "\n", "  ");
+    std::cout << result.soft_iron_matrix.format(fmt) << "\n\n";
 
-    printf("Hard-Iron Offset:\n");
-    std::cout << result.hard_iron_offset << "\n\n";
+    printf("  Hard-Iron Offset:\n");
+    std::cout << result.hard_iron_offset.format(fmt) << "\n\n";
 
-    printf("Fit RMSE: %.5f\n\n", fit_RMSE);
+    printf("  Fit RMSE: %.5f\n", fit_RMSE);
+}
+
+
+// TODO: Move to view module
+struct ProgramArgs
+{
+    std::filesystem::path input_data_filepath;
+
+    bool display_analysis = false;
+    bool spherical_fit = false;
+    bool ellipsoidal_fit = false;
+
+    std::optional<double> field_strength;
+
+    std::filesystem::path output_json_directory;
+};
+
+// TODO: Move to view module
+void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
+{
+    app.description("Tool to fit magnetometer calibrations for a device.");
+    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
+
+    app.add_option("file", args.input_data_filepath, "A binary file containing mip data to read from.")
+        ->check(CLI::ExistingFile)
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
+        ->required();
+
+    CLI::Option_group* core = app.add_option_group("Core", "Core functionality of the tool.");
+
+    core->add_flag("-a,--display-analysis", args.display_analysis, "Display comprehensive analysis output.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    core->add_flag("-s,--spherical-fit", args.spherical_fit, "Perform a spherical fit on the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    core->add_flag("-e,--ellipsoidal-fit", args.ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+    core->require_option(1, 0);
+
+    app.add_option("-f,--field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+    app.add_option("-j,--output-json", args.output_json_directory, "Write the resulting calibration(s) to JSON file(s) in the given directory.")
+        ->check(CLI::ExistingDirectory)
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+}
+
+// TODO: Move to backend or microstrain utilities
+struct MappedBinaryData
+{
+    mio::mmap_source mapping;
+    microstrain::ConstU8ArrayView view;
+};
+
+// TODO: Move to backend or microstrain utilities
+// TODO: Move file logic out and add test
+std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filepath)
+{
+    std::error_code error;
+    mio::mmap_source mapping = mio::make_mmap_source(filepath.string(), error);
+
+    if (error)
+    {
+        return std::nullopt;
+    }
+
+    const microstrain::ConstU8ArrayView view(reinterpret_cast<const uint8_t*>(mapping.data()), mapping.size());
+
+    return MappedBinaryData{std::move(mapping), view};
 }
 
 
 int main(const int argc, char **argv)
 {
-    /*** Parse commandline arguments ***/
-
-    // Required
-    std::filesystem::path arg_input_data_filepath;
-
-    // Optional
-    std::filesystem::path arg_output_json_directory;
-    std::optional<double> arg_field_strength;
-    bool arg_spatial_coverage = false;
-    bool arg_spherical_fit = false;
-    bool arg_ellipsoidal_fit = false;
-
-    CLI::App app{"Tool to fit magnetometer calibrations for a device."};
-    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
-
-    app.add_option("file", arg_input_data_filepath, "A binary file containing mip data to read from.")
-        ->check(CLI::ExistingFile)
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
-        ->required();
-    app.add_option("-r,--reference-field-strength", arg_field_strength, "Field strength to use as a reference instead of using the measured field strength.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-c,--spatial-coverage", arg_spatial_coverage, "Calculate the spatial coverage of the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-s,--spherical-fit", arg_spherical_fit, "Perform a spherical fit on the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-e,--ellipsoidal-fit", arg_ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_option("-j,--output-json", arg_output_json_directory, "Output the resulting calibration(s) as JSON to the given directory.")
-        ->check(CLI::ExistingDirectory)
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-
+    ProgramArgs args;
+    CLI::App app;
+    setup_argument_parser(app, args, argv);
     CLI11_PARSE(app, argc, argv);
 
-    /*** Create a read-only view of the input file ***/
+    const std::optional<MappedBinaryData> mapped_data = mapBinaryFile(args.input_data_filepath);
+    assert(mapped_data.has_value());
 
-    std::error_code error;
-    const mio::mmap_source file_view = mio::make_mmap_source(arg_input_data_filepath.string(), error);
-
-    if (error)
-    {
-        std::cerr << "Error opening file: " << error.message() << std::endl;
-        return 1;
-    }
-
-    const uint8_t *data = reinterpret_cast<const uint8_t *>(file_view.data());
-    const microstrain::ConstU8ArrayView data_view(data, file_view.size());
-
-    /*** Run the calculations ***/
-
-    const Eigen::MatrixX3d points = backend::extractPointMatrixFromRawData(data_view, arg_field_strength);
+    const Eigen::MatrixX3d points = backend::extractPointMatrixFromRawData(mapped_data->view, args.field_strength);
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
-    printf("Number Of Points: %zu\n\n", static_cast<size_t>(points.rows()));
-
-    if (!arg_field_strength.has_value())
+    if (!args.field_strength.has_value())
     {
-        arg_field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
+        printf("\nNOTE: Using estimate for field strength.\n");
+
+        args.field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
 
-    if (arg_spherical_fit || arg_ellipsoidal_fit)
+    if (args.display_analysis)
     {
-        printf("Using Field Strength: %.5f\n\n", arg_field_strength.value());
+        printf("\n");
+        printf("--------------------------------------------------\n");
+        printf("Analysis:\n");
+        printf("--------------------------------------------------\n");
+        printf("  Used Points       : %zu\n", static_cast<size_t>(points.rows()));
+        printf("  Spatial Coverage  : %.5f%%\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
+        printf("  Field Strength    : %.5f\n", args.field_strength.value());
+        printf("  Initial Offset    : [%.5f, %.5f, %.5f]\n", initial_offset.x(), initial_offset.y(), initial_offset.z());
     }
 
-    if (arg_spatial_coverage)
+    // TODO: Cleanup following sections
+    if (args.spherical_fit)
     {
-        printf("Spatial Coverage: %.5f%%\n\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
-    }
-
-    if (arg_spherical_fit)
-    {
-        const microstrain_mag_cal::FitResult fit_result =
-            microstrain_mag_cal::fitSphere(points, arg_field_strength.value(), initial_offset);
-
-        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
+        const FitResult fit_result = microstrain_mag_cal::fitSphere(points, args.field_strength.value(), initial_offset);
+        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
         displayFitResult("Spherical Fit", fit_result, fit_RMSE);
 
-        if (!arg_output_json_directory.empty())
+        if (!args.output_json_directory.empty())
         {
-            microstrain_mag_cal::serializeFitResultToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
+            microstrain_mag_cal::serializeFitResultToFile(args.output_json_directory / "spherical_fit.json", fit_result);
         }
     }
 
-    if (arg_ellipsoidal_fit)
+    if (args.ellipsoidal_fit)
     {
-        const microstrain_mag_cal::FitResult fit_result =
-            microstrain_mag_cal::fitEllipsoid(points, arg_field_strength.value(), initial_offset);
-
-        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, arg_field_strength.value());
+        const FitResult fit_result = microstrain_mag_cal::fitEllipsoid(points, args.field_strength.value(), initial_offset);
+        const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
         displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
 
-        if (!arg_output_json_directory.empty())
+        if (!args.output_json_directory.empty())
         {
-            microstrain_mag_cal::serializeFitResultToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
+            microstrain_mag_cal::serializeFitResultToFile(args.output_json_directory / "ellipsoidal_fit.json", fit_result);
         }
     }
 
