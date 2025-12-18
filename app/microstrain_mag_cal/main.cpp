@@ -70,6 +70,30 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 }
 
+// TODO: Move to backend or microstrain utilities
+struct MappedBinaryData
+{
+    mio::mmap_source mapping;
+    microstrain::ConstU8ArrayView view;
+};
+
+// TODO: Move to backend or microstrain utilities
+std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filepath)
+{
+    std::error_code error;
+    mio::mmap_source mapping = mio::make_mmap_source(filepath.string(), error);
+
+    if (error)
+    {
+        return std::nullopt;
+    }
+
+    const microstrain::ConstU8ArrayView view(reinterpret_cast<const uint8_t*>(mapping.data()), mapping.size());
+
+    return MappedBinaryData{std::move(mapping), view};
+}
+
+
 int main(const int argc, char **argv)
 {
     ProgramArgs args;
@@ -77,21 +101,10 @@ int main(const int argc, char **argv)
     setup_argument_parser(app, args, argv);
     CLI11_PARSE(app, argc, argv);
 
-    // TODO: Potentially refactor memory mapping section
-    std::error_code error;
-    const mio::mmap_source file_view = mio::make_mmap_source(args.input_data_filepath.string(), error);
+    const std::optional<MappedBinaryData> mapped_data = mapBinaryFile(args.input_data_filepath);
+    assert(mapped_data.has_value());
 
-    if (error)
-    {
-        std::cerr << "Error opening file: " << error.message() << "\n";
-
-        return 1;
-    }
-
-    const uint8_t *data = reinterpret_cast<const uint8_t *>(file_view.data());
-    const microstrain::ConstU8ArrayView data_view(data, file_view.size());
-
-    const Eigen::MatrixX3d points = backend::extractPointMatrixFromRawData(data_view, args.field_strength);
+    const Eigen::MatrixX3d points = backend::extractPointMatrixFromRawData(mapped_data->view, args.field_strength);
 
     printf("Number Of Points: %zu\n\n", static_cast<size_t>(points.rows()));
 
