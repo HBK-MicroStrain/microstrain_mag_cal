@@ -15,6 +15,7 @@
 void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
 {
 
+    printf("\n");
     printf("--------------------------------------------------\n");
     printf("%s\n", fit_name.data());
     printf("--------------------------------------------------\n");
@@ -26,15 +27,15 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
         const std::string_view error_name = magic_enum::enum_name(result.error);
         result_output += error_name.empty() ? "UNKNOWN" : error_name;
     }
-    printf("Result: %s\n\n", result_output.c_str());
+    printf("  Result: %s\n\n", result_output.c_str());
 
-    printf("Soft-Iron Matrix:\n");
-    std::cout << result.soft_iron_matrix << "\n\n";
+    printf("  Soft-Iron Matrix:\n");
+    std::cout << "  " << result.soft_iron_matrix << "\n\n";
 
-    printf("Hard-Iron Offset:\n");
-    std::cout << result.hard_iron_offset << "\n\n";
+    printf("  Hard-Iron Offset:\n");
+    std::cout << "  " << result.hard_iron_offset << "\n\n";
 
-    printf("Fit RMSE: %.5f\n\n", fit_RMSE);
+    printf("  Fit RMSE: %.5f\n", fit_RMSE);
 }
 
 
@@ -118,13 +119,14 @@ int main(const int argc, char **argv)
 
     if (!args.field_strength.has_value())
     {
-        printf("No reference field strength specified. Estimating field strength from the data...\n");
+        printf("\nNOTE: No reference field strength specified. Estimating from data...\n");
 
         args.field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
 
     if (args.display_analysis)
     {
+        printf("\n");
         printf("--------------------------------------------------\n");
         printf("Analysis:\n");
         printf("--------------------------------------------------\n");
@@ -134,12 +136,12 @@ int main(const int argc, char **argv)
         printf("  Initial Offset    : [%.5f, %.5f, %.5f]\n", initial_offset.x(), initial_offset.y(), initial_offset.z());
     }
 
+    // TODO: Cleanup following sections
     if (args.spherical_fit)
     {
         const microstrain_mag_cal::FitResult fit_result =
             microstrain_mag_cal::fitSphere(points, args.field_strength.value(), initial_offset);
 
-        // TODO: Make reusable function for the rest
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
         displayFitResult("Spherical Fit", fit_result, fit_RMSE);
@@ -155,7 +157,6 @@ int main(const int argc, char **argv)
         const microstrain_mag_cal::FitResult fit_result =
             microstrain_mag_cal::fitEllipsoid(points, args.field_strength.value(), initial_offset);
 
-        // TODO: Make reusable function for the rest
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
         displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
