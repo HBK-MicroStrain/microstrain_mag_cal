@@ -3,19 +3,19 @@
 ## CLI Usage
 The CLI is run by the following command:
 ```
-offline_mag_cal [OPTIONS]
+microstrain-mag-cal [OPTIONS]
 ```
 
 For a list of options, run:
 ```
-offline_mag_cal --help
+microstrain-mag-cal --help
 ```
 
 ### Example
 This example reads magnetometer data from the file `mag_cal_data.bin` and runs spherical and
-ellipsoidal fits on the data:
+ellipsoidal fits on the data using the reference field strength `0.12345`:
 ```
-offline-mag-cal "mag_cal_test.bin" -s -e
+microstrain-mag-cal "mag_cal_example.bin" -f 0.12345 -s -e
 ```
 
 ### Reference Field Strength
