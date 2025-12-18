@@ -15,8 +15,8 @@ Suite of library and tools for magnetometer calibration.
 
 ## Usage
 See the following usage guides:
-* [Application](app/README.md#cli-usage)
-* [Library](lib/README.md#usage)
+* [Application](app/USAGE_GUIDE.md)
+* [Library](lib/USAGE_GUIDE.md)
 
 ### Fit Functions
 The core functionality of this suite revolves around fitting calibration coefficients. The currently
