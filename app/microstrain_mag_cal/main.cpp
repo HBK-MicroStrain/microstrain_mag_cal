@@ -123,7 +123,7 @@ int main(const int argc, char **argv)
 
     if (!args.field_strength.has_value())
     {
-        printf("\nNOTE: No reference field strength specified. Estimating from data...\n");
+        printf("\nNOTE: Using estimate of field strength.\n");
 
         args.field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
