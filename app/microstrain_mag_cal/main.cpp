@@ -36,12 +36,20 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
 // TODO: Move to view module
 struct ProgramArgs
 {
+    // Required
     std::filesystem::path input_data_filepath;
-    std::filesystem::path output_json_directory;
-    std::optional<double> field_strength;
-    bool spatial_coverage = false;
+
+    // Optional: Primary Operations
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
+    bool spatial_coverage = false;
+
+    // Optional: Configuration/Modifiers
+    std::optional<double> field_strength;
+
+    // Optional: Output Options
+    bool display_analysis = false;
+    std::filesystem::path output_json_directory;
 };
 
 // TODO: Move to view module
@@ -56,16 +64,22 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
         ->required();
 
-    // Optional
-    app.add_option("-r,--reference-field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-c,--spatial-coverage", args.spatial_coverage, "Calculate the spatial coverage of the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    // Optional: Primary Operations
     app.add_flag("-s,--spherical-fit", args.spherical_fit, "Perform a spherical fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-e,--ellipsoidal-fit", args.ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_option("-j,--output-json", args.output_json_directory, "Output the resulting calibration(s) as JSON to the given directory.")
+    app.add_flag("-c,--spatial-coverage", args.spatial_coverage, "Calculate the spatial coverage of the input data.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+    // Optional: Configuration/Modifiers
+    app.add_option("-r,--reference-field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+    // Optional: Output Options
+    app.add_flag("-a,--display-analysis", args.display_analysis, "Display comprehensive analysis output.")
+        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    app.add_option("-j,--output-json", args.output_json_directory, "Write the resulting calibration(s) to JSON file(s) in the given directory.")
         ->check(CLI::ExistingDirectory)
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 }
@@ -78,6 +92,7 @@ struct MappedBinaryData
 };
 
 // TODO: Move to backend or microstrain utilities
+// TODO: Move file logic out and add test
 std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filepath)
 {
     std::error_code error;
