@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <CLI/CLI.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <mio/mmap.hpp>
 
 #include <backend.hpp>
@@ -18,15 +19,14 @@ void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::Fi
     printf("%s\n", fit_name.data());
     printf("%s\n\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
 
-    printf("Fit Result: ");
-    if (result.error == microstrain_mag_cal::FitResult::Error::NONE)
+    std::string result_output = "SUCCESS";
+    if (result.error != microstrain_mag_cal::FitResult::Error::NONE)
     {
-        printf("SUCCEEDED\n\n");
+        result_output = "FAIL - ";
+        const std::string_view error_name = magic_enum::enum_name(result.error);
+        result_output += error_name.empty() ? "UNKNOWN" : error_name;
     }
-    else
-    {
-        printf("FAILED ---> %s\n\n", microstrain_mag_cal::FitResult::getErrorMessage(result.error).c_str());
-    }
+    printf("Result: %s\n\n", result_output.c_str());
 
     printf("Soft-Iron Matrix:\n");
     std::cout << result.soft_iron_matrix << "\n\n";
@@ -52,7 +52,7 @@ int main(const int argc, char **argv)
     bool arg_spherical_fit = false;
     bool arg_ellipsoidal_fit = false;
 
-    CLI::App app{"MVP converting the mag cal logic from InertialConnect into a standalone application."};
+    CLI::App app{"Tool to fit magnetometer calibrations for a device."};
     app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
 
     app.add_option("file", arg_input_data_filepath, "A binary file containing mip data to read from.")
@@ -120,7 +120,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
+            microstrain_mag_cal::serializeFitResultToFile(arg_output_json_directory / "spherical_fit.json", fit_result);
         }
     }
 
@@ -135,7 +135,7 @@ int main(const int argc, char **argv)
 
         if (!arg_output_json_directory.empty())
         {
-            microstrain_mag_cal::writeJsonToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
+            microstrain_mag_cal::serializeFitResultToFile(arg_output_json_directory / "ellipsoidal_fit.json", fit_result);
         }
     }
 

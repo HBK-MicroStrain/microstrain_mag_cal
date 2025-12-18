@@ -54,12 +54,19 @@ FetchContent_Declare(
     GIT_TAG 5.0.0
     GIT_SHALLOW TRUE
 )
+FetchContent_Declare(
+    magic_enum
+    GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
+    GIT_TAG v0.9.7
+    GIT_SHALLOW TRUE
+)
 FetchContent_Declare(microstrain_test
     GIT_REPOSITORY https://github.com/LORD-MicroStrain/microstrain_test.git
     GIT_TAG v0.2.7
 )
 
 FetchContent_MakeAvailable(eigen)
+FetchContent_MakeAvailable(magic_enum)
 FetchContent_MakeAvailable(microstrain_test)
 
 if (MSVC)

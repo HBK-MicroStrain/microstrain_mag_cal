@@ -7,5 +7,5 @@ target_sources(${BACKEND}
 )
 target_sources(${CLI}
     PRIVATE
-        "cli.cpp"
+        "main.cpp"
 )

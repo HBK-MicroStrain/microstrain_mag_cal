@@ -1,0 +1,1 @@
+target_sources(${APPLY_CLI} PRIVATE "main.cpp")
