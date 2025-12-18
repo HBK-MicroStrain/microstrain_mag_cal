@@ -7,6 +7,24 @@ Use the `microstrain-mag-cal` tool to fit calibrations. For a list of options, r
 microstrain-mag-cal --help
 ```
 
+### Analysis Output
+The tool supports optional verbose output for data analysis:
+```
+microstrain-mag-cal "example_file.bin" --display-analysis
+```
+
+This provides helpful information when fitting calibrations, but it can also be useful standalone
+before fitting to analyze data quality. 
+
+If data quality is poor, the resulting fit will likely be poor. Thus, it is recommended 
+to recapture the data in this scenario.
+
+Indicators of poor data quality:
+* A very small amount of the total points are being used.
+* The *spatial coverage* is low (especially < 50%).
+* The field strength being used is significantly different from the local field strength the data was
+  captured in.
+
 ### Reference Field Strength
 The tool will automatically estimate the field strength given the input data if no reference field
 strength is given.
