@@ -10,11 +10,13 @@
 #include <microstrain_mag_cal/calibration.hpp>
 
 
+static constexpr int MIN_SUPPORTED_TERMINAL_WIDTH = 50;
+
+
 // TODO: Move to view module
 // Console output after the fitting algorithms are run
 void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
 {
-    static constexpr int MIN_SUPPORTED_TERMINAL_WIDTH = 50;
 
     printf("%s\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
     printf("%s\n", fit_name.data());
@@ -42,7 +44,6 @@ struct ProgramArgs
     // Optional: Primary Operations
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
-    bool spatial_coverage = false;
 
     // Optional: Configuration/Modifiers
     std::optional<double> field_strength;
@@ -68,8 +69,6 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
     app.add_flag("-s,--spherical-fit", args.spherical_fit, "Perform a spherical fit on the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     app.add_flag("-e,--ellipsoidal-fit", args.ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    app.add_flag("-c,--spatial-coverage", args.spatial_coverage, "Calculate the spatial coverage of the input data.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     // Optional: Configuration/Modifiers
@@ -120,11 +119,7 @@ int main(const int argc, char **argv)
     assert(mapped_data.has_value());
 
     const Eigen::MatrixX3d points = backend::extractPointMatrixFromRawData(mapped_data->view, args.field_strength);
-
-    printf("Number Of Points: %zu\n\n", static_cast<size_t>(points.rows()));
-
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
-
 
     if (!args.field_strength.has_value())
     {
@@ -132,14 +127,14 @@ int main(const int argc, char **argv)
         args.field_strength = microstrain_mag_cal::calculateMeanMeasuredFieldStrength(points, initial_offset);
     }
 
-    if (args.spherical_fit || args.ellipsoidal_fit)
+    if (args.display_analysis)
     {
-        printf("Using Field Strength: %.5f\n\n", args.field_strength.value());
-    }
-
-    if (args.spatial_coverage)
-    {
-        printf("Spatial Coverage: %.5f%%\n\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
+        printf("--------------------------------------------------\n");
+        printf("Analysis:\n");
+        printf("--------------------------------------------------\n");
+        printf("  Used Points       : %zu\n", static_cast<size_t>(points.rows()));
+        printf("  Spatial Coverage  : %.5f%%\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
+        printf("  Field Strength    : %.5f\n", args.field_strength.value());
     }
 
     if (args.spherical_fit)
