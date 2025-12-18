@@ -33,10 +33,11 @@ void displayFitResult(const std::string &fit_name, const FitResult &result, cons
     printf("  Result: %s\n\n", result_output.c_str());
 
     printf("  Soft-Iron Matrix:\n");
-    std::cout << "  " << result.soft_iron_matrix << "\n\n";
+    const Eigen::IOFormat fmt(6, 0, " ", "\n", "  ");
+    std::cout << result.soft_iron_matrix.format(fmt) << "\n\n";
 
     printf("  Hard-Iron Offset:\n");
-    std::cout << "  " << result.hard_iron_offset << "\n\n";
+    std::cout << result.hard_iron_offset.format(fmt) << "\n\n";
 
     printf("  Fit RMSE: %.5f\n", fit_RMSE);
 }
