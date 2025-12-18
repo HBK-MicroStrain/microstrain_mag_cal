@@ -10,17 +10,14 @@
 #include <microstrain_mag_cal/calibration.hpp>
 
 
-static constexpr int MIN_SUPPORTED_TERMINAL_WIDTH = 50;
-
-
 // TODO: Move to view module
 // Console output after the fitting algorithms are run
 void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
 {
 
-    printf("%s\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
+    printf("--------------------------------------------------\n");
     printf("%s\n", fit_name.data());
-    printf("%s\n\n", std::string(MIN_SUPPORTED_TERMINAL_WIDTH, '-').data());
+    printf("--------------------------------------------------\n");
 
     const std::string_view error_name = magic_enum::enum_name(result.error);
     std::cout << "Error: " << (error_name.empty() ? "UNKNOWN" : error_name) << "\n\n";
@@ -135,6 +132,7 @@ int main(const int argc, char **argv)
         printf("  Used Points       : %zu\n", static_cast<size_t>(points.rows()));
         printf("  Spatial Coverage  : %.5f%%\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
         printf("  Field Strength    : %.5f\n", args.field_strength.value());
+        printf("  Initial Offset    : [%.5f, %.5f, %.5f]\n", initial_offset.x(), initial_offset.y(), initial_offset.z());
     }
 
     if (args.spherical_fit)
