@@ -69,7 +69,7 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     // Optional: Configuration/Modifiers
-    app.add_option("-r,--reference-field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+    app.add_option("-f,--field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 
     // Optional: Output Options
