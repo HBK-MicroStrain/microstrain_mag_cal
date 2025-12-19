@@ -122,7 +122,8 @@ int main(const int argc, char **argv)
     const std::optional<MappedBinaryData> mapped_data = mapBinaryFile(args.input_data_filepath);
     assert(mapped_data.has_value());
 
-    const Eigen::MatrixX3d points = backend::extractPointMatrixFromRawData(mapped_data->view, args.field_strength);
+    const microstrain_mag_cal::PointManager point_manager = backend::extractPointsFromRawData(mapped_data->view, args.field_strength);
+    const Eigen::MatrixX3d points = point_manager.getMatrix();
     const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
     if (!args.field_strength.has_value())

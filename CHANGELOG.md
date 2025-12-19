@@ -1,7 +1,7 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## [Unreleased]
 
 ### Added 
 - `libmicrostrain-mag-cal`: PointManager metrics for tracking total number of points seen and number of points after 
@@ -9,8 +9,9 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 - `libmicrostrain-mag-cal`: Changed target constructor for PointManager to pass by value instead of reference.
+- `libmicrostrain-mag-cal`: Made `PointManager::getMatrix()` const-qualified.
 
-## 0.3.0-pre-alpha - 2025-12-18
+## [0.3.0-pre-alpha] - 2025-12-18
 
 _First major changes from feedback_.
 
@@ -35,7 +36,7 @@ _First major changes from feedback_.
 - New dependency on [nlohmann/json](https://github.com/nlohmann/json/tree/v3.12.0?tab=readme-ov-file#serialization--deserialization).
 - New dependency on [Neargye/magic_enum](https://github.com/Neargye/magic_enum).
 
-## 0.2.0-pre-alpha - 2025-12-11
+## [0.2.0-pre-alpha] - 2025-12-11
 
 _Interface, packaging, and documentation changes. No new features were introduced._
 
@@ -49,7 +50,7 @@ _Interface, packaging, and documentation changes. No new features were introduce
 - Offline mag cal cli tool
 - Script to apply coefficients to the device
 
-## 0.1.0-pre-alpha - 2025-12-03
+## [0.1.0-pre-alpha] - 2025-12-03
 
 _First release._
 

@@ -51,7 +51,7 @@ namespace backend
     }
 
     /// Extracts a matrix of points from raw binary data.
-    Eigen::MatrixX3d extractPointMatrixFromRawData(
+    microstrain_mag_cal::PointManager extractPointsFromRawData(
         const microstrain::ConstU8ArrayView &data_view,
         const std::optional<double> reference_field_strength)
     {
@@ -72,6 +72,6 @@ namespace backend
         mip::Parser parser(&extractPoints, &point_manager, 0);
         parser.parse(data_view.data(), data_view.size(), 0);
 
-        return point_manager.getMatrix();
+        return point_manager;
     }
 }

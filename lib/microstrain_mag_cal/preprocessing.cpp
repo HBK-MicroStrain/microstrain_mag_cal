@@ -35,9 +35,9 @@ namespace microstrain_mag_cal
         ++m_num_points_seen;
     }
 
-    Eigen::MatrixX3d PointManager::getMatrix()
+    Eigen::MatrixX3d PointManager::getMatrix() const
     {
-        return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>>(
+        return Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>>(
             m_flattened_points.data(),
             static_cast<Eigen::Index>(getNumFilteredPoints()),
             3

@@ -62,7 +62,7 @@ namespace microstrain_mag_cal
 
         void addPoint(const std::array<float, 3> &point);
 
-        Eigen::MatrixX3d getMatrix();
+        Eigen::MatrixX3d getMatrix() const;
 
         size_t getNumPointsSeen() const;
         size_t getNumFilteredPoints() const;

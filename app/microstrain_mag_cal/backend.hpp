@@ -2,15 +2,13 @@
 
 #include <optional>
 
-#include <Eigen/Dense>
-
 #include <microstrain/array_view.hpp>
 #include <microstrain/platform.h>  // Needed to fix OS-specific naming conflicts
-#include <microstrain_mag_cal/calibration.hpp>
+#include <microstrain_mag_cal/preprocessing.hpp>
 
 namespace backend
 {
-    Eigen::MatrixX3d extractPointMatrixFromRawData(
+    microstrain_mag_cal::PointManager extractPointsFromRawData(
         const microstrain::ConstU8ArrayView &data_view,
         std::optional<double> reference_field_strength = std::nullopt);
 }
