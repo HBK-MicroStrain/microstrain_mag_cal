@@ -10,40 +10,38 @@
 #include "mip/definitions/commands_3dm.hpp"
 
 
-// TODO: Move to view module
+// TODO: Move to cli module
 struct ProgramArgs
 {
-    std::filesystem::path calibration_filepath;
+    explicit ProgramArgs(char** argv)
+    {
+        app.description("Tool for applying a magnetometer calibration to a device.");
+        app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <calibration_file> <port_name> [OPTIONS]");
 
+        app.add_option("calibration_file", calibration_filepath, "JSON file containing a calibration to apply.")
+            ->check(CLI::ExistingFile)
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
+            ->required();
+        app.add_option("port_name", port_name, "Name of the port for the device to connect to.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
+            ->required();
+
+        app.add_option("-b,--baudrate", baudrate, "Baudrate of the device to connect to (defaults to 115200).")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    }
+
+    CLI::App app{};
+
+    std::filesystem::path calibration_filepath;
     std::string port_name;
     std::uint32_t baudrate = 115200;
 };
 
-// TODO: Move to view module
-void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
-{
-    app.description("Tool for applying a magnetometer calibration to a device.");
-    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <calibration_file> <port_name> [OPTIONS]");
-
-    app.add_option("calibration_file", args.calibration_filepath, "JSON file containing a calibration to apply.")
-        ->check(CLI::ExistingFile)
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
-        ->required();
-    app.add_option("port_name", args.port_name, "Name of the port for the device to connect to.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
-        ->required();
-
-    app.add_option("-b,--baudrate", args.baudrate, "Baudrate of the device to connect to (defaults to 115200).")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-}
-
 
 int main(const int argc, char **argv)
 {
-    ProgramArgs args;
-    CLI::App app;
-    setup_argument_parser(app, args, argv);
-    CLI11_PARSE(app, argc, argv);
+    ProgramArgs args(argv);
+    CLI11_PARSE(args.app, argc, argv);
 
     microstrain_mag_cal::FitResult fit_result = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
 
