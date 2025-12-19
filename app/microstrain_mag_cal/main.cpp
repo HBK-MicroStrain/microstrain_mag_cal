@@ -6,6 +6,7 @@
 #include <mio/mmap.hpp>
 
 #include <backend.hpp>
+#include <cli.hpp>
 #include <microstrain_mag_cal/analysis.hpp>
 #include <microstrain_mag_cal/calibration.hpp>
 
@@ -13,37 +14,7 @@
 using microstrain_mag_cal::FitResult;
 
 
-// TODO: Move to view module
-// Console output after the fitting algorithms are run
-void displayFitResult(const std::string &fit_name, const FitResult &result, const double fit_RMSE)
-{
-
-    printf("\n");
-    printf("--------------------------------------------------\n");
-    printf("%s\n", fit_name.data());
-    printf("--------------------------------------------------\n");
-
-    std::string result_output = "SUCCESS";
-    if (result.error != FitResult::Error::NONE)
-    {
-        result_output = "FAIL - ";
-        const std::string_view error_name = magic_enum::enum_name(result.error);
-        result_output += error_name.empty() ? "UNKNOWN" : error_name;
-    }
-    printf("  Result: %s\n\n", result_output.c_str());
-
-    printf("  Soft-Iron Matrix:\n");
-    const Eigen::IOFormat fmt(6, 0, " ", "\n", "  ");
-    std::cout << result.soft_iron_matrix.format(fmt) << "\n\n";
-
-    printf("  Hard-Iron Offset:\n");
-    std::cout << result.hard_iron_offset.format(fmt) << "\n\n";
-
-    printf("  Fit RMSE: %.5f\n", fit_RMSE);
-}
-
-
-// TODO: Move to view module
+// TODO: Change to class and move to cli module
 struct ProgramArgs
 {
     std::filesystem::path input_data_filepath;
@@ -57,7 +28,7 @@ struct ProgramArgs
     std::filesystem::path output_json_directory;
 };
 
-// TODO: Move to view module
+// TODO: Change to class and move to cli module
 void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
 {
     app.description("Tool to fit magnetometer calibrations for a device.");
@@ -87,14 +58,14 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 }
 
-// TODO: Move to backend or microstrain utilities
+// TODO: Move to backend
 struct MappedBinaryData
 {
     mio::mmap_source mapping;
     microstrain::ConstU8ArrayView view;
 };
 
-// TODO: Move to backend or microstrain utilities
+// TODO: Move to backend
 // TODO: Move file logic out and add test
 std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filepath)
 {
@@ -111,7 +82,8 @@ std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filep
     return MappedBinaryData{std::move(mapping), view};
 }
 
-// TODO: Move to view module
+// TODO: Split into getPointRetention() and getPointUsageDisplay()
+// TODO: Move getPointRetention() to backend, getPointUsageDisplay() to cli
 std::string getPointUsageDisplay(const microstrain_mag_cal::PointManager &point_manager)
 {
     const size_t filtered = point_manager.getNumFilteredPoints();
@@ -127,6 +99,7 @@ std::string getPointUsageDisplay(const microstrain_mag_cal::PointManager &point_
 
 int main(const int argc, char **argv)
 {
+    // TODO: Change to class and move to cli module
     ProgramArgs args;
     CLI::App app;
     setup_argument_parser(app, args, argv);
@@ -164,8 +137,9 @@ int main(const int argc, char **argv)
         const FitResult fit_result = microstrain_mag_cal::fitSphere(points, args.field_strength.value(), initial_offset);
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
-        displayFitResult("Spherical Fit", fit_result, fit_RMSE);
+        cli::displayFitResult("Spherical Fit", fit_result, fit_RMSE);
 
+        // TODO: Refactor serializeFitResultToFile() to return false if failed to open file
         if (!args.output_json_directory.empty())
         {
             microstrain_mag_cal::serializeFitResultToFile(args.output_json_directory / "spherical_fit.json", fit_result);
@@ -177,7 +151,7 @@ int main(const int argc, char **argv)
         const FitResult fit_result = microstrain_mag_cal::fitEllipsoid(points, args.field_strength.value(), initial_offset);
         const double fit_RMSE = microstrain_mag_cal::calculateFitRMSE(points, fit_result, args.field_strength.value());
 
-        displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
+        cli::displayFitResult("Ellipsoidal Fit", fit_result, fit_RMSE);
 
         if (!args.output_json_directory.empty())
         {
