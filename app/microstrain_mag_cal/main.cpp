@@ -13,58 +13,52 @@
 using microstrain_mag_cal::FitResult;
 
 
-// TODO: Change to class and move to cli module
 struct ProgramArgs
 {
-    std::filesystem::path input_data_filepath;
+    explicit ProgramArgs(char** argv)
+    {
+        app.description("Tool to fit magnetometer calibrations for a device.");
+        app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
 
+        app.add_option("file", input_data_filepath, "A binary file containing mip data to read from.")
+            ->check(CLI::ExistingFile)
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
+            ->required();
+
+        CLI::Option_group* core = app.add_option_group("Core", "Core functionality of the tool.");
+
+        core->add_flag("-a,--display-analysis", display_analysis, "Display comprehensive analysis output.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+        core->add_flag("-s,--spherical-fit", spherical_fit, "Perform a spherical fit on the input data.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+        core->add_flag("-e,--ellipsoidal-fit", ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+        core->require_option(1, 0);
+
+        app.add_option("-f,--field-strength", field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+        app.add_option("-j,--output-json", output_json_directory, "Write the resulting calibration(s) to JSON file(s) in the given directory.")
+            ->check(CLI::ExistingDirectory)
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    }
+
+    CLI::App app{};
+
+    std::filesystem::path input_data_filepath;
     bool display_analysis = false;
     bool spherical_fit = false;
     bool ellipsoidal_fit = false;
-
     std::optional<double> field_strength;
-
     std::filesystem::path output_json_directory;
 };
-
-// TODO: Change to class and move to cli module
-void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
-{
-    app.description("Tool to fit magnetometer calibrations for a device.");
-    app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
-
-    app.add_option("file", args.input_data_filepath, "A binary file containing mip data to read from.")
-        ->check(CLI::ExistingFile)
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
-        ->required();
-
-    CLI::Option_group* core = app.add_option_group("Core", "Core functionality of the tool.");
-
-    core->add_flag("-a,--display-analysis", args.display_analysis, "Display comprehensive analysis output.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    core->add_flag("-s,--spherical-fit", args.spherical_fit, "Perform a spherical fit on the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-    core->add_flag("-e,--ellipsoidal-fit", args.ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-
-    core->require_option(1, 0);
-
-    app.add_option("-f,--field-strength", args.field_strength, "Field strength to use as a reference instead of using the measured field strength.")
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-
-    app.add_option("-j,--output-json", args.output_json_directory, "Write the resulting calibration(s) to JSON file(s) in the given directory.")
-        ->check(CLI::ExistingDirectory)
-        ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
-}
 
 
 int main(const int argc, char **argv)
 {
-    // TODO: Change to class and move to cli module
-    ProgramArgs args;
-    CLI::App app;
-    setup_argument_parser(app, args, argv);
-    CLI11_PARSE(app, argc, argv);
+    ProgramArgs args(argv);
+    CLI11_PARSE(args.app, argc, argv);
 
     const std::optional<backend::MappedBinaryData> mapped_data = backend::mapBinaryFile(args.input_data_filepath);
     assert(mapped_data.has_value());
