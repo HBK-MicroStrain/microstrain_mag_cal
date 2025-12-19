@@ -54,7 +54,9 @@ MICROSTRAIN_TEST_CASE("Lib_Preprocessing", "Point_manager_metrics_are_tracked_pr
     sut.addPoint({4.0f, 4.0f, 4.0f});
     sut.addPoint({4.1f, 4.1f, 4.1f});
     sut.addPoint({5.0f, 5.0f, 5.0f});
+    sut.addPoint({5.1f, 5.1f, 5.1f});
 
     CHECK(sut.getNumFilteredPoints() == 5);
-    CHECK(sut.getNumPointsSeen() == 9);
+    CHECK(sut.getNumPointsSeen() == 10);
+    CHECK(sut.getPointRetention() == doctest::Approx(50).epsilon(0.001));
 }

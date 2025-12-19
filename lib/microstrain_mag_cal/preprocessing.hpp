@@ -66,6 +66,7 @@ namespace microstrain_mag_cal
 
         size_t getNumPointsSeen() const;
         size_t getNumFilteredPoints() const;
+        double getPointRetention() const;
 
     private:
         // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN).

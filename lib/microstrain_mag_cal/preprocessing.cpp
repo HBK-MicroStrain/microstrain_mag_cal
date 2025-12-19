@@ -44,15 +44,21 @@ namespace microstrain_mag_cal
         );
     }
 
-    /// @brief Gets the total number of points that were seen by the point manager before filtering.
+    /// @brief Returns the total number of points that were seen by the point manager before filtering.
     size_t PointManager::getNumPointsSeen() const
     {
         return m_num_points_seen;
     }
 
-    /// @brief Gets the number of points after filtering.
+    /// @brief Returns the number of points after filtering.
     size_t PointManager::getNumFilteredPoints() const
     {
         return m_flattened_points.size() / 3;
+    }
+
+    /// @brief Returns the percentage of points retained after filtering.
+    double PointManager::getPointRetention() const
+    {
+        return (m_num_points_seen > 0) ? (100.0 * getNumFilteredPoints() / m_num_points_seen) : 0.0;
     }
 }

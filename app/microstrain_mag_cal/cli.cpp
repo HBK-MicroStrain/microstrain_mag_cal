@@ -29,4 +29,16 @@ namespace cli
 
         printf("  Fit RMSE: %.5f\n", fit_RMSE);
     }
+
+    std::string getPointUsageDisplay(const microstrain_mag_cal::PointManager &point_manager)
+    {
+        const size_t used = point_manager.getNumFilteredPoints();
+        const size_t total = point_manager.getNumPointsSeen();
+        const double retention = point_manager.getPointRetention();
+
+        char buffer[128];
+        snprintf(buffer, sizeof(buffer), "%zu / %zu (%.1f%%)", used, total, retention);
+
+        return std::string(buffer);
+    }
 }

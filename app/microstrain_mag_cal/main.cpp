@@ -82,20 +82,6 @@ std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filep
     return MappedBinaryData{std::move(mapping), view};
 }
 
-// TODO: Split into getPointRetention() and getPointUsageDisplay()
-// TODO: Move getPointRetention() to backend, getPointUsageDisplay() to cli
-std::string getPointUsageDisplay(const microstrain_mag_cal::PointManager &point_manager)
-{
-    const size_t filtered = point_manager.getNumFilteredPoints();
-    const size_t total = point_manager.getNumPointsSeen();
-    const double retention = (total > 0) ? (100.0 * filtered / total) : 0.0;
-
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer), "%zu / %zu (%.1f%%)", filtered, total, retention);
-
-    return std::string(buffer);
-}
-
 
 int main(const int argc, char **argv)
 {
@@ -125,7 +111,7 @@ int main(const int argc, char **argv)
         printf("--------------------------------------------------\n");
         printf("Analysis:\n");
         printf("--------------------------------------------------\n");
-        printf("  Used Points       : %s\n", getPointUsageDisplay(point_manager).c_str());
+        printf("  Used Points       : %s\n", cli::getPointUsageDisplay(point_manager).c_str());
         printf("  Spatial Coverage  : %.5f%%\n", microstrain_mag_cal::calculateSpatialCoverage(points, initial_offset));
         printf("  Field Strength    : %.5f\n", args.field_strength.value());
         printf("  Initial Offset    : [%.5f, %.5f, %.5f]\n", initial_offset.x(), initial_offset.y(), initial_offset.z());
