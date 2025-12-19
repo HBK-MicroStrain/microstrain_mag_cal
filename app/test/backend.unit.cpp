@@ -22,7 +22,7 @@ public:
         m_data.insert(m_data.end(), packet.data().begin(), packet.data().end());
     }
 
-    microstrain::ConstU8ArrayView data() const
+    [[nodiscard]] microstrain::ConstU8ArrayView data() const
     {
         return {m_data.data(), m_data.size()};
     }

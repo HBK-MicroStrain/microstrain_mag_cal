@@ -1,6 +1,15 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Added 
+- `libmicrostrain-mag-cal`: PointManager metrics for tracking total number of points seen and number of points after 
+                            filtering.
+
+### Changed
+- `libmicrostrain-mag-cal`: Changed target constructor for PointManager to pass by value instead of reference.
+
 ## 0.3.0-pre-alpha - 2025-12-18
 
 _First major changes from feedback_.

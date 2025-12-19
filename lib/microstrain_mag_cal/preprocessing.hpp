@@ -53,7 +53,8 @@ namespace microstrain_mag_cal
     {
     public:
         PointManager() = delete;
-        explicit PointManager(const VoxelGrid &unique_point_grid, size_t data_size_estimate);
+
+        explicit PointManager(VoxelGrid unique_point_grid, size_t data_size_estimate);
         explicit PointManager(const size_t data_size_estimate)
             : PointManager(VoxelGrid(VoxelGrid::DEFAULT_VOXEL_SIZE), data_size_estimate) {}
         explicit PointManager(const VoxelGrid &unique_point_grid)
@@ -63,10 +64,14 @@ namespace microstrain_mag_cal
 
         Eigen::MatrixX3d getMatrix();
 
+        size_t getNumPointsSeen() const;
+        size_t getNumFilteredPoints() const;
+
     private:
         // Extract point vectors as flattened list of points (x1, y1, z1, ..., xN, yN, zN).
         // We can then map the Eigen matrix directly to this list for zero-copy.
         std::vector<double> m_flattened_points;
         VoxelGrid m_unique_point_grid;
+        size_t m_num_points_seen = 0;
     };
 }
