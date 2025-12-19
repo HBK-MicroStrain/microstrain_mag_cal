@@ -47,6 +47,7 @@ set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
 set_target_properties(${APPLY_CLI} PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}-apply")
 
 target_link_libraries(${BACKEND}
+    CLI11::CLI11
     Eigen3::Eigen
     ${MIP_LIBRARIES}
     "lib${PROJECT_NAME}"
@@ -55,7 +56,6 @@ target_link_libraries(${BACKEND}
 target_link_libraries(${CLI}
     PRIVATE
         ${BACKEND}
-        CLI11::CLI11
         magic_enum::magic_enum
 )
 target_link_libraries(${APPLY_CLI}

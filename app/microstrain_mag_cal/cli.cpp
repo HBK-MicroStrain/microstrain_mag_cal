@@ -3,6 +3,35 @@
 
 namespace cli
 {
+    ProgramArgs::ProgramArgs(char** argv)
+    {
+        app.description("Tool to fit magnetometer calibrations for a device.");
+        app.usage("Usage: " + std::filesystem::path(argv[0]).filename().string() + " <file> [OPTIONS]");
+
+        app.add_option("file", input_data_filepath, "A binary file containing mip data to read from.")
+            ->check(CLI::ExistingFile)
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw)
+            ->required();
+
+        CLI::Option_group* core = app.add_option_group("Core", "Core functionality of the tool.");
+
+        core->add_flag("-a,--display-analysis", display_analysis, "Display comprehensive analysis output.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+        core->add_flag("-s,--spherical-fit", spherical_fit, "Perform a spherical fit on the input data.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+        core->add_flag("-e,--ellipsoidal-fit", ellipsoidal_fit, "Perform an ellipsoidal fit on the input data.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+        core->require_option(1, 0);
+
+        app.add_option("-f,--field-strength", field_strength, "Field strength to use as a reference instead of using the measured field strength.")
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+
+        app.add_option("-j,--output-json", output_json_directory, "Write the resulting calibration(s) to JSON file(s) in the given directory.")
+            ->check(CLI::ExistingDirectory)
+            ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
+    }
+
     // Console output after the fitting algorithms are run
     void displayFitResult(const std::string &fit_name, const microstrain_mag_cal::FitResult &result, const double fit_RMSE)
     {
