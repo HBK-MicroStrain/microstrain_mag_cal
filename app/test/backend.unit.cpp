@@ -22,7 +22,7 @@ public:
         m_data.insert(m_data.end(), packet.data().begin(), packet.data().end());
     }
 
-    microstrain::ConstU8ArrayView data() const
+    [[nodiscard]] microstrain::ConstU8ArrayView data() const
     {
         return {m_data.data(), m_data.size()};
     }
@@ -38,9 +38,9 @@ std::array CHECK_POINTS {
 };
 
 
-MICROSTRAIN_TEST_CASE("App_Backend", "Mag_cal_data_can_be_extracted_from_binary_into_a_point_matrix")
+MICROSTRAIN_TEST_CASE("App_Backend", "Magnetometer_points_can_be_extracted_from_binary_data")
 {
-    BinaryDataBuilder builder = BinaryDataBuilder();
+    BinaryDataBuilder builder{};
     builder.addMipPacket(
         mip::data_sensor::ScaledMag{{CHECK_POINTS[0], CHECK_POINTS[1], CHECK_POINTS[2]}});
     builder.addMipPacket(
@@ -52,17 +52,17 @@ MICROSTRAIN_TEST_CASE("App_Backend", "Mag_cal_data_can_be_extracted_from_binary_
         mip::data_sensor::ScaledGyro{{0.0f, 0.0f, 0.0f}});
     const microstrain::ConstU8ArrayView data_view = builder.data();
 
-    Eigen::MatrixX3d result = backend::extractPointMatrixFromRawData(data_view);
+    microstrain_mag_cal::PointManager result = backend::extractPointsFromRawData(data_view);
+    Eigen::MatrixX3d points = result.getMatrix();
 
-    REQUIRE(result.rows() == 3);
-    REQUIRE(result.cols() == 3);
-    CHECK(result(0, 0) == doctest::Approx(CHECK_POINTS[0]).epsilon(0.001));
-    CHECK(result(0, 1) == doctest::Approx(CHECK_POINTS[1]).epsilon(0.001));
-    CHECK(result(0, 2) == doctest::Approx(CHECK_POINTS[2]).epsilon(0.001));
-    CHECK(result(1, 0) == doctest::Approx(CHECK_POINTS[3]).epsilon(0.001));
-    CHECK(result(1, 1) == doctest::Approx(CHECK_POINTS[4]).epsilon(0.001));
-    CHECK(result(1, 2) == doctest::Approx(CHECK_POINTS[5]).epsilon(0.001));
-    CHECK(result(2, 0) == doctest::Approx(CHECK_POINTS[6]).epsilon(0.001));
-    CHECK(result(2, 1) == doctest::Approx(CHECK_POINTS[7]).epsilon(0.001));
-    CHECK(result(2, 2) == doctest::Approx(CHECK_POINTS[8]).epsilon(0.001));
+    REQUIRE(points.rows() == 3);
+    CHECK(points(0, 0) == doctest::Approx(CHECK_POINTS[0]).epsilon(0.001));
+    CHECK(points(0, 1) == doctest::Approx(CHECK_POINTS[1]).epsilon(0.001));
+    CHECK(points(0, 2) == doctest::Approx(CHECK_POINTS[2]).epsilon(0.001));
+    CHECK(points(1, 0) == doctest::Approx(CHECK_POINTS[3]).epsilon(0.001));
+    CHECK(points(1, 1) == doctest::Approx(CHECK_POINTS[4]).epsilon(0.001));
+    CHECK(points(1, 2) == doctest::Approx(CHECK_POINTS[5]).epsilon(0.001));
+    CHECK(points(2, 0) == doctest::Approx(CHECK_POINTS[6]).epsilon(0.001));
+    CHECK(points(2, 1) == doctest::Approx(CHECK_POINTS[7]).epsilon(0.001));
+    CHECK(points(2, 2) == doctest::Approx(CHECK_POINTS[8]).epsilon(0.001));
 }
