@@ -15,6 +15,22 @@ using ScaledMag = mip::data_sensor::ScaledMag;
 
 namespace backend
 {
+    /// @brief Returns a read-only mapping of the file and a view of the bytes.
+    std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filepath)
+    {
+        std::error_code error;
+        mio::mmap_source mapping = mio::make_mmap_source(filepath.string(), error);
+
+        if (error)
+        {
+            return std::nullopt;
+        }
+
+        const microstrain::ConstU8ArrayView view(reinterpret_cast<const uint8_t*>(mapping.data()), mapping.size());
+
+        return MappedBinaryData{std::move(mapping), view};
+    }
+
     // Extracts the points into the point manager. Called by the mip parser for each packet found.
     bool extractPoints(void *point_manager, const mip::PacketView *packet_view, const mip::Timestamp /* timestamp */)
     {

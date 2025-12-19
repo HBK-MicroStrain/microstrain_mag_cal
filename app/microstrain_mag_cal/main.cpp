@@ -3,7 +3,6 @@
 
 #include <CLI/CLI.hpp>
 #include <magic_enum/magic_enum.hpp>
-#include <mio/mmap.hpp>
 
 #include <backend.hpp>
 #include <cli.hpp>
@@ -58,30 +57,6 @@ void setup_argument_parser(CLI::App& app, ProgramArgs& args, char* argv[])
         ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
 }
 
-// TODO: Move to backend
-struct MappedBinaryData
-{
-    mio::mmap_source mapping;
-    microstrain::ConstU8ArrayView view;
-};
-
-// TODO: Move to backend
-// TODO: Move file logic out and add test
-std::optional<MappedBinaryData> mapBinaryFile(const std::filesystem::path& filepath)
-{
-    std::error_code error;
-    mio::mmap_source mapping = mio::make_mmap_source(filepath.string(), error);
-
-    if (error)
-    {
-        return std::nullopt;
-    }
-
-    const microstrain::ConstU8ArrayView view(reinterpret_cast<const uint8_t*>(mapping.data()), mapping.size());
-
-    return MappedBinaryData{std::move(mapping), view};
-}
-
 
 int main(const int argc, char **argv)
 {
@@ -91,7 +66,7 @@ int main(const int argc, char **argv)
     setup_argument_parser(app, args, argv);
     CLI11_PARSE(app, argc, argv);
 
-    const std::optional<MappedBinaryData> mapped_data = mapBinaryFile(args.input_data_filepath);
+    const std::optional<backend::MappedBinaryData> mapped_data = backend::mapBinaryFile(args.input_data_filepath);
     assert(mapped_data.has_value());
 
     const microstrain_mag_cal::PointManager point_manager = backend::extractPointsFromRawData(mapped_data->view, args.field_strength);
@@ -117,7 +92,6 @@ int main(const int argc, char **argv)
         printf("  Initial Offset    : [%.5f, %.5f, %.5f]\n", initial_offset.x(), initial_offset.y(), initial_offset.z());
     }
 
-    // TODO: Cleanup following sections
     if (args.spherical_fit)
     {
         const FitResult fit_result = microstrain_mag_cal::fitSphere(points, args.field_strength.value(), initial_offset);
@@ -125,7 +99,6 @@ int main(const int argc, char **argv)
 
         cli::displayFitResult("Spherical Fit", fit_result, fit_RMSE);
 
-        // TODO: Refactor serializeFitResultToFile() to return false if failed to open file
         if (!args.output_json_directory.empty())
         {
             microstrain_mag_cal::serializeFitResultToFile(args.output_json_directory / "spherical_fit.json", fit_result);

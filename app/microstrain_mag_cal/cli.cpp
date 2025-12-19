@@ -30,6 +30,7 @@ namespace cli
         printf("  Fit RMSE: %.5f\n", fit_RMSE);
     }
 
+    // Formats it like this: "NUM USED / NUM TOTAL (RETENTION%)"
     std::string getPointUsageDisplay(const microstrain_mag_cal::PointManager &point_manager)
     {
         const size_t used = point_manager.getNumFilteredPoints();
