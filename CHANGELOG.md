@@ -10,6 +10,7 @@ This project follows [Semantic Versioning](https://semver.org/).
 ### Changed
 - `libmicrostrain-mag-cal`: Changed target constructor for PointManager to pass by value instead of reference.
 - `libmicrostrain-mag-cal`: Made `PointManager::getMatrix()` const-qualified.
+- `microstrain-mag-cal`: Points used output changed to the following format: `POINTS_USED / TOTAL_POINTS (PERCENTAGE%)`
 
 ## [0.3.0-pre-alpha] - 2025-12-18
 

@@ -40,7 +40,7 @@ std::array CHECK_POINTS {
 
 MICROSTRAIN_TEST_CASE("App_Backend", "Magnetometer_points_can_be_extracted_from_binary_data")
 {
-    BinaryDataBuilder builder = BinaryDataBuilder();
+    BinaryDataBuilder builder{};
     builder.addMipPacket(
         mip::data_sensor::ScaledMag{{CHECK_POINTS[0], CHECK_POINTS[1], CHECK_POINTS[2]}});
     builder.addMipPacket(
