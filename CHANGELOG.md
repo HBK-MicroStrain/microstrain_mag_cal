@@ -1,7 +1,9 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.4.0-pre-alpha] - 2025-12-19
+
+_Updated interface to provide more descriptive metrics for used points_.
 
 ### Added 
 - `libmicrostrain-mag-cal`: PointManager metrics for tracking total number of points seen, number of points after 
