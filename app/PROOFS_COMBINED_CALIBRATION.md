@@ -62,3 +62,9 @@ $$
 *Desired*: $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}})$
 
 *Derived:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))$
+
+**Step 7:** Substitute the *desired* expression for $\mathbf{m_new}$:
+
+$$
+\mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}}) = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+$$
