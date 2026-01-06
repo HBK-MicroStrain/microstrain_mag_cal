@@ -103,3 +103,54 @@ $$
 \mathbf{A}_{\text{combined}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})
 $$
 
+## Combined Hard-Iron Offset Vector
+
+**Derivation:**
+
+Starting from *step 4* above, we have:
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+$$
+
+and we have established that:
+
+$$
+\mathbf{A}_{\text{combined}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})
+$$
+
+**Step 1:** Write the explicit desired form:
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}})
+$$
+
+**Step 2:** Substitute $\mathbf{A}_{\text{combined}}$:
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{combined}}))
+$$
+
+**Step 3:** Match the constant terms from both expressions
+
+*Desired:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{combined}}))$
+
+*Derived:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))$
+
+**Step 4:** The constant terms (without $\mathbf{m}_{\text{raw}}$) must be equal:
+
+$$
+\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{combined}})) = (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+$$
+
+**Step 5:** Left-multiply both sides by $\mathbf{A}_{\text{new}}^{-1}$:
+
+$$
+\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{combined}}) = \mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}}) + \mathbf{b}_{\text{new}}
+$$
+
+**Step 6:** Left-multiply both sides by $\mathbf{A}_{\text{old}}^{-1}$ for the derived equation:
+
+$$
+\mathbf{b}_{\text{combined}} = \mathbf{b}_{\text{old}} + \mathbf{A}_{\text{old}}^{-1}(\mathbf{b}_{\text{new}})
+$$
