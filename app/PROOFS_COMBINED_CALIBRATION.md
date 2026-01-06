@@ -27,9 +27,20 @@ $$
 \mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{m}_{\text{old}} - \mathbf{b}_{\text{new}})
 $$
 
-**Step 1:** Substitute the expression for $\mathbf{m}_{\text{old}}$
+**Step 1:** Substitute the expression for $\mathbf{m}_{\text{old}}$:
 
 $$
 \mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}} - \mathbf{b}_{\text{old}}) - \mathbf{b}_{\text{new}})
 $$
 
+**Step 2:** Apply the distributive property on $\mathbf{A}_{\text{old}}$:
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}}) - \mathbf{b}_{\text{new}})
+$$
+
+**Step 3:** Apply the distributive property on $\mathbf{A}_{\text{new}}$:
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+$$
