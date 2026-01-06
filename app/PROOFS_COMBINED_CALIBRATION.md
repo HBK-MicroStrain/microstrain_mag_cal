@@ -66,5 +66,19 @@ $$
 **Step 7:** Substitute the *desired* expression for $\mathbf{m_new}$:
 
 $$
-\mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}}) = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+\mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}}) = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}})),
+$$
+
+for all possible values of $\mathbf{m}_{\text{raw}}$.
+
+**Step 8:** Rearrange to group terms:
+
+$$
+(\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}})) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}}) = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}})
+$$
+
+**Step 9:** Factor the right side using the distributive property:
+
+$$
+(\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}})) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}}) = (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}) - \mathbf{A}_{\text{combined}})\mathbf{m}_{\text{raw}}
 $$
