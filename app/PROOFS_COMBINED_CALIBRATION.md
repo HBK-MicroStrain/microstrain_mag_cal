@@ -1,5 +1,5 @@
 # Combined Calibration Proofs
-This document contains formal proofs for the derived equations that calculate the combined 
+This document contains mathematical proofs for the derived equations that calculate the combined 
 calibration coefficients. 
 
 These coefficients are necessary since the data sampled for calibration
@@ -53,15 +53,31 @@ $$
 
 **Step 5:** Compare with the desired form:
 
-*Desired*: $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}} - \mathbf{b}_{\text{combined}})$
+*Desired*: 
 
-*Derived:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{old}}) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))$
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}} - \mathbf{b}_{\text{combined}})
+$$
+
+*Derived:* 
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{old}}) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+$$
 
 **Step 6:** Applying the distributive property to the desired form:
 
-*Desired*: $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}})$
+*Desired*: 
 
-*Derived:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{old}}) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))$
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}})
+$$
+
+*Derived:* 
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{old}}) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+$$
 
 **Step 7:** Substitute the *desired* expression for $\mathbf{m_new}$:
 
@@ -133,9 +149,17 @@ $$
 
 **Step 3:** Match the constant terms from both expressions
 
-*Desired:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{combined}})$
+*Desired:* 
 
-*Derived:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{old}}) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))$
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{combined}})
+$$
+
+*Derived:* 
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{m}_{\text{raw}}) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})(\mathbf{b}_{\text{old}}) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
+$$
 
 **Step 4:** The constant terms (without $\mathbf{m}_{\text{raw}}$) must be equal:
 
