@@ -82,3 +82,24 @@ $$
 $$
 (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}})) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}}) = (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}) - \mathbf{A}_{\text{combined}})\mathbf{m}_{\text{raw}}
 $$
+
+**Step 10:** Substitute zero for the left side:
+
+For the equation to hold for all values of $\mathbf{m}_{\text{raw}}$, both sides must be 0. Therefore:
+
+$$
+0 = (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}) - \mathbf{A}_{\text{combined}})\mathbf{m}_{\text{raw}}, \text{ for all } \mathbf{m}_{\text{raw}}
+$$
+
+**Step 11:** For this to be true for all $\mathbf{m}_{\text{raw}}$, we require:
+
+$$
+0 = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}) - \mathbf{A}_{\text{combined}}
+$$
+
+**Step 12:** Rearrange for the derived equation:
+
+$$
+\mathbf{A}_{\text{combined}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}})
+$$
+
