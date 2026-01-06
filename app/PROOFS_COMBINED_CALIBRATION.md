@@ -42,5 +42,23 @@ $$
 **Step 3:** Apply the distributive property on $\mathbf{A}_{\text{new}}$:
 
 $$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) - \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}})
+$$
+
+**Step 4:** Factor out the constant offset terms with the distributive property:
+
+$$
 \mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))
 $$
+
+**Step 5:** Compare with the desired form:
+
+*Desired*: $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}} - \mathbf{b}_{\text{combined}})$
+
+*Derived:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))$
+
+**Step 6:** Applying the distributive property to the desired form:
+
+*Desired*: $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}}) - \mathbf{A}_{\text{combined}}(\mathbf{b}_{\text{combined}})$
+
+*Derived:* $\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}})) - (\mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{b}_{\text{old}})) + \mathbf{A}_{\text{new}}(\mathbf{b}_{\text{new}}))$
