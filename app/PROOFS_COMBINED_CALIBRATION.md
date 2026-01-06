@@ -5,3 +5,31 @@ calibration coefficients.
 These coefficients are necessary since the data sampled for calibration
 was likely already calibrated, unless the calibration was zeroed out first. The combined coefficients
 account for this and allow the new calibration to be applied on top of the old one.
+
+## Combined Soft-Iron Correction Matrix
+**Goal:** Find $\mathbf{A}_{\text{combined}}$ such that:
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{combined}}(\mathbf{m}_{\text{raw}} - \mathbf{b}_{\text{combined}})
+$$
+
+**Given:** The correct equation:
+
+$$
+\mathbf{m}_{\text{corr}} = \mathbf{A}(\mathbf{m}_{\text{raw}} - \mathbf{b})
+$$
+
+**Derivation:**
+
+Starting with the composition of transformations:
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{m}_{\text{old}} - \mathbf{b}_{\text{new}})
+$$
+
+**Step 1:** Substitute the expression for $\mathbf{m}_{\text{old}}$
+
+$$
+\mathbf{m}_{\text{new}} = \mathbf{A}_{\text{new}}(\mathbf{A}_{\text{old}}(\mathbf{m}_{\text{raw}} - \mathbf{b}_{\text{old}}) - \mathbf{b}_{\text{new}})
+$$
+
