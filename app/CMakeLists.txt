@@ -34,9 +34,9 @@ FetchContent_MakeAvailable(mip_sdk)
 # Application setup
 # ---------------------------------------------------------------
 
-set(BACKEND "${PROJECT_NAME}_backend")      # Main application logic
-set(CLI "${PROJECT_NAME}_cli")              # Command-line interface for app
-set(APPLY_CLI "${PROJECT_NAME}_apply_cli")  # Command-line interface for applying calibration
+set(BACKEND "${PROJECT_NAME}_backend")  # Main application logic
+set(CLI "${PROJECT_NAME}_cli")          # Command-line interface for app
+set(APPLY_CLI "${APPLY}_cli")           # Command-line interface for applying calibration
 
 add_library(${BACKEND} STATIC)
 add_executable(${CLI})
@@ -62,7 +62,7 @@ target_link_libraries(${APPLY_CLI}
     PRIVATE
         ${BACKEND}
         CLI11::CLI11
-        Eigen3::Eigen
+        ${LIB_APPLY}
         ${MIP_LIBRARIES}
         ${MICROSTRAIN_LIBRARIES}
 )
