@@ -5,5 +5,5 @@
 
 namespace microstrain_mag_cal
 {
-    FitResult combineCorrections(const FitResult &old_fit, const FitResult &new_fit);
+    FitResult composeCorrections(const FitResult &old_fit, const FitResult &new_fit);
 };

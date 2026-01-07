@@ -1,4 +1,4 @@
 target_sources(${LIB_APPLY} PRIVATE
-    "combined_coefficients.cpp"
-    "combined_coefficients.hpp"
+    "composed_coefficients.cpp"
+    "composed_coefficients.hpp"
 )
