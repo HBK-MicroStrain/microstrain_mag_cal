@@ -58,7 +58,7 @@ target_link_libraries(${LIB}
 )
 target_link_libraries(${LIB_APPLY}
     PUBLIC
-        Eigen3::Eigen
+        ${LIB}
 )
 
 target_compile_options(${LIB} PRIVATE ${COMPILE_OPTIONS})
