@@ -34,15 +34,15 @@ FetchContent_MakeAvailable(mip_sdk)
 # Application setup
 # ---------------------------------------------------------------
 
-set(BACKEND "${PROJECT_NAME}_backend")  # Main application logic
-set(CLI "${PROJECT_NAME}_cli")          # Command-line interface for app
-set(APPLY_CLI "${APPLY}_cli")           # Command-line interface for applying calibration
+set(BACKEND "${MAIN}_backend")  # Main application logic
+set(CLI "${MAIN}_cli")          # Command-line interface for app
+set(APPLY_CLI "${APPLY}_cli")   # Command-line interface for applying calibration
 
 add_library(${BACKEND} STATIC)
 add_executable(${CLI})
 add_executable(${APPLY_CLI})
 
-string(REPLACE "_" "-" EXECUTABLE_NAME ${PROJECT_NAME})
+string(REPLACE "_" "-" EXECUTABLE_NAME ${MAIN})
 set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
 set_target_properties(${APPLY_CLI} PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}-apply")
 
@@ -50,7 +50,7 @@ target_link_libraries(${BACKEND}
     CLI11::CLI11
     Eigen3::Eigen
     ${MIP_LIBRARIES}
-    "lib${PROJECT_NAME}"
+    ${LIB}
     mio::mio
 )
 target_link_libraries(${CLI}

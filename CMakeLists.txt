@@ -21,12 +21,12 @@ enable_testing()
 # Targets
 # ---------------------------------------------------------------
 
-# Shared names
+# Apps
+set(MAIN ${PROJECT_NAME})
 set(APPLY "${PROJECT_NAME}_apply")
 
-# Apps
-
 # Libraries
+set(LIB "lib${MAIN}")
 set(LIB_APPLY "lib${APPLY}")
 
 # ---------------------------------------------------------------

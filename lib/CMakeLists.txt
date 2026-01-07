@@ -27,8 +27,6 @@ if(DEFINED Python_EXECUTABLE)
     # Mark as used
 endif()
 
-set(LIB "lib${PROJECT_NAME}")
-
 add_library(${LIB})
 add_library(${LIB_APPLY})
 
