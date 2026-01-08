@@ -14,8 +14,8 @@ add_executable(${LIB_UNIT_TESTS}
 target_link_libraries(${LIB_UNIT_TESTS}
     PRIVATE
         microstrain_test::cpp
-        ${LIB}
-        ${LIB_APPLY}
+        ${LIB_CALIBRATION}
+        ${LIB_APPLY_CALIBRATION}
 )
 
 # ---------------------------------------------------------------

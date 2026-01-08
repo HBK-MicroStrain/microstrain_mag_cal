@@ -22,12 +22,12 @@ enable_testing()
 # ---------------------------------------------------------------
 
 # Apps
-set(MAIN ${PROJECT_NAME})
-set(APPLY "${PROJECT_NAME}_apply")
+set(CALIBRATION_APP ${PROJECT_NAME})
+set(APPLY_CALIBRATION_APP "${PROJECT_NAME}_apply")
 
 # Libraries
-set(LIB "lib${MAIN}")
-set(LIB_APPLY "lib${APPLY}")
+set(LIB_CALIBRATION "lib${CALIBRATION_APP}")
+set(LIB_APPLY_CALIBRATION "lib${APPLY_CALIBRATION_APP}")
 
 # ---------------------------------------------------------------
 # Shared Compile Options
