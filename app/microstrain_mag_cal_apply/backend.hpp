@@ -3,6 +3,9 @@
 #include <microstrain/connections/serial/serial_connection.hpp>
 #include <mip/mip_interface.hpp>
 
+#include <microstrain_mag_cal/calibration.hpp>
+
+
 namespace backend
 {
     struct DeviceConnection

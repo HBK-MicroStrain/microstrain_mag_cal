@@ -56,6 +56,8 @@ target_link_libraries(${CALIBRATION_APP_BACKEND}
     mio::mio
 )
 target_link_libraries(${APPLY_CALIBRATION_APP_BACKEND}
+    ${LIB_APPLY_CALIBRATION}
+    ${LIB_CALIBRATION}
     ${MIP_LIBRARIES}
     ${MICROSTRAIN_LIBRARIES}
 )
@@ -69,7 +71,6 @@ target_link_libraries(${APPLY_CALIBRATION_APP_CLI}
     PRIVATE
         ${APPLY_CALIBRATION_APP_BACKEND}
         CLI11::CLI11
-        ${LIB_APPLY_CALIBRATION}
 )
 
 # ---------------------------------------------------------------
