@@ -15,4 +15,6 @@ namespace cli
         std::string port_name;
         std::uint32_t baudrate = 115200;
     };
+
+    void displayFailedConnectionInformation(std::string_view port_name, std::uint32_t baudrate);
 }

@@ -20,4 +20,11 @@ namespace cli
         app.add_option("-b,--baudrate", baudrate, "Baudrate of the device to connect to (defaults to 115200).")
             ->multi_option_policy(CLI::MultiOptionPolicy::Throw);
     }
+
+    void displayFailedConnectionInformation(const std::string_view port_name, const std::uint32_t baudrate)
+    {
+        std::cerr << "ERROR: Failed to connect to device with\n"
+                  << "    --->     Port: " << port_name << '\n'
+                  << "    ---> Baudrate: " << baudrate << '\n';
+    }
 }

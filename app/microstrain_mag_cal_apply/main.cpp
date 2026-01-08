@@ -30,9 +30,7 @@ int main(const int argc, char **argv)
 
     if (!connection.connect())
     {
-        printf("ERROR: Failed to connect to device with\n");
-        printf("    --->     Port: %s\n", args.port_name.c_str());
-        printf("    ---> Baudrate: %d\n", args.baudrate);
+        cli::displayFailedConnectionInformation(args.port_name, args.baudrate);
 
         return 1;
     }
