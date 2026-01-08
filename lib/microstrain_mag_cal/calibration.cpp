@@ -10,7 +10,7 @@
 namespace microstrain_mag_cal
 {
     /// @brief Returns a fit result that leaves the calibration unchanged (doesn't apply).
-    FitResult FitResult::noCorrection(const Error &error)
+    FitResult FitResult::noCorrection(const Error error)
     {
         return {Eigen::Matrix3d::Identity(), Eigen::Vector3d::Zero(), error};
     }
@@ -148,8 +148,8 @@ namespace microstrain_mag_cal
 
         // Optimize
         if (const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
-            status != Eigen::LevenbergMarquardtSpace::Status::RelativeErrorTooSmall &&
-            status != Eigen::LevenbergMarquardtSpace::Status::RelativeReductionTooSmall)
+            status <= Eigen::LevenbergMarquardtSpace::Status::Running ||
+            status >= Eigen::LevenbergMarquardtSpace::Status::TooManyFunctionEvaluation)
         {
             return FitResult::Error::FIT_OPTIMIZATION_DID_NOT_CONVERGE;
         }
