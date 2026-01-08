@@ -46,16 +46,9 @@ int main(const int argc, char **argv)
 
     const microstrain_mag_cal::FitResult new_fit = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
 
-    if (new_fit.error == microstrain_mag_cal::FitResult::Error::DESERIALIZATION_COULD_NOT_OPEN_FILE)
-    {
-        printf("ERROR: Could not open file to deserialize: %s\n", args.calibration_filepath.filename().string().c_str());
-
-        return 1;
-    }
-
     if (new_fit.error != microstrain_mag_cal::FitResult::Error::NONE)
     {
-        std::cout << "ERROR: Calibration contains error: " << magic_enum::enum_name(new_fit.error) << "\n";
+        std::cerr << "ERROR: Calibration contains error: " << magic_enum::enum_name(new_fit.error) << "\n";
 
         return 1;
     }
