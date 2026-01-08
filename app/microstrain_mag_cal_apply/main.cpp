@@ -9,6 +9,7 @@
 #include <microstrain_mag_cal_apply/composed_coefficients.hpp>
 #include <mip/mip_interface.hpp>
 #include <mip/definitions/commands_3dm.hpp>
+#include "backend.hpp"
 #include "cli.hpp"
 
 
@@ -26,29 +27,27 @@ int main(const int argc, char **argv)
         return 1;
     }
 
-    microstrain::connections::SerialConnection connection(args.port_name, args.baudrate);
+    std::optional<backend::DeviceConnection> device_connection = backend::connectToDevice(args.port_name, args.baudrate);
 
-    if (!connection.connect())
+    if (!device_connection)
     {
         cli::displayFailedConnectionInformation(args.port_name, args.baudrate);
 
         return 1;
     }
 
-    mip::Interface device(&connection, mip::C::mip_timeout_from_baudrate(args.baudrate), 2000);
-
     microstrain_mag_cal::FitResult old_fit;
     float hard_iron_from_device[3];
     float soft_iron_from_device[9];
 
-    if (!mip::commands_3dm::readMagHardIronOffset(device, hard_iron_from_device))
+    if (!mip::commands_3dm::readMagHardIronOffset(device_connection->interface, hard_iron_from_device))
     {
         printf("ERROR: Reading old hard-iron offset from device failed.\n");
 
         return 1;
     }
 
-    if (!mip::commands_3dm::readMagSoftIronMatrix(device, soft_iron_from_device))
+    if (!mip::commands_3dm::readMagSoftIronMatrix(device_connection->interface, soft_iron_from_device))
     {
         printf("ERROR: Reading old soft-iron-matrix from device failed.\n");
 
@@ -62,28 +61,28 @@ int main(const int argc, char **argv)
     const std::vector<float> soft_iron_matrix = microstrain_mag_cal::toVector<float>(composed_fit.soft_iron_matrix);
     const std::vector<float> hard_iron_offset = microstrain_mag_cal::toVector<float>(composed_fit.hard_iron_offset);
 
-    if (!mip::commands_3dm::writeMagSoftIronMatrix(device, soft_iron_matrix.data()))
+    if (!mip::commands_3dm::writeMagSoftIronMatrix(device_connection->interface, soft_iron_matrix.data()))
     {
         printf("ERROR: Writing soft-iron matrix failed.\n");
 
         return 1;
     }
 
-    if (!mip::commands_3dm::saveMagSoftIronMatrix(device))
+    if (!mip::commands_3dm::saveMagSoftIronMatrix(device_connection->interface))
     {
         printf("ERROR: Writing soft-iron matrix failed.\n");
 
         return 1;
     }
 
-    if (!mip::commands_3dm::writeMagHardIronOffset(device, hard_iron_offset.data()))
+    if (!mip::commands_3dm::writeMagHardIronOffset(device_connection->interface, hard_iron_offset.data()))
     {
         printf("ERROR: Writing hard-iron offset failed.\n");
 
         return 1;
     }
 
-    if (!mip::commands_3dm::saveMagHardIronOffset(device))
+    if (!mip::commands_3dm::saveMagHardIronOffset(device_connection->interface))
     {
         printf("ERROR: Saving hard-iron offset failed.\n");
 

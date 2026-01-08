@@ -36,9 +36,12 @@ FetchContent_MakeAvailable(mip_sdk)
 
 set(CALIBRATION_APP_BACKEND "${CALIBRATION_APP}_backend")
 set(CALIBRATION_APP_CLI "${CALIBRATION_APP}_cli")
+
+set(APPLY_CALIBRATION_APP_BACKEND "${APPLY_CALIBRATION_APP}_backend")
 set(APPLY_CALIBRATION_APP_CLI "${APPLY_CALIBRATION_APP}_cli")
 
 add_library(${CALIBRATION_APP_BACKEND} STATIC)
+add_library(${APPLY_CALIBRATION_APP_BACKEND} STATIC)
 add_executable(${CALIBRATION_APP_CLI})
 add_executable(${APPLY_CALIBRATION_APP_CLI})
 
@@ -53,6 +56,10 @@ target_link_libraries(${CALIBRATION_APP_BACKEND}
     ${LIB_CALIBRATION}
     mio::mio
 )
+target_link_libraries(${APPLY_CALIBRATION_APP_BACKEND}
+    ${MIP_LIBRARIES}
+    ${MICROSTRAIN_LIBRARIES}
+)
 target_link_libraries(${CALIBRATION_APP_CLI}
     PRIVATE
         ${CALIBRATION_APP_BACKEND}
@@ -60,7 +67,7 @@ target_link_libraries(${CALIBRATION_APP_CLI}
 )
 target_link_libraries(${APPLY_CALIBRATION_APP_CLI}
     PRIVATE
-        ${CALIBRATION_APP_BACKEND}
+        ${APPLY_CALIBRATION_APP_BACKEND}
         CLI11::CLI11
         ${LIB_APPLY_CALIBRATION}
         ${MIP_LIBRARIES}
@@ -71,8 +78,8 @@ target_link_libraries(${APPLY_CALIBRATION_APP_CLI}
 # Subdirectories
 # ---------------------------------------------------------------
 
-add_subdirectory(${PROJECT_NAME})
-add_subdirectory("${PROJECT_NAME}_apply")
+add_subdirectory(${CALIBRATION_APP})
+add_subdirectory(${APPLY_CALIBRATION_APP})
 add_subdirectory(test)
 
 # ---------------------------------------------------------------
