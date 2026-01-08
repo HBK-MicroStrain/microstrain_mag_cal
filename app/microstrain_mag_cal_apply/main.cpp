@@ -6,6 +6,7 @@
 
 #include <microstrain/connections/serial/serial_connection.hpp>
 #include <microstrain_mag_cal/calibration.hpp>
+#include <microstrain_mag_cal_apply/composed_coefficients.hpp>
 #include <mip/mip_interface.hpp>
 #include "mip/definitions/commands_3dm.hpp"
 
@@ -43,18 +44,18 @@ int main(const int argc, char **argv)
     ProgramArgs args(argv);
     CLI11_PARSE(args.app, argc, argv);
 
-    microstrain_mag_cal::FitResult fit_result = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
+    microstrain_mag_cal::FitResult new_fit = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
 
-    if (fit_result.error == microstrain_mag_cal::FitResult::Error::DESERIALIZATION_COULD_NOT_OPEN_FILE)
+    if (new_fit.error == microstrain_mag_cal::FitResult::Error::DESERIALIZATION_COULD_NOT_OPEN_FILE)
     {
         printf("ERROR: Could not open file to deserialize: %s\n", args.calibration_filepath.filename().string().c_str());
 
         return 1;
     }
 
-    if (fit_result.error != microstrain_mag_cal::FitResult::Error::NONE)
+    if (new_fit.error != microstrain_mag_cal::FitResult::Error::NONE)
     {
-        std::cout << "ERROR: Calibration contains error: " << magic_enum::enum_name(fit_result.error) << "\n";
+        std::cout << "ERROR: Calibration contains error: " << magic_enum::enum_name(new_fit.error) << "\n";
 
         return 1;
     }
@@ -72,22 +73,30 @@ int main(const int argc, char **argv)
 
     mip::Interface device(&connection, mip::C::mip_timeout_from_baudrate(args.baudrate), 2000);
 
-    const std::vector<float> hard_iron_offset = microstrain_mag_cal::toVector<float>(fit_result.hard_iron_offset);
-    const std::vector<float> soft_iron_matrix = microstrain_mag_cal::toVector<float>(fit_result.soft_iron_matrix);
+    microstrain_mag_cal::FitResult old_fit;
+    float hard_iron_from_device[3];
+    float soft_iron_from_device[9];
 
-    if (!mip::commands_3dm::writeMagHardIronOffset(device, hard_iron_offset.data()))
+    if (!mip::commands_3dm::readMagHardIronOffset(device, hard_iron_from_device))
     {
-        printf("ERROR: Writing hard-iron offset failed.\n");
+        printf("ERROR: Reading old hard-iron offset from device failed.\n");
 
         return 1;
     }
 
-    if (!mip::commands_3dm::saveMagHardIronOffset(device))
+    if (!mip::commands_3dm::readMagSoftIronMatrix(device, soft_iron_from_device))
     {
-        printf("ERROR: Saving hard-iron offset failed.\n");
+        printf("ERROR: Reading old soft-iron-matrix from device failed.\n");
 
         return 1;
     }
+
+    old_fit.soft_iron_matrix = Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>>(soft_iron_from_device).cast<double>();
+    old_fit.hard_iron_offset = Eigen::Map<const Eigen::Vector3f>(hard_iron_from_device).cast<double>();
+    const microstrain_mag_cal::FitResult composed_fit = microstrain_mag_cal::composeCorrections(old_fit, new_fit);
+
+    const std::vector<float> soft_iron_matrix = microstrain_mag_cal::toVector<float>(composed_fit.soft_iron_matrix);
+    const std::vector<float> hard_iron_offset = microstrain_mag_cal::toVector<float>(composed_fit.hard_iron_offset);
 
     if (!mip::commands_3dm::writeMagSoftIronMatrix(device, soft_iron_matrix.data()))
     {
@@ -99,6 +108,20 @@ int main(const int argc, char **argv)
     if (!mip::commands_3dm::saveMagSoftIronMatrix(device))
     {
         printf("ERROR: Writing soft-iron matrix failed.\n");
+
+        return 1;
+    }
+
+    if (!mip::commands_3dm::writeMagHardIronOffset(device, hard_iron_offset.data()))
+    {
+        printf("ERROR: Writing hard-iron offset failed.\n");
+
+        return 1;
+    }
+
+    if (!mip::commands_3dm::saveMagHardIronOffset(device))
+    {
+        printf("ERROR: Saving hard-iron offset failed.\n");
 
         return 1;
     }

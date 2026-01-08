@@ -11,7 +11,7 @@ add_executable(${BACKEND_UNIT_TESTS}
 target_link_libraries(${BACKEND_UNIT_TESTS}
     PRIVATE
         microstrain_test::cpp
-        ${BACKEND}
+        ${CALIBRATION_APP_BACKEND}
 )
 
 # ---------------------------------------------------------------

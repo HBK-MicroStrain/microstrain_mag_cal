@@ -34,35 +34,35 @@ FetchContent_MakeAvailable(mip_sdk)
 # Application setup
 # ---------------------------------------------------------------
 
-set(BACKEND "${PROJECT_NAME}_backend")      # Main application logic
-set(CLI "${PROJECT_NAME}_cli")              # Command-line interface for app
-set(APPLY_CLI "${PROJECT_NAME}_apply_cli")  # Command-line interface for applying calibration
+set(CALIBRATION_APP_BACKEND "${CALIBRATION_APP}_backend")
+set(CALIBRATION_APP_CLI "${CALIBRATION_APP}_cli")
+set(APPLY_CALIBRATION_APP_CLI "${APPLY_CALIBRATION_APP}_cli")
 
-add_library(${BACKEND} STATIC)
-add_executable(${CLI})
-add_executable(${APPLY_CLI})
+add_library(${CALIBRATION_APP_BACKEND} STATIC)
+add_executable(${CALIBRATION_APP_CLI})
+add_executable(${APPLY_CALIBRATION_APP_CLI})
 
-string(REPLACE "_" "-" EXECUTABLE_NAME ${PROJECT_NAME})
-set_target_properties(${CLI} PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
-set_target_properties(${APPLY_CLI} PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}-apply")
+string(REPLACE "_" "-" EXECUTABLE_NAME ${CALIBRATION_APP})
+set_target_properties(${CALIBRATION_APP_CLI} PROPERTIES OUTPUT_NAME ${EXECUTABLE_NAME})
+set_target_properties(${APPLY_CALIBRATION_APP_CLI} PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}-apply")
 
-target_link_libraries(${BACKEND}
+target_link_libraries(${CALIBRATION_APP_BACKEND}
     CLI11::CLI11
     Eigen3::Eigen
     ${MIP_LIBRARIES}
-    "lib${PROJECT_NAME}"
+    ${LIB_CALIBRATION}
     mio::mio
 )
-target_link_libraries(${CLI}
+target_link_libraries(${CALIBRATION_APP_CLI}
     PRIVATE
-        ${BACKEND}
+        ${CALIBRATION_APP_BACKEND}
         magic_enum::magic_enum
 )
-target_link_libraries(${APPLY_CLI}
+target_link_libraries(${APPLY_CALIBRATION_APP_CLI}
     PRIVATE
-        ${BACKEND}
+        ${CALIBRATION_APP_BACKEND}
         CLI11::CLI11
-        Eigen3::Eigen
+        ${LIB_APPLY_CALIBRATION}
         ${MIP_LIBRARIES}
         ${MICROSTRAIN_LIBRARIES}
 )
@@ -79,12 +79,12 @@ add_subdirectory(test)
 # Installation
 # ---------------------------------------------------------------
 
-install(TARGETS ${CLI}
+install(TARGETS ${CALIBRATION_APP_CLI}
     DESTINATION bin
     COMPONENT app
 )
 
-install(TARGETS ${APPLY_CLI}
+install(TARGETS ${APPLY_CALIBRATION_APP_CLI}
     DESTINATION bin
     COMPONENT app
 )

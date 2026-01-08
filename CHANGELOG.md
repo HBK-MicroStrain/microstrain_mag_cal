@@ -1,6 +1,22 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Added
+- `libmicrostrain-mag-cal-apply`: New library module dedicated to features used in applying calibrations
+                                  to a device.
+- `libmicrostrain-mag-cal-apply`: Function to compose two calibration corrections into a single combined 
+                                  correction. The composed correction can then be written to the device
+                                  in a single step. Used to apply a new calibration on top of an old
+                                  one (if the data sampled for the new calibration came from already
+                                  calibrated data).
+                                  
+### Changed
+- `microstrain-mag-cal-apply`: Changed the default behavior for applying calibrations. The new default
+                               composes the new calibration onto the old one before applying. This is
+                               done automatically.
+
 ## [0.4.0-pre-alpha] - 2025-12-19
 
 _Updated interface to provide more descriptive metrics for used points_.

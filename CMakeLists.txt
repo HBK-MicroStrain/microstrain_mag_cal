@@ -18,6 +18,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 enable_testing()
 
 # ---------------------------------------------------------------
+# Targets
+# ---------------------------------------------------------------
+
+# Apps
+set(CALIBRATION_APP ${PROJECT_NAME})
+set(APPLY_CALIBRATION_APP "${PROJECT_NAME}_apply")
+
+# Libraries
+set(LIB_CALIBRATION "lib${CALIBRATION_APP}")
+set(LIB_APPLY_CALIBRATION "lib${APPLY_CALIBRATION_APP}")
+
+# ---------------------------------------------------------------
 # Shared Compile Options
 # ---------------------------------------------------------------
 
