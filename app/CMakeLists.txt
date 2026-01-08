@@ -50,7 +50,6 @@ set_target_properties(${CALIBRATION_APP_CLI} PROPERTIES OUTPUT_NAME ${EXECUTABLE
 set_target_properties(${APPLY_CALIBRATION_APP_CLI} PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}-apply")
 
 target_link_libraries(${CALIBRATION_APP_BACKEND}
-    CLI11::CLI11
     Eigen3::Eigen
     ${MIP_LIBRARIES}
     ${LIB_CALIBRATION}
@@ -62,6 +61,7 @@ target_link_libraries(${APPLY_CALIBRATION_APP_BACKEND}
 )
 target_link_libraries(${CALIBRATION_APP_CLI}
     PRIVATE
+        CLI11::CLI11
         ${CALIBRATION_APP_BACKEND}
         magic_enum::magic_enum
 )
@@ -70,8 +70,6 @@ target_link_libraries(${APPLY_CALIBRATION_APP_CLI}
         ${APPLY_CALIBRATION_APP_BACKEND}
         CLI11::CLI11
         ${LIB_APPLY_CALIBRATION}
-        ${MIP_LIBRARIES}
-        ${MICROSTRAIN_LIBRARIES}
 )
 
 # ---------------------------------------------------------------

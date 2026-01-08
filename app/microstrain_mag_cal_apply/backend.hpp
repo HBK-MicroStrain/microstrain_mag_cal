@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string_view>
-
 #include <microstrain/connections/serial/serial_connection.hpp>
 #include <mip/mip_interface.hpp>
 
@@ -17,5 +15,5 @@ namespace backend
         mip::Interface interface;
     };
 
-    std::optional<DeviceConnection> connectToDevice(const std::string& port_name, const std::uint32_t baudrate);
+    std::optional<DeviceConnection> connectToDevice(const std::string& port_name, std::uint32_t baudrate);
 }

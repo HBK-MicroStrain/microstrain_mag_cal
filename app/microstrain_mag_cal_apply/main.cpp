@@ -4,10 +4,8 @@
 #include <CLI/CLI.hpp>
 #include <nlohmann/json.hpp>
 
-#include <microstrain/connections/serial/serial_connection.hpp>
 #include <microstrain_mag_cal/calibration.hpp>
 #include <microstrain_mag_cal_apply/composed_coefficients.hpp>
-#include <mip/mip_interface.hpp>
 #include <mip/definitions/commands_3dm.hpp>
 #include "backend.hpp"
 #include "cli.hpp"
