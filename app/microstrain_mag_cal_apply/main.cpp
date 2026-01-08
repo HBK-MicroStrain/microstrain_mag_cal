@@ -44,7 +44,7 @@ int main(const int argc, char **argv)
     ProgramArgs args(argv);
     CLI11_PARSE(args.app, argc, argv);
 
-    microstrain_mag_cal::FitResult new_fit = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
+    const microstrain_mag_cal::FitResult new_fit = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
 
     if (new_fit.error == microstrain_mag_cal::FitResult::Error::DESERIALIZATION_COULD_NOT_OPEN_FILE)
     {
