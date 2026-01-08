@@ -3,10 +3,10 @@
 
 #include <magic_enum/magic_enum.hpp>
 
-#include <backend.hpp>
-#include <cli.hpp>
 #include <microstrain_mag_cal/analysis.hpp>
 #include <microstrain_mag_cal/calibration.hpp>
+#include "backend.hpp"
+#include "cli.hpp"
 
 
 using microstrain_mag_cal::FitResult;

@@ -4,10 +4,10 @@ target_sources(${CALIBRATION_APP_BACKEND}
     PRIVATE
         "backend.cpp"
         "backend.hpp"
-        "cli.cpp"
-        "cli.hpp"
 )
 target_sources(${CALIBRATION_APP_CLI}
     PRIVATE
+        "cli.cpp"
+        "cli.hpp"
         "main.cpp"
 )
