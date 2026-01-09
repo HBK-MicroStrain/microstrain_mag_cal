@@ -1,20 +1,19 @@
 #pragma once
 
 #include <microstrain/connections/serial/serial_connection.hpp>
-#include <mip/mip_interface.hpp>
-
 #include <microstrain_mag_cal/calibration.hpp>
+#include <mip/mip_interface.hpp>
 
 
 namespace backend
 {
     struct DeviceConnection
     {
-        DeviceConnection(microstrain::connections::SerialConnection connection, std::uint32_t baudrate)
+        DeviceConnection(std::unique_ptr<microstrain::connections::SerialConnection> connection, std::uint32_t baudrate)
         : connection(std::move(connection)),
-          interface(&connection, mip::C::mip_timeout_from_baudrate(baudrate), 2000) {}
+          interface(this->connection.get(), mip::C::mip_timeout_from_baudrate(baudrate), 2000) {}
 
-        microstrain::connections::SerialConnection connection;
+        std::unique_ptr<microstrain::connections::SerialConnection> connection;
         mip::Interface interface;
     };
 

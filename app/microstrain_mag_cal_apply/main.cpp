@@ -2,11 +2,11 @@
 #include <iostream>
 
 #include <CLI/CLI.hpp>
-#include <nlohmann/json.hpp>
-
 #include <microstrain_mag_cal/calibration.hpp>
 #include <microstrain_mag_cal_apply/composed_coefficients.hpp>
 #include <mip/definitions/commands_3dm.hpp>
+#include <nlohmann/json.hpp>
+
 #include "backend.hpp"
 #include "cli.hpp"
 
@@ -20,7 +20,7 @@ int main(const int argc, char **argv)
 
     if (new_fit.error != microstrain_mag_cal::FitResult::Error::NONE)
     {
-        std::cerr << "ERROR: Calibration contains error: " << magic_enum::enum_name(new_fit.error) << "\n";
+        std::cerr << "Calibration contains error: " << magic_enum::enum_name(new_fit.error) << "\n";
 
         return 1;
     }
@@ -86,6 +86,8 @@ int main(const int argc, char **argv)
 
         return 1;
     }
+
+    printf("Success.\n");
 
     return 0;
 }
