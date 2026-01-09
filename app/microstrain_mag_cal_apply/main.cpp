@@ -20,7 +20,7 @@ int main(const int argc, char **argv)
 
     if (new_fit.error != microstrain_mag_cal::FitResult::Error::NONE)
     {
-        std::cerr << "Calibration contains error: " << magic_enum::enum_name(new_fit.error) << "\n";
+        std::cerr << "ERROR: Calibration contains error ---> " << magic_enum::enum_name(new_fit.error) << "\n";
 
         return 1;
     }
@@ -34,28 +34,14 @@ int main(const int argc, char **argv)
         return 1;
     }
 
-    microstrain_mag_cal::FitResult old_fit;
-    float hard_iron_from_device[3];
-    float soft_iron_from_device[9];
+    const std::optional<microstrain_mag_cal::FitResult> old_fit = backend::readCalibrationFromDevice(device_connection->interface);
 
-    if (!mip::commands_3dm::readMagHardIronOffset(device_connection->interface, hard_iron_from_device))
+    if (!old_fit)
     {
-        printf("ERROR: Reading old hard-iron offset from device failed.\n");
-
-        return 1;
+        std::cerr << "ERROR: Reading calibration from the device failed.\n";
     }
 
-    if (!mip::commands_3dm::readMagSoftIronMatrix(device_connection->interface, soft_iron_from_device))
-    {
-        printf("ERROR: Reading old soft-iron-matrix from device failed.\n");
-
-        return 1;
-    }
-
-    old_fit.soft_iron_matrix = Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>>(soft_iron_from_device).cast<double>();
-    old_fit.hard_iron_offset = Eigen::Map<const Eigen::Vector3f>(hard_iron_from_device).cast<double>();
-    const microstrain_mag_cal::FitResult composed_fit = microstrain_mag_cal::composeCorrections(old_fit, new_fit);
-
+    const microstrain_mag_cal::FitResult composed_fit = microstrain_mag_cal::composeCorrections(old_fit.value(), new_fit);
     const std::vector<float> soft_iron_matrix = microstrain_mag_cal::toVector<float>(composed_fit.soft_iron_matrix);
     const std::vector<float> hard_iron_offset = microstrain_mag_cal::toVector<float>(composed_fit.hard_iron_offset);
 

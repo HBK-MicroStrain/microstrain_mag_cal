@@ -21,4 +21,6 @@ namespace backend
     };
 
     std::optional<DeviceConnection> connectToDevice(const std::string& port_name, std::uint32_t baudrate);
+
+    std::optional<microstrain_mag_cal::FitResult> readCalibrationFromDevice(mip::Interface& device_interface);
 }
