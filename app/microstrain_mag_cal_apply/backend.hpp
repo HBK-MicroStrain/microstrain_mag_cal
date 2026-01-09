@@ -13,6 +13,9 @@ namespace backend
         : connection(std::move(connection)),
           interface(this->connection.get(), mip::C::mip_timeout_from_baudrate(baudrate), 2000) {}
 
+        DeviceConnection(DeviceConnection&&) = delete;
+        DeviceConnection& operator=(DeviceConnection&&) = delete;
+
         std::unique_ptr<microstrain::connections::SerialConnection> connection;
         mip::Interface interface;
     };
