@@ -1,5 +1,6 @@
 #include "backend.hpp"
 
+#include <microstrain_mag_cal_apply/composed_coefficients.hpp>
 #include <mip/definitions/commands_3dm.hpp>
 
 namespace backend
@@ -30,8 +31,8 @@ namespace backend
         }
 
         microstrain_mag_cal::FitResult fit_result;
-        fit_result.soft_iron_matrix = Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>>(soft_iron_from_device).cast<double>();
-        fit_result.hard_iron_offset = Eigen::Map<const Eigen::Vector3f>(hard_iron_from_device).cast<double>();
+        fit_result.soft_iron_matrix = microstrain_mag_cal::toSoftIronMatrix(soft_iron_from_device);
+        fit_result.hard_iron_offset = microstrain_mag_cal::toHardIronOffset(hard_iron_from_device);
 
         return std::optional(std::move(fit_result));
     }
