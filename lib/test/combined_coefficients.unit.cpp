@@ -60,15 +60,15 @@ MICROSTRAIN_TEST_CASE("Lib_Apply", "Row_major_data_can_be_converted_to_soft_iron
 
     Eigen::Matrix3d soft_iron_matrix = toSoftIronMatrix(row_major_data);
 
-    CHECK(soft_iron_matrix(0) == doctest::Approx(1.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(1) == doctest::Approx(2.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(2) == doctest::Approx(3.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(3) == doctest::Approx(4.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(4) == doctest::Approx(5.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(5) == doctest::Approx(6.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(6) == doctest::Approx(7.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(7) == doctest::Approx(8.12345).epsilon(0.0001));
-    CHECK(soft_iron_matrix(8) == doctest::Approx(9.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(0, 0) == doctest::Approx(1.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(0, 1) == doctest::Approx(2.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(0, 2) == doctest::Approx(3.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(1, 0) == doctest::Approx(4.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(1, 1) == doctest::Approx(5.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(1, 2) == doctest::Approx(6.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(2, 0) == doctest::Approx(7.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(2, 1) == doctest::Approx(8.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(2, 2) == doctest::Approx(9.12345).epsilon(0.0001));
 }
 
 MICROSTRAIN_TEST_CASE("Lib_Apply", "Data_can_be_converted_to_hard_iron_offset_with_data_in_the_correct_indices")

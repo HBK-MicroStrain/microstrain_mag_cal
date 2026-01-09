@@ -8,7 +8,7 @@ namespace microstrain_mag_cal
     FitResult composeCorrections(const FitResult &old_fit, const FitResult &new_fit);
 
     template<typename T>
-    Eigen::Matrix3d toSoftIronMatrix(const T* row_major_data)
+    Eigen::Matrix<double, 3, 3, Eigen::RowMajor> toSoftIronMatrix(const T* row_major_data)
     {
         return Eigen::Map<const Eigen::Matrix<T, 3, 3, Eigen::RowMajor>>(row_major_data)
             .template cast<double>();
