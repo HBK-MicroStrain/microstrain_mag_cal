@@ -35,4 +35,20 @@ namespace backend
 
         return std::optional(std::move(fit_result));
     }
+
+    bool writeCalibrationToDevice(mip::Interface& device_interface, const microstrain_mag_cal::FitResult& fit_result)
+    {
+        const std::vector<float> soft_iron_matrix = microstrain_mag_cal::toVector<float>(fit_result.soft_iron_matrix);
+        const std::vector<float> hard_iron_offset = microstrain_mag_cal::toVector<float>(fit_result.hard_iron_offset);
+
+        if (!mip::commands_3dm::writeMagSoftIronMatrix(device_interface, soft_iron_matrix.data()) ||
+            !mip::commands_3dm::saveMagSoftIronMatrix(device_interface) ||
+            !mip::commands_3dm::writeMagHardIronOffset(device_interface, hard_iron_offset.data()) ||
+            !mip::commands_3dm::saveMagHardIronOffset(device_interface))
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -39,36 +39,15 @@ int main(const int argc, char **argv)
     if (!old_fit)
     {
         std::cerr << "ERROR: Reading calibration from the device failed.\n";
+
+        return 1;
     }
 
     const microstrain_mag_cal::FitResult composed_fit = microstrain_mag_cal::composeCorrections(old_fit.value(), new_fit);
-    const std::vector<float> soft_iron_matrix = microstrain_mag_cal::toVector<float>(composed_fit.soft_iron_matrix);
-    const std::vector<float> hard_iron_offset = microstrain_mag_cal::toVector<float>(composed_fit.hard_iron_offset);
 
-    if (!mip::commands_3dm::writeMagSoftIronMatrix(device_connection->interface, soft_iron_matrix.data()))
+    if (!backend::writeCalibrationToDevice(device_connection->interface, composed_fit))
     {
-        printf("ERROR: Writing soft-iron matrix failed.\n");
-
-        return 1;
-    }
-
-    if (!mip::commands_3dm::saveMagSoftIronMatrix(device_connection->interface))
-    {
-        printf("ERROR: Writing soft-iron matrix failed.\n");
-
-        return 1;
-    }
-
-    if (!mip::commands_3dm::writeMagHardIronOffset(device_connection->interface, hard_iron_offset.data()))
-    {
-        printf("ERROR: Writing hard-iron offset failed.\n");
-
-        return 1;
-    }
-
-    if (!mip::commands_3dm::saveMagHardIronOffset(device_connection->interface))
-    {
-        printf("ERROR: Saving hard-iron offset failed.\n");
+        std::cerr << "ERROR: Writing calibration to the device failed.\n";
 
         return 1;
     }
