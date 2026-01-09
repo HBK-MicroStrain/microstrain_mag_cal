@@ -15,7 +15,7 @@ int main(const int argc, char **argv)
     cli::ProgramArgs args(argv);
     CLI11_PARSE(args.app, argc, argv);
 
-    const microstrain_mag_cal::FitResult new_fit = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
+    microstrain_mag_cal::FitResult new_fit = microstrain_mag_cal::deserializeFitResultFromFile(args.calibration_filepath);
 
     if (new_fit.error != microstrain_mag_cal::FitResult::Error::NONE)
     {
@@ -33,18 +33,21 @@ int main(const int argc, char **argv)
         return 1;
     }
 
-    const std::optional<microstrain_mag_cal::FitResult> old_fit = backend::readCalibrationFromDevice(device_connection->interface);
-
-    if (!old_fit)
+    if (!args.overwrite)
     {
-        std::cerr << "ERROR: Reading calibration from the device failed.\n";
+        const std::optional<microstrain_mag_cal::FitResult> old_fit = backend::readCalibrationFromDevice(device_connection->interface);
 
-        return 1;
+        if (!old_fit)
+        {
+            std::cerr << "ERROR: Reading calibration from the device failed.\n";
+
+            return 1;
+        }
+
+        new_fit = microstrain_mag_cal::composeCorrections(old_fit.value(), new_fit);
     }
 
-    const microstrain_mag_cal::FitResult composed_fit = microstrain_mag_cal::composeCorrections(old_fit.value(), new_fit);
-
-    if (!backend::writeCalibrationToDevice(device_connection->interface, composed_fit))
+    if (!backend::writeCalibrationToDevice(device_connection->interface, new_fit))
     {
         std::cerr << "ERROR: Writing calibration to the device failed.\n";
 
