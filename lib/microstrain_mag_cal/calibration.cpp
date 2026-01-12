@@ -64,7 +64,7 @@ namespace microstrain_mag_cal
     ///       soft-iron distortions.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
+    /// @param initial_offset Initial hard iron offset vector (bx, by, bz).
     ///
     /// @returns Mean measured field strength in the same unit as the input measurements.
     ///
@@ -195,9 +195,8 @@ namespace microstrain_mag_cal
     ///                       the reference is unknown.
     /// @param initial_offset Initial hard iron offset vector (bx, by, bz).
     ///
-    /// TODO: Document that this returns the correction, not distortion.
-    /// @returns Fit result containing hard-iron offset, uniform soft-iron scale factor, and whether
-    ///          the fit succeeded. The units will be the same as the input data.
+    /// @returns Fit result containing hard-iron offset, uniform soft-iron scale factor correction
+    ///          matrix, and whether the fit succeeded. The units will be the same as the input data.
     ///
     FitResult fitSphere(const Eigen::MatrixX3d &points, const double field_strength, const Eigen::Vector3d &initial_offset)
     {
@@ -261,9 +260,8 @@ namespace microstrain_mag_cal
     ///                       the reference is unknown.
     /// @param initial_offset Initial hard iron offset vector (bx, by, bz).
     ///
-    /// TODO: Document that this returns the correction, not distortion.
-    /// @returns Fit result containing hard-iron offset, full symmetric soft-iron matrix, and whether
-    ///          the fit succeeded. The units will be the same as the input data.
+    /// @returns Fit result containing hard-iron offset, full symmetric soft-iron correction matrix,
+    ///          and whether the fit succeeded. The units will be the same as the input data.
     ///
     FitResult fitEllipsoid(const Eigen::MatrixX3d &points, const double field_strength, const Eigen::Vector3d &initial_offset)
     {
