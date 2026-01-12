@@ -146,9 +146,12 @@ namespace microstrain_mag_cal
         solver.parameters.maxfev = MAX_ITERATIONS;
         solver.parameters.xtol = TOLERANCE;
 
-        // Optimize
+        // Optimize.
+        // Status codes outside of this range indicate that the solver was not able to converge.
+        // Status codes within this range indicate that the solver converged early (i.e. no more
+        // error reduction can be made).
         if (const Eigen::LevenbergMarquardtSpace::Status status = solver.minimize(parameters);
-            status <= Eigen::LevenbergMarquardtSpace::Status::Running ||
+            status <= Eigen::LevenbergMarquardtSpace::Status::ImproperInputParameters ||
             status >= Eigen::LevenbergMarquardtSpace::Status::TooManyFunctionEvaluation)
         {
             return FitResult::Error::FIT_OPTIMIZATION_DID_NOT_CONVERGE;
