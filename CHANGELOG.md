@@ -16,6 +16,11 @@ This project follows [Semantic Versioning](https://semver.org/).
 - `microstrain-mag-cal-apply`: Changed the default behavior for applying calibrations. The new default
                                composes the new calibration onto the old one before applying. This is
                                done automatically.
+                               
+### Fixed
+- `libmicrostrain-mag-cal`: Fit algorithms returning an error when they converged early.
+- `libmicrostrain-mag-cal`: Warnings of potentially escaped addresses with FitResult.
+
 
 ## [0.4.0-pre-alpha] - 2025-12-19
 
