@@ -22,7 +22,7 @@ int main(const int argc, char **argv)
 
     const microstrain_mag_cal::PointManager point_manager = backend::extractPointsFromRawData(mapped_data->view, args.field_strength);
     const Eigen::MatrixX3d points = point_manager.getMatrix();
-    const Eigen::RowVector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
+    const Eigen::Vector3d initial_offset = microstrain_mag_cal::estimateInitialHardIronOffset(points);
 
     if (!args.field_strength.has_value())
     {
