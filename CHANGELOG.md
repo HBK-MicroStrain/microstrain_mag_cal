@@ -1,7 +1,9 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## [0.5.0-pre-alpha] - 2026-01-12
+
+_Added calibration composition support and fixed fit algorithm issues._
 
 ### Added
 - `libmicrostrain-mag-cal-apply`: New library module dedicated to features used in applying calibrations
