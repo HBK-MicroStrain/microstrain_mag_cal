@@ -7,8 +7,8 @@ set(LIB_UNIT_TESTS "lib_unit_tests")
 add_executable(${LIB_UNIT_TESTS}
     "analysis.unit.cpp"
     "calibration.unit.cpp"
-    #"combined_coefficients.unit.cpp"
-    #"preprocessing.unit.cpp"
+    "combined_coefficients.unit.cpp"
+    "preprocessing.unit.cpp"
 )
 
 target_link_libraries(${LIB_UNIT_TESTS}

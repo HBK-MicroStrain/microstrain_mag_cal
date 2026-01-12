@@ -3,8 +3,6 @@ target_sources(${LIB_CALIBRATION} PRIVATE
     "analysis.cpp"
     "calibration.cpp"
     "calibration.hpp"
-#[[
     "preprocessing.hpp"
     "preprocessing.cpp"
-]]
 )
