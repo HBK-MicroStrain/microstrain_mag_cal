@@ -21,7 +21,7 @@ namespace microstrain_mag_cal
         };
 
         Eigen::Matrix3d soft_iron_matrix;
-        Eigen::RowVector3d hard_iron_offset;
+        Eigen::Vector3d hard_iron_offset;
         Error error = Error::NONE;
 
         static FitResult noCorrection(Error error);
@@ -31,11 +31,11 @@ namespace microstrain_mag_cal
     };
 
 
-    Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points);
-    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset);
+    Eigen::Vector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points);
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::Vector3d &initial_offset);
 
-    FitResult fitSphere(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
-    FitResult fitEllipsoid(const Eigen::MatrixX3d &points, double field_strength, const Eigen::RowVector3d &initial_offset);
+    FitResult fitSphere(const Eigen::MatrixX3d &points, double field_strength, const Eigen::Vector3d &initial_offset);
+    FitResult fitEllipsoid(const Eigen::MatrixX3d &points, double field_strength, const Eigen::Vector3d &initial_offset);
 
     nlohmann::json serializeFitResult(const FitResult &fit_result);
     void serializeFitResultToFile(const std::filesystem::path &filepath, const FitResult& fit_result);
@@ -45,7 +45,7 @@ namespace microstrain_mag_cal
 
     void writeJsonToFile(const std::filesystem::path &filepath, const nlohmann::json& json_output);
 
-    /// @brief Converts an Eigen container to vector.
+    /// @brief Converts an Eigen container to vector in row-major order from the container.
     ///
     /// @tparam T Type of the data contained within the Eigen container.
     ///

@@ -43,14 +43,15 @@ namespace microstrain_mag_cal
     /// @returns 1x3 row vector containing the estimated hard-iron offset [bx, by, bz] in the same
     ///          units as the input measurements.
     ///
-    Eigen::RowVector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points)
+    Eigen::Vector3d estimateInitialHardIronOffset(const Eigen::MatrixX3d &points)
     {
         if (points.rows() == 0)
         {
-            return Eigen::RowVector3d::Zero();
+            return Eigen::Vector3d::Zero();
         }
 
-        return points.colwise().mean();
+        // Papers typically use 3xN (colwise) for points, while we use Nx3 (rowwise).
+        return points.colwise().mean().transpose();
     }
 
     /// Calculates the mean measured field strength from raw magnetometer measurements.
@@ -67,14 +68,15 @@ namespace microstrain_mag_cal
     ///
     /// @returns Mean measured field strength in the same unit as the input measurements.
     ///
-    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset)
+    double calculateMeanMeasuredFieldStrength(const Eigen::MatrixX3d &points, const Eigen::Vector3d &initial_offset)
     {
         if (points.size() == 0)
         {
             return 0.0;
         }
 
-        return (points.rowwise() - initial_offset).rowwise().norm().mean();
+        // Papers typically use 3xN (colwise) for points, while we use Nx3 (rowwise).
+        return (points.rowwise() - initial_offset.transpose()).rowwise().norm().mean();
     }
 
     // Each fitting algorithm requires a functor that's used by the Eigen solver. This base functor
@@ -99,11 +101,14 @@ namespace microstrain_mag_cal
         [[nodiscard]] int values() const { return static_cast<int>(points.rows()); }
         static int inputs() { return NumParameters; }
 
-        // Common residual calculation --> delegates correction to each derived functor
+        // Common residual calculation --> delegates correction to each derived functor.
         int operator()(const InputType& parameters, Eigen::VectorXd& residuals) const
         {
             for (int i = 0; i < points.rows(); ++i)
             {
+                // Papers typically use 3xN (colwise) for points, while we use Nx3 (rowwise).
+                // Passing each point here as a column vector to match the typical paper convention
+                // when applying the correction.
                 const Eigen::Vector3d corrected_point =
                     static_cast<const Derived *>(this)->applyCorrection(parameters, points.row(i).transpose());
 
@@ -170,7 +175,7 @@ namespace microstrain_mag_cal
             const double scale = std::sqrt(parameters(0));
             const Eigen::Vector3d hard_iron_offset = parameters.tail<3>();
 
-            return (point - hard_iron_offset) * scale;
+            return scale * (point - hard_iron_offset);
         }
     };
 
@@ -188,16 +193,13 @@ namespace microstrain_mag_cal
     /// @param field_strength The field strength to use for the target radius. Use the reference
     ///                       field strength if possible. Only use the measured field strength if
     ///                       the reference is unknown.
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
+    /// @param initial_offset Initial hard iron offset vector (bx, by, bz).
     ///
     /// TODO: Document that this returns the correction, not distortion.
     /// @returns Fit result containing hard-iron offset, uniform soft-iron scale factor, and whether
     ///          the fit succeeded. The units will be the same as the input data.
     ///
-    FitResult fitSphere(
-        const Eigen::MatrixX3d &points,
-        const double field_strength,
-        const Eigen::RowVector3d &initial_offset)
+    FitResult fitSphere(const Eigen::MatrixX3d &points, const double field_strength, const Eigen::Vector3d &initial_offset)
     {
         Eigen::VectorXd fit_parameters(4);
         fit_parameters(0) = 1.0;               // Scale^2
@@ -257,21 +259,19 @@ namespace microstrain_mag_cal
     /// @param field_strength The field strength to use for the target radius. Use the reference
     ///                       field strength if possible. Only use the measured field strength if
     ///                       the reference is unknown.
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
+    /// @param initial_offset Initial hard iron offset vector (bx, by, bz).
     ///
+    /// TODO: Document that this returns the correction, not distortion.
     /// @returns Fit result containing hard-iron offset, full symmetric soft-iron matrix, and whether
     ///          the fit succeeded. The units will be the same as the input data.
     ///
-    FitResult fitEllipsoid(
-        const Eigen::MatrixX3d &points,
-        const double field_strength,
-        const Eigen::RowVector3d &initial_offset)
+    FitResult fitEllipsoid(const Eigen::MatrixX3d &points, const double field_strength, const Eigen::Vector3d &initial_offset)
     {
         Eigen::VectorXd fit_parameters(9);
-        fit_parameters.head<6>() << 1.0, 0.0, 0.0,  // Initialize soft-iron as identity matrix. Using
-                                         1.0, 0.0,  // the upper triangle for optimization.
+        fit_parameters.head<6>() << 1.0, 0.0, 0.0,  // Soft-Iron Matrix - Symmetric since ellipsoids have symmetric
+                                         1.0, 0.0,  // quadratic forms, so we can use the upper triangle.
                                               1.0;
-        fit_parameters.tail<3>() = initial_offset;  // Hard iron offset
+        fit_parameters.tail<3>() = initial_offset;  // Hard-Iron Offset
 
         if (const FitResult::Error error = optimizeFit<EllipsoidalFitFunctor>(points, field_strength, fit_parameters);
             error != FitResult::Error::NONE)
