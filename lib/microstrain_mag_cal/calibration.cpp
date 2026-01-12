@@ -250,8 +250,8 @@ namespace microstrain_mag_cal
     /// @brief Performs an ellipsoidal fit on the raw magnetometer data.
     ///
     /// Fits an ellipsoid to magnetometer data to estimate both hard-iron offset (bias) and soft-iron
-    /// effects (scaling, rotation, and shear). Provides more accurate calibration than spherical fit
-    /// when ferromagnetic materials cause axis-dependent field distortion. The soft-iron matrix is
+    /// effects (scaling and shear). Provides more accurate calibration than spherical fit when
+    /// ferromagnetic materials cause axis-dependent field distortion. The soft-iron matrix is
     /// symmetric (6 unique parameters).
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
