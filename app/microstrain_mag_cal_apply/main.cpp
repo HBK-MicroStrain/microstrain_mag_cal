@@ -2,8 +2,8 @@
 #include <iostream>
 
 #include <CLI/CLI.hpp>
+#include <microstrain_mag_cal/apply.hpp>
 #include <microstrain_mag_cal/calibration.hpp>
-#include <microstrain_mag_cal_apply/composed_coefficients.hpp>
 #include <nlohmann/json.hpp>
 
 #include "backend.hpp"

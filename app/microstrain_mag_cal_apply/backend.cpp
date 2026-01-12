@@ -1,6 +1,6 @@
 #include "backend.hpp"
 
-#include <microstrain_mag_cal_apply/composed_coefficients.hpp>
+#include <microstrain_mag_cal/apply.hpp>
 #include <mip/definitions/commands_3dm.hpp>
 
 namespace backend

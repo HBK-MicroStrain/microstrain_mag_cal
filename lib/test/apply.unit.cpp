@@ -1,4 +1,4 @@
-#include <microstrain_mag_cal_apply/composed_coefficients.hpp>
+#include <microstrain_mag_cal/apply.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 #include "clean_data.hpp"
 #include "shared_fixtures.hpp"
