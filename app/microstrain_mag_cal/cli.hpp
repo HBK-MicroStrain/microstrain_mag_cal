@@ -7,6 +7,7 @@
 #include <microstrain_mag_cal/calibration.hpp>
 #include <microstrain_mag_cal/preprocessing.hpp>
 
+
 namespace cli
 {
     struct ProgramArgs

@@ -8,15 +8,15 @@ using namespace microstrain_mag_cal;
 
 namespace fixture
 {
-    const Eigen::Vector3d applyComposedCorrections(const Eigen::Vector3d &raw_point, const FitResult &combined_fit)
+    Eigen::Vector3d applyComposedCorrections(const Eigen::Vector3d& raw_point, const FitResult& combined_fit)
     {
         return combined_fit.soft_iron_matrix * (raw_point - combined_fit.hard_iron_offset.transpose());
     }
 
-    const Eigen::Vector3d applyCorrectionsSequentially(
-        const Eigen::Vector3d &raw_point,
-        const FitResult &old_fit,
-        const FitResult &new_fit)
+    Eigen::Vector3d applyCorrectionsSequentially(
+        const Eigen::Vector3d& raw_point,
+        const FitResult& old_fit,
+        const FitResult& new_fit)
     {
         const Eigen::Vector3d old_calibrated = old_fit.soft_iron_matrix * (raw_point - old_fit.hard_iron_offset.transpose());
 
@@ -48,4 +48,36 @@ MICROSTRAIN_TEST_CASE("Lib_Apply", "Applying_composed_corrections_is_equivalent_
     CHECK(result_composed(0) == doctest::Approx(result_sequential(0)).epsilon(0.0001));
     CHECK(result_composed(1) == doctest::Approx(result_sequential(1)).epsilon(0.0001));
     CHECK(result_composed(2) == doctest::Approx(result_sequential(2)).epsilon(0.0001));
+}
+
+MICROSTRAIN_TEST_CASE("Lib_Apply", "Row_major_data_can_be_converted_to_soft_iron_matrix_with_data_in_the_correct_indices")
+{
+    float row_major_data[9] = {
+        1.12345f, 2.12345f, 3.12345f,
+        4.12345f, 5.12345f, 6.12345f,
+        7.12345f, 8.12345f, 9.12345f
+    };
+
+    Eigen::Matrix3d soft_iron_matrix = toSoftIronMatrix(row_major_data);
+
+    CHECK(soft_iron_matrix(0, 0) == doctest::Approx(1.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(0, 1) == doctest::Approx(2.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(0, 2) == doctest::Approx(3.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(1, 0) == doctest::Approx(4.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(1, 1) == doctest::Approx(5.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(1, 2) == doctest::Approx(6.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(2, 0) == doctest::Approx(7.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(2, 1) == doctest::Approx(8.12345).epsilon(0.0001));
+    CHECK(soft_iron_matrix(2, 2) == doctest::Approx(9.12345).epsilon(0.0001));
+}
+
+MICROSTRAIN_TEST_CASE("Lib_Apply", "Data_can_be_converted_to_hard_iron_offset_with_data_in_the_correct_indices")
+{
+    float data[9] = { 1.12345f, 2.12345f, 3.12345f };
+
+    Eigen::Vector3d hard_iron_offset = toHardIronOffset(data);
+
+    CHECK(hard_iron_offset(0) == doctest::Approx(1.12345).epsilon(0.0001));
+    CHECK(hard_iron_offset(1) == doctest::Approx(2.12345).epsilon(0.0001));
+    CHECK(hard_iron_offset(2) == doctest::Approx(3.12345).epsilon(0.0001));
 }

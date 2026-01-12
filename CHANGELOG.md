@@ -11,6 +11,14 @@ This project follows [Semantic Versioning](https://semver.org/).
                                   in a single step. Used to apply a new calibration on top of an old
                                   one (if the data sampled for the new calibration came from already
                                   calibrated data).
+- `microstrain-mag-cal-apply`: Command-line argument to bypass the default composing behavior and 
+                               overwrite the old calibration completely.
+- `libmicrostrain-mag-cal-apply`: Function to convert from raw row-major data representation of the 
+                                  soft-iron matrix to Eigen matrix representation (useful for 
+                                  converting raw data from the device to work with the library).
+- `libmicrostrain-mag-cal-apply`: Function to convert from raw data representation of the hard-iron 
+                                  offset to Eigen matrix representation (useful for converting raw 
+                                  data from the device to work with the library).
                                   
 ### Changed
 - `microstrain-mag-cal-apply`: Changed the default behavior for applying calibrations. The new default
