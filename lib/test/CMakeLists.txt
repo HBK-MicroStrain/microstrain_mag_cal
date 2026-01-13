@@ -7,7 +7,7 @@ set(LIB_UNIT_TESTS "lib_unit_tests")
 add_executable(${LIB_UNIT_TESTS}
     "analysis.unit.cpp"
     "calibration.unit.cpp"
-    "combined_coefficients.unit.cpp"
+    "apply.unit.cpp"
     "preprocessing.unit.cpp"
 )
 

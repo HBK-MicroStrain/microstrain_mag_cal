@@ -19,11 +19,11 @@ namespace microstrain_mag_cal
     /// Good spatial coverage (>70%) is necessary for accurate calibration.
     ///
     /// @param points Nx3 matrix of raw magnetometer measurements (mx, my, mz).
-    /// @param initial_offset 1x3 row vector of the estimated initial hard iron offset (bx, by, bz).
+    /// @param initial_offset Initial hard-iron offset vector (bx, by, bz).
     ///
     /// @returns Coverage percentage (0-100%), where higher values indicate better distribution.
     ///
-    double calculateSpatialCoverage(const Eigen::MatrixX3d &points, const Eigen::RowVector3d &initial_offset)
+    double calculateSpatialCoverage(const Eigen::MatrixX3d &points, const Eigen::Vector3d &initial_offset)
     {
         // This algorithm uses the geography convention for coverage.
 
@@ -38,10 +38,10 @@ namespace microstrain_mag_cal
         std::set<std::pair<int, int>> occupied_bins;
 
         for (int i = 0; i < points.rows(); ++i) {
-            Eigen::Vector3d point = points.row(i) - initial_offset;
+            // Papers typically use 3xN (colwise) for points, while we use Nx3 (rowwise).
+            Eigen::Vector3d point = points.row(i).transpose() - initial_offset;
 
-            // Normalizing to the unit sphere here because we only care about directional
-            // information, not magnitude information.
+            // Normalizing to the unit sphere because we only care about direction, not magnitude.
             point.normalize();
 
             const double x = point(0);
@@ -85,19 +85,22 @@ namespace microstrain_mag_cal
     ///
     double calculateFitRMSE(const Eigen::MatrixX3d &points, const FitResult &fit_result, const double field_strength)
     {
-        const double field_strength_squared = field_strength * field_strength;
-
         // Precompute A
         const Eigen::Matrix3d A = fit_result.soft_iron_matrix.transpose() * fit_result.soft_iron_matrix;
 
-        // Compute compensated magnetometer readings
-        const Eigen::MatrixX3d centered = points.rowwise() - fit_result.hard_iron_offset;
+        // Compute compensated magnetometer readings.
+        // Papers typically use 3xN (colwise) for points, while we use Nx3 (rowwise).
+        const Eigen::MatrixX3d centered = points.rowwise() - fit_result.hard_iron_offset.transpose();
 
-        // For each point: compute (p - bias)^T * A * (p - bias)
+        // For each point: compute (p - bias)^T * A * (p - bias).
+        // This is a vectorized implementation for all points at once.
+        // The centered point (p - bias) is already a row vector, so we don't have to transpose like
+        // in the equation.
         const Eigen::VectorXd quadratic_forms = (centered * A).cwiseProduct(centered).rowwise().sum();
 
         // Compute residuals
-        const Eigen::VectorXd residuals = Eigen::VectorXd::Constant(points.rows(), field_strength_squared) - quadratic_forms;
+        const Eigen::VectorXd residuals =
+            Eigen::VectorXd::Constant(points.rows(), field_strength * field_strength) - quadratic_forms;
 
         // Sum of squared residuals
         const double sum_squared_residuals = residuals.array().square().sum();

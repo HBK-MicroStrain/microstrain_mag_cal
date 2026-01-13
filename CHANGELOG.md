@@ -1,6 +1,20 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Changed
+- `libmicrostrain-mag-cal`: Changed hard-iron offset in FitResult to be a column vector instead of a row 
+                            vector to match common format in papers.
+- `everything`: Updated interfaces to take in the hard-iron offset as a column vector instead of a 
+                row vector.
+- `libmicrostrain-mag-cal`: Updated documentation for fit functions to explicitly state that they return
+                            the correction matrix and not the distortion matrix for soft-iron.
+  - `libmicrostrain-mag-cal`: Moved separate `libmicrostrain-mag-cal-apply` into `apply` module.
+  
+### Removed
+- Separate `libmicrostrain-mag-cal-apply` library.
+
 ## [0.5.0-pre-alpha] - 2026-01-12
 
 _Added calibration composition support and fixed fit algorithm issues._

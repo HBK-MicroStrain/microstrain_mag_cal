@@ -1,4 +1,4 @@
-#include <microstrain_mag_cal_apply/composed_coefficients.hpp>
+#include <microstrain_mag_cal/apply.hpp>
 #include <microstrain_test/microstrain_test.hpp>
 #include "clean_data.hpp"
 #include "shared_fixtures.hpp"
@@ -10,7 +10,7 @@ namespace fixture
 {
     Eigen::Vector3d applyComposedCorrections(const Eigen::Vector3d& raw_point, const FitResult& combined_fit)
     {
-        return combined_fit.soft_iron_matrix * (raw_point - combined_fit.hard_iron_offset.transpose());
+        return combined_fit.soft_iron_matrix * (raw_point - combined_fit.hard_iron_offset);
     }
 
     Eigen::Vector3d applyCorrectionsSequentially(
@@ -18,9 +18,9 @@ namespace fixture
         const FitResult& old_fit,
         const FitResult& new_fit)
     {
-        const Eigen::Vector3d old_calibrated = old_fit.soft_iron_matrix * (raw_point - old_fit.hard_iron_offset.transpose());
+        const Eigen::Vector3d old_calibrated = old_fit.soft_iron_matrix * (raw_point - old_fit.hard_iron_offset);
 
-        return new_fit.soft_iron_matrix * (old_calibrated - new_fit.hard_iron_offset.transpose());
+        return new_fit.soft_iron_matrix * (old_calibrated - new_fit.hard_iron_offset);
     }
 }
 
