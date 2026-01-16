@@ -1,7 +1,7 @@
 # Changelog
 This project follows [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## [0.6.0-pre-alpha] - 2026-01-16
 
 ### Changed
 - `libmicrostrain-mag-cal`: Changed hard-iron offset in FitResult to be a column vector instead of a row 
