@@ -1,15 +1,16 @@
 # MicroStrain MagCal
 <!-- Build and CI/CD Status -->
-[![CI](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/ci.yml/badge.svg)](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/ci.yml)
-[![CD](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/cd.yml/badge.svg)](https://github.com/HBK-MicroStrain-Internal/mag-cal/actions/workflows/cd.yml)
-[![Stable](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal?label=Stable)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
-[![Latest](https://img.shields.io/github/v/release/HBK-MicroStrain-Internal/mag-cal?include_prereleases&label=Latest)](https://github.com/HBK-MicroStrain-Internal/mag-cal/releases/latest)
+[![CI](https://github.com/HBK-MicroStrain/microstrain_mag_cal/actions/workflows/ci.yml/badge.svg)](https://github.com/HBK-MicroStrain/microstrain_mag_cal/actions/workflows/ci.yml)
+[![CD](https://github.com/HBK-MicroStrain/microstrain_mag_cal/actions/workflows/cd.yml/badge.svg)](https://github.com/HBK-MicroStrain/microstrain_mag_cal/actions/workflows/cd.yml)
+[![Stable](https://img.shields.io/github/v/release/HBK-MicroStrain/microstrain_mag_cal?label=Stable)](https://github.com/HBK-MicroStrain/microstrain_mag_cal/releases/latest)
+[![Latest](https://img.shields.io/github/v/release/HBK-MicroStrain/microstrain_mag_cal?include_prereleases&label=Latest)](https://github.com/HBK-MicroStrain/microstrain_mag_cal/releases/latest)
 
 <!-- Project Info -->
+![License](https://img.shields.io/github/license/HBK-MicroStrain/microstrain_mag_cal?label=License)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
 
 <!-- Development/Standards -->
-[![Keep a Changelog](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-E05735)](https://keepachangelog.com/en/1.1.0/)
+[![Keep a Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog%20v1.1.0-E05735)](https://keepachangelog.com/en/1.1.0/)
 
 Suite of library and tools for magnetometer calibration.
 
